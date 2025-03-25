@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-13 14:35:07.164809",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "course_name",
+  "course_location",
+  "course_start_date",
+  "course_end_date",
+  "course_price"
+ ],
+ "fields": [
+  {
+   "fieldname": "course_name",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Course Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "course_start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Course Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "course_end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Course End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "course_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Course Price",
+   "reqd": 1
+  },
+  {
+   "fieldname": "course_location",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Course Location",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-13 14:35:07.164809",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Course info",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
