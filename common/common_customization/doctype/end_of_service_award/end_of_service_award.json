@@ -1,0 +1,493 @@
+{
+ "actions": [],
+ "autoname": "format:{EOSA}-{####}",
+ "creation": "2025-03-13 14:47:42.378012",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "department",
+  "type_of_contract",
+  "salary",
+  "worked_days",
+  "reason",
+  "column_break_5",
+  "work_start_date",
+  "end_date",
+  "notice_month",
+  "notice_month_start",
+  "notice_month_end",
+  "salary_details_section",
+  "basic",
+  "basic_day_value",
+  "total_month_basic",
+  "column_break_mvv0r",
+  "housing_allowance",
+  "housing_day_value",
+  "total_month_housing",
+  "column_break_rr0q2",
+  "transportation_allowance",
+  "transportation_day_value",
+  "total_month_transportation",
+  "column_break_6tz4t",
+  "other_allowance",
+  "other_day_value",
+  "total_month_other",
+  "duration_of_service",
+  "years",
+  "award",
+  "column_break_3",
+  "months",
+  "column_break_9",
+  "days",
+  "employee_entitlement",
+  "days_number",
+  "html_1",
+  "leave_number",
+  "ticket_number",
+  "column_break_20",
+  "day_value",
+  "html_2",
+  "leave_cost",
+  "ticket_cost",
+  "column_break_23",
+  "total_month_salary",
+  "salary_is_already_taken",
+  "leave_total_cost",
+  "ticket_total_cost",
+  "deduction_section",
+  "end_of_service_award_deduction",
+  "total_deduction",
+  "earning_section",
+  "end_of_service_award_earning",
+  "total_earning",
+  "total_award",
+  "month_salary",
+  "total",
+  "rejection_reason",
+  "salary_structure",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "label": "Employee Name "
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Department",
+   "options": "Department",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.employment_type",
+   "fieldname": "type_of_contract",
+   "fieldtype": "Read Only",
+   "label": "Type of Contract"
+  },
+  {
+   "fieldname": "salary",
+   "fieldtype": "Currency",
+   "ignore_user_permissions": 1,
+   "label": "Salary",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "worked_days",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Worked Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reason for end of service",
+   "options": "\n\u0627\u0646\u062a\u0647\u0627\u0621 \u0645\u062f\u0629 \u0627\u0644\u0639\u0642\u062f \u0623\u0648 \u0627\u0644\u0627\u062a\u0641\u0627\u0642 \u0628\u064a\u0646 \u0627\u0644\u0637\u0631\u0641\u064a\u0646 \u0639\u0644\u0649 \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0642\u062f \u0623\u0648 \u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0642\u062f \u0645\u0646 \u0642\u0628\u0644 \u0627\u0644\u0634\u0631\u0643\u0629\n\u0627\u0633\u062a\u0642\u0627\u0644\u0629 \u0627\u0644\u0645\u0648\u0638\u0641 \u0642\u0628\u0644 \u0627\u0646\u062a\u0647\u0627\u0621 \u0645\u062f\u0629 \u0627\u0644\u0639\u0642\u062f\n\u0627\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0642\u062f \u062e\u0644\u0627\u0644 \u0641\u062a\u0631\u0647 \u0627\u0644\u062a\u062c\u0631\u0628\u0647",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "work_start_date",
+   "fieldtype": "Date",
+   "label": "Work Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "duration_of_service",
+   "fieldtype": "Section Break",
+   "label": "Duration of Service"
+  },
+  {
+   "default": "0",
+   "fieldname": "years",
+   "fieldtype": "Int",
+   "label": "Number of Years",
+   "read_only": 1
+  },
+  {
+   "fieldname": "award",
+   "fieldtype": "Currency",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Award",
+   "reqd": 1,
+   "width": "250"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "months",
+   "fieldtype": "Int",
+   "label": "Number of Months",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "days",
+   "fieldtype": "Int",
+   "label": "Number of Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "employee_entitlement",
+   "fieldtype": "Section Break",
+   "label": "Employee Entitlement"
+  },
+  {
+   "default": "0",
+   "fieldname": "days_number",
+   "fieldtype": "Data",
+   "label": "Days Number"
+  },
+  {
+   "default": "0",
+   "fieldname": "leave_number",
+   "fieldtype": "Data",
+   "label": "Leave Balance"
+  },
+  {
+   "fieldname": "ticket_number",
+   "fieldtype": "Data",
+   "label": "Ticket Number"
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "day_value",
+   "fieldtype": "Currency",
+   "label": "Total Day Value",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "leave_cost",
+   "fieldtype": "Currency",
+   "label": "Leave Cost",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ticket_cost",
+   "fieldtype": "Currency",
+   "label": "Ticket Cost",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_month_salary",
+   "fieldtype": "Currency",
+   "label": "Total Month Salary",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "leave_total_cost",
+   "fieldtype": "Currency",
+   "label": "Leave Total Cost"
+  },
+  {
+   "default": "0",
+   "fieldname": "ticket_total_cost",
+   "fieldtype": "Currency",
+   "label": "Ticket Total Cost"
+  },
+  {
+   "fieldname": "total_award",
+   "fieldtype": "Section Break",
+   "label": "Total Award"
+  },
+  {
+   "default": "0",
+   "fieldname": "month_salary",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Month Salary",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "End of Service Award",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "notice_month",
+   "fieldtype": "Check",
+   "label": "Notice Month"
+  },
+  {
+   "depends_on": "eval:doc.notice_month",
+   "fieldname": "notice_month_start",
+   "fieldtype": "Date",
+   "label": "Notice Month Start"
+  },
+  {
+   "depends_on": "eval:doc.notice_month",
+   "fieldname": "notice_month_end",
+   "fieldtype": "Date",
+   "label": "Notice Month End"
+  },
+  {
+   "depends_on": "employee",
+   "fieldname": "salary_details_section",
+   "fieldtype": "Section Break",
+   "label": "Salary Details"
+  },
+  {
+   "default": "0",
+   "fieldname": "basic",
+   "fieldtype": "Currency",
+   "label": "Basic Salary",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "housing_allowance",
+   "fieldtype": "Currency",
+   "label": "Housing Allowance",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "transportation_allowance",
+   "fieldtype": "Currency",
+   "label": "Transportation Allowance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "deduction_section",
+   "fieldtype": "Section Break",
+   "label": "Deduction"
+  },
+  {
+   "fieldname": "end_of_service_award_deduction",
+   "fieldtype": "Table",
+   "label": "End of Service Award Deduction",
+   "options": "End of Service Award Deduction"
+  },
+  {
+   "fieldname": "total_deduction",
+   "fieldtype": "Data",
+   "label": "Total Deduction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "earning_section",
+   "fieldtype": "Section Break",
+   "label": "Earning"
+  },
+  {
+   "fieldname": "end_of_service_award_earning",
+   "fieldtype": "Table",
+   "label": "End of Service Award Earning",
+   "options": "End of Service Award Earning"
+  },
+  {
+   "fieldname": "total_earning",
+   "fieldtype": "Data",
+   "label": "Total Earning",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rejection_reason",
+   "fieldtype": "Small Text",
+   "label": "Rejection Reason",
+   "read_only": 1
+  },
+  {
+   "fieldname": "html_1",
+   "fieldtype": "Heading"
+  },
+  {
+   "fieldname": "html_2",
+   "fieldtype": "Heading"
+  },
+  {
+   "default": "0",
+   "fieldname": "salary_is_already_taken",
+   "fieldtype": "Check",
+   "label": "Salary is Already Taken"
+  },
+  {
+   "fieldname": "column_break_mvv0r",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rr0q2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "other_allowance",
+   "fieldtype": "Currency",
+   "label": "Other Allowance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_6tz4t",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "basic_day_value",
+   "fieldtype": "Currency",
+   "label": "Day Value ( Basic )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "housing_day_value",
+   "fieldtype": "Currency",
+   "label": "Day Value ( Housing )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "transportation_day_value",
+   "fieldtype": "Currency",
+   "label": "Day Value ( Transportation )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "other_day_value",
+   "fieldtype": "Currency",
+   "label": "Day Value ( Other )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_month_basic",
+   "fieldtype": "Currency",
+   "label": "Total Month ( Basic )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_month_housing",
+   "fieldtype": "Currency",
+   "label": "Total Month ( Housing )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_month_transportation",
+   "fieldtype": "Currency",
+   "label": "Total Month ( Transportation )",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_month_other",
+   "fieldtype": "Currency",
+   "label": "Total Month ( Other )",
+   "read_only": 1
+  },
+  {
+   "fieldname": "salary_structure",
+   "fieldtype": "Link",
+   "label": "salary_structure",
+   "options": "Salary Structure",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-03-13 16:22:52.231184",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "End of Service Award",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 1
+}

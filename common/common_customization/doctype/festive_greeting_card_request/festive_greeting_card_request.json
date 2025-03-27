@@ -1,0 +1,196 @@
+{
+ "actions": [],
+ "autoname": "FGCR-.YYYY.-.MM.-.DD.-.####",
+ "allow_rename": 1,
+ "creation": "2025-03-13 15:46:51.406745",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "festive_greeting",
+  "person_name",
+  "festive_greeting_for",
+  "column_break_3xlfb",
+  "position_top",
+  "position_left",
+  "font_size",
+  "font_color",
+  "section_break_eoqxa",
+  "origin_festive_image",
+  "origin_festive_image_preview",
+  "column_break_1zthc",
+  "request_festive_image",
+  "request_festive_image_preview",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "festive_greeting",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Festive Greeting",
+   "options": "Festive Greeting Card",
+   "reqd": 1
+  },
+  {
+   "fieldname": "person_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Person Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Festive Greeting Card Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "festive_greeting_for",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Festive Greeting For",
+   "options": "\nBrother\nSister",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1zthc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "festive_greeting.festive_image",
+   "fieldname": "origin_festive_image",
+   "fieldtype": "Attach Image",
+   "label": "Origin Festive Image",
+   "read_only": 1
+  },
+  {
+   "fieldname": "request_festive_image",
+   "fieldtype": "Attach Image",
+   "label": "Request Festive Image",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_eoqxa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "origin_festive_image",
+   "fieldname": "origin_festive_image_preview",
+   "fieldtype": "Image",
+   "label": "Origin Festive Image Preview",
+   "options": "origin_festive_image"
+  },
+  {
+   "depends_on": "request_festive_image",
+   "fieldname": "request_festive_image_preview",
+   "fieldtype": "Image",
+   "label": "Request Festive Image Preview",
+   "options": "request_festive_image"
+  },
+  {
+   "fieldname": "column_break_3xlfb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "position_top",
+   "fieldtype": "Int",
+   "label": "Position Top",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "position_left",
+   "fieldtype": "Int",
+   "label": "Position Left",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "fieldname": "font_size",
+   "fieldtype": "Int",
+   "label": "Font Size",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "#FF0000",
+   "fieldname": "font_color",
+   "fieldtype": "Color",
+   "label": "Font Color",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-03-13 15:46:51.406745",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Festive Greeting Card Request",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "person_name",
+ "states": []
+}
