@@ -1,0 +1,16 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "Common customization",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd hr_service && yarn install",
+    "dev": "cd hr_service && yarn dev",
+    "build": "cd hr_service && yarn build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

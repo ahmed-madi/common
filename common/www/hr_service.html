@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/common/hr-service/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Services</title>
+  <script type="module" crossorigin src="/assets/common/hr-service/assets/index-DW8zap68.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/common/hr-service/assets/index-VCHmb7fa.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script>window.csrf_token = '{{ frappe.session.csrf_token }}';
+
+    if (!window.frappe) window.frappe = {};
+
+    frappe.boot = JSON.parse({{ boot }});
+
+  </script>
+</body>
+
+</html>
