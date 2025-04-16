@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-13 23:37:18.863256",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "full_name",
+  "relationship",
+  "id",
+  "passport",
+  "birthday"
+ ],
+ "fields": [
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "relationship",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Relationship",
+   "reqd": 1
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "passport",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Passport",
+   "reqd": 1
+  },
+  {
+   "fieldname": "birthday",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Birthday",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-13 23:37:16.863256",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Employee Family Member",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

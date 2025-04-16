@@ -1,0 +1,177 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"AjDup3eW4R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Self Service</span>\",\"col\":12}},{\"id\":\"Ks7QsRpdfV\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Requests\",\"col\":4}},{\"id\":\"SmWVNlCQgp\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Requests\",\"col\":4}},{\"id\":\"0tY3V8ML3r\",\"type\":\"card\",\"data\":{\"card_name\":\"Employee Requests\",\"col\":4}}]",
+ "creation": "2025-04-13 13:56:45.003059",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "assign",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Self Service",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Financial Requests",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan Application",
+   "link_count": 0,
+   "link_to": "Loan Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Advance",
+   "link_count": 0,
+   "link_to": "Employee Advance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Request",
+   "link_count": 0,
+   "link_to": "Payment Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Overtime Pay Request",
+   "link_count": 0,
+   "link_to": "Overtime Pay Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "HR Requests",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Document Request",
+   "link_count": 0,
+   "link_to": "Document Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Visa Application",
+   "link_count": 0,
+   "link_to": "Visa Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Resignation",
+   "link_count": 0,
+   "link_to": "Employee Resignation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Request",
+   "link_count": 0,
+   "link_to": "Training Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Requests",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Update Employee Information",
+   "link_count": 0,
+   "link_to": "Update Employee Information",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Salary Fixation",
+   "link_count": 0,
+   "link_to": "Salary Fixation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Change IBAN Request",
+   "link_count": 0,
+   "link_to": "Change IBAN Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Update Employee Permissions",
+   "link_count": 0,
+   "link_to": "Update Employee Permissions",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-04-13 23:42:02.061848",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Self Service",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Staff Portal",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 36.0,
+ "shortcuts": [],
+ "title": "Self Service"
+}

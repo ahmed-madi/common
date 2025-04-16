@@ -1,0 +1,235 @@
+{
+ "actions": [],
+ "autoname": "format:HD-SRVR-{####}",
+ "creation": "2025-04-13 21:41:18.994849",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "department",
+  "full_name",
+  "server_type",
+  "column_break_tn0zt",
+  "email",
+  "environment",
+  "system_requirements_section",
+  "machine_type",
+  "server_name",
+  "server_cname",
+  "amt_of_ram",
+  "number_of_cpus",
+  "column_break_7f66u",
+  "special_instructions_or_requests",
+  "disk_space_required_gb_section",
+  "rename_system_desk",
+  "rename_data_desk",
+  "d_install_drive",
+  "f_data_drive",
+  "column_break_cg49m",
+  "description",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "server_type",
+   "fieldtype": "Table MultiSelect",
+   "label": "Server Type",
+   "options": "Server Request Type Table",
+   "reqd": 1
+  },
+  {
+   "default": "Production",
+   "fieldname": "environment",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Environment",
+   "options": "Production\nDev / Test\nOperating System",
+   "reqd": 1
+  },
+  {
+   "fieldname": "system_requirements_section",
+   "fieldtype": "Section Break",
+   "label": "System Requirements"
+  },
+  {
+   "fieldname": "server_name",
+   "fieldtype": "Data",
+   "label": "Server Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "server_cname",
+   "fieldtype": "Data",
+   "label": "Server Cname",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "amt_of_ram",
+   "fieldtype": "Int",
+   "label": "Amt of RAM (GB)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "default": "2",
+   "fieldname": "number_of_cpus",
+   "fieldtype": "Select",
+   "label": "Number of CPUs",
+   "options": "2\n4\n8",
+   "reqd": 1
+  },
+  {
+   "fieldname": "special_instructions_or_requests",
+   "fieldtype": "Text",
+   "label": "Special Instructions or Requests"
+  },
+  {
+   "fieldname": "disk_space_required_gb_section",
+   "fieldtype": "Section Break",
+   "label": "Disk Space Required (GB)"
+  },
+  {
+   "fieldname": "rename_system_desk",
+   "fieldtype": "Data",
+   "label": "Rename System Desk",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rename_data_desk",
+   "fieldtype": "Data",
+   "label": "Rename Data Desk",
+   "reqd": 1
+  },
+  {
+   "fieldname": "d_install_drive",
+   "fieldtype": "Data",
+   "label": "D (Install) Drive",
+   "reqd": 1
+  },
+  {
+   "fieldname": "f_data_drive",
+   "fieldtype": "Data",
+   "label": "F (Data) Drive",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Server Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_tn0zt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_7f66u",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_cg49m",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "default": "Virtual Machine",
+   "fieldname": "machine_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Machine Type",
+   "options": "Virtual Machine\nPhysical Server",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "read_only_depends_on": "eval:!frappe.user.has_role('System Manager')"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Read Only",
+   "label": "Department"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-04-13 17:19:18.473057",
+ "modified_by": "Administrator",
+ "module": "Helpdesk",
+ "name": "Server Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Help Desk Admin",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

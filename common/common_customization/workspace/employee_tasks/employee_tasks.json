@@ -1,0 +1,57 @@
+{
+ "charts": [
+  {
+   "chart_name": "Employee Tasks Priorities",
+   "label": "Employee Tasks Priorities"
+  },
+  {
+   "chart_name": "Employee Tasks Status",
+   "label": "Employee Tasks Status"
+  }
+ ],
+ "content": "[{\"id\":\"BzkrQhIbel\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Employee Tasks</span>\",\"col\":12}},{\"id\":\"YVoVKuEMIv\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Employee Tasks Status\",\"col\":6}},{\"id\":\"6Eh34av_J3\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Employee Tasks Priorities\",\"col\":6}},{\"id\":\"5RRNGQK7xU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"s4BqE-E7jp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tasks Calendar\",\"col\":3}},{\"id\":\"J_y7t57uwY\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"NWWkAqNlaa\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Tasks\",\"col\":4}},{\"id\":\"zwHG-Bmh7k\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Timesheets\",\"col\":4}}]",
+ "creation": "2025-04-13 12:49:02.650216",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "milestone",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Employee Tasks",
+ "links": [],
+ "modified": "2025-04-13 13:21:15.104348",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Employee Tasks",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Staff Portal",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Task",
+   "label": "Tasks",
+   "quick_list_filter": "[]"
+  },
+  {
+   "document_type": "Timesheet",
+   "label": "Timesheets",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 33.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Tasks Calendar",
+   "type": "URL",
+   "url": "/app/task/view/calendar/default"
+  }
+ ],
+ "title": "Employee Tasks"
+}
