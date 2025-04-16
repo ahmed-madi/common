@@ -1,23 +1,23 @@
 {
  "charts": [],
- "content": "[{\"id\":\"AjDup3eW4R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Self Service</span>\",\"col\":12}},{\"id\":\"Ks7QsRpdfV\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Requests\",\"col\":4}},{\"id\":\"SmWVNlCQgp\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Requests\",\"col\":4}},{\"id\":\"0tY3V8ML3r\",\"type\":\"card\",\"data\":{\"card_name\":\"Employee Requests\",\"col\":4}}]",
- "creation": "2025-04-13 13:56:45.003059",
+ "content": "[{\"id\":\"drCEiV2BPz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Help Desk</span>\",\"col\":12}},{\"id\":\"X7bI0bOEMN\",\"type\":\"card\",\"data\":{\"card_name\":\"Master\",\"col\":4}},{\"id\":\"55etebHNAj\",\"type\":\"card\",\"data\":{\"card_name\":\"Requests\",\"col\":4}},{\"id\":\"KlN8GzJjal\",\"type\":\"card\",\"data\":{\"card_name\":\"Maintenance Requests\",\"col\":4}}]",
+ "creation": "2025-04-16 12:24:54.624942",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
- "icon": "assign",
+ "icon": "support",
  "idx": 0,
- "indicator_color": "green",
+ "indicator_color": "",
  "is_hidden": 0,
- "label": "Self Service",
+ "label": "HelpDesk",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Financial Requests",
-   "link_count": 4,
+   "label": "Master",
+   "link_count": 5,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -25,9 +25,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Loan Application",
+   "label": "Device Request Type",
    "link_count": 0,
-   "link_to": "Loan Application",
+   "link_to": "Device Request Type",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -35,9 +35,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Employee Advance",
+   "label": "Server Request Type",
    "link_count": 0,
-   "link_to": "Employee Advance",
+   "link_to": "Server Request Type",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -45,9 +45,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Payment Request",
+   "label": "IT Maintenance Problem",
    "link_count": 0,
-   "link_to": "Payment Request",
+   "link_to": "IT Maintenance Problem",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -55,9 +55,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Overtime Pay Request",
+   "label": "Security Maintenance Problem",
    "link_count": 0,
-   "link_to": "Overtime Pay Request",
+   "link_to": "Security Maintenance Problem",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -65,8 +65,18 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "HR Requests",
-   "link_count": 4,
+   "label": "Stationary Request Type",
+   "link_count": 0,
+   "link_to": "Stationary Request Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Maintenance Requests",
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -74,9 +84,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Document Request",
+   "label": "Facility Maintenance Support",
    "link_count": 0,
-   "link_to": "Document Request",
+   "link_to": "Facility Maintenance Support",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -84,9 +94,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Visa Application",
+   "label": "IT Maintenance Support Request",
    "link_count": 0,
-   "link_to": "Visa Application",
+   "link_to": "IT Maintenance Support Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -94,9 +104,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Employee Resignation",
+   "label": "Security Maintenance Support",
    "link_count": 0,
-   "link_to": "Employee Resignation",
+   "link_to": "Security Maintenance Support",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -104,18 +114,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Training Request",
-   "link_count": 0,
-   "link_to": "Training Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Employee Requests",
-   "link_count": 4,
+   "label": "Requests",
+   "link_count": 6,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -123,9 +123,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Update Employee Information",
+   "label": "Business Card Request",
    "link_count": 0,
-   "link_to": "Update Employee Information",
+   "link_to": "Business Card Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -133,9 +133,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Salary Fixation",
+   "label": "Device Request",
    "link_count": 0,
-   "link_to": "Salary Fixation",
+   "link_to": "Device Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -143,9 +143,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Update Employee Permissions",
+   "label": "Email Request",
    "link_count": 0,
-   "link_to": "Update Employee Permissions",
+   "link_to": "Email Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -153,25 +153,45 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Change IBAN Request",
+   "label": "Server Request",
    "link_count": 0,
-   "link_to": "Change IBAN Request",
+   "link_to": "Server Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Software License Request",
+   "link_count": 0,
+   "link_to": "Software License Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stationary Request",
+   "link_count": 0,
+   "link_to": "Stationary Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2025-04-16 11:37:36.967679",
+ "modified": "2025-04-16 12:31:33.186441",
  "modified_by": "Administrator",
- "module": "Common Customization",
- "name": "Self Service",
+ "module": "Helpdesk",
+ "name": "HelpDesk",
  "number_cards": [],
  "owner": "Administrator",
  "parent_page": "Staff Portal",
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 36.0,
+ "sequence_id": 39.0,
  "shortcuts": [],
- "title": "Self Service"
+ "title": "HelpDesk"
 }
