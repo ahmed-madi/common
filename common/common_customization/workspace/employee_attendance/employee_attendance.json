@@ -1,0 +1,75 @@
+{
+ "charts": [
+  {
+   "chart_name": "Attendance Count",
+   "label": "Attendance Count"
+  }
+ ],
+ "content": "[{\"id\":\"fZPhyB8oeh\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Employee Attendance</span>\",\"col\":12}},{\"id\":\"Bs4g-Yh2dj\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Attendance Count\",\"col\":12}},{\"id\":\"UqAQnOOCZE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Shift Request\",\"col\":3}},{\"id\":\"lX0zIRaIIX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Check-in/out\",\"col\":3}},{\"id\":\"Qzc2O8BI44\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Attendance Request\",\"col\":3}},{\"id\":\"sIf4qRVs4X\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5Y-eqVXdzs\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Attendance\",\"col\":4}},{\"id\":\"5aXhkECaIA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Attendance Requests\",\"col\":4}},{\"id\":\"NOARuelgtj\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Employee Checkin\",\"col\":4}}]",
+ "creation": "2025-04-13 13:35:50.256036",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "map",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Employee Attendance",
+ "links": [],
+ "modified": "2025-04-13 13:54:41.750241",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Employee Attendance",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Staff Portal",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Attendance",
+   "label": "Attendance",
+   "quick_list_filter": "[]"
+  },
+  {
+   "document_type": "Employee Checkin",
+   "label": "Employee Checkin",
+   "quick_list_filter": "[]"
+  },
+  {
+   "document_type": "Attendance Request",
+   "label": "Attendance Requests",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 34.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Add Shift Request",
+   "link_to": "Shift Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Add Check-in/out",
+   "link_to": "Employee Checkin",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Add Attendance Request",
+   "link_to": "Attendance Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Employee Attendance"
+}
