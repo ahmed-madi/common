@@ -1,8 +1,8 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "TR-.#####.",
- "creation": "2025-03-13 14:29:03.420385",
+ "autoname": "CR-.#####.",
+ "creation": "2025-04-26 13:29:50.427855",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -10,19 +10,18 @@
   "employee_name",
   "department",
   "column_break_hmybe",
-  "training_title",
-  "training_type",
+  "club_name",
   "start_date",
   "end_date",
   "section_break_4",
   "training_provider",
-  "training_duration",
   "column_break_egpc",
   "is_paid",
   "training_price",
   "section_break_g56lj",
-  "training_description",
+  "motivation",
   "section_break_zate",
+  "remarks",
   "attachment",
   "amended_from"
  ],
@@ -49,33 +48,8 @@
    "options": "Department"
   },
   {
-   "fieldname": "section_break_4",
-   "fieldtype": "Section Break",
-   "label": "Course information"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Training Request",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_hmybe",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_g56lj",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "training_type",
-   "fieldtype": "Select",
-   "label": "Training Type",
-   "options": "\nInternal\nExternal",
-   "reqd": 1
   },
   {
    "fieldname": "start_date",
@@ -90,10 +64,14 @@
    "reqd": 1
   },
   {
-   "fieldname": "training_duration",
-   "fieldtype": "Float",
-   "label": "Training Duration  (Hours)",
-   "non_negative": 1,
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break",
+   "label": "Course information"
+  },
+  {
+   "fieldname": "training_provider",
+   "fieldtype": "Data",
+   "label": "Participation Role",
    "reqd": 1
   },
   {
@@ -114,10 +92,8 @@
    "mandatory_depends_on": "is_paid"
   },
   {
-   "fieldname": "training_description",
-   "fieldtype": "Small Text",
-   "label": "Training Description",
-   "reqd": 1
+   "fieldname": "section_break_g56lj",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "section_break_zate",
@@ -129,25 +105,51 @@
    "label": "Attachment"
   },
   {
-   "fieldname": "training_title",
-   "fieldtype": "Data",
-   "label": "Training Title",
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Club Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Club Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "club_name",
+   "fieldtype": "Link",
+   "label": "Club Name",
+   "options": "Club Name",
    "reqd": 1
   },
   {
-   "fieldname": "training_provider",
-   "fieldtype": "Data",
-   "label": "Training Provider",
+   "fieldname": "motivation",
+   "fieldtype": "Small Text",
+   "label": "Motivation",
    "reqd": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:25:06.169807",
+ "modified": "2025-04-26 13:32:40.500571",
  "modified_by": "Administrator",
  "module": "Common Customization",
- "name": "Training Request",
+ "name": "Club Request",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [

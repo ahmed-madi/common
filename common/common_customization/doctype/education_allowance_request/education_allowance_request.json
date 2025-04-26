@@ -1,28 +1,27 @@
 {
  "actions": [],
  "autoname": "naming_series:",
- "creation": "2025-04-13 23:27:57.218117",
+ "creation": "2025-04-26 13:00:53.385854",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
   "employee",
-  "column_break_8bbmu",
   "employee_name",
-  "employment_number",
+  "column_break_8bbmu",
+  "naming_series",
   "current_bank_details_section",
-  "c_bank_name",
+  "dependent_name",
+  "academic_year",
   "column_break_hrnd",
-  "c_bank_ac_no",
+  "relation",
   "c_iban",
   "new_bank_details_section",
-  "bank_name",
+  "amount_requested",
   "column_break_dayi",
-  "bank_ac_no",
-  "iban",
+  "school_name",
+  "attachment",
   "section_break_ecpv",
   "reason",
-  "attachment",
   "amended_from"
  ],
  "fields": [
@@ -30,7 +29,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
-   "options": "HR-SL-IBAN-.####",
+   "options": "HR-SL-EAR-.####",
    "reqd": 1
   },
   {
@@ -53,111 +52,105 @@
    "read_only": 1
   },
   {
-   "fieldname": "employment_number",
-   "fieldtype": "Read Only",
-   "label": "Employment Number"
-  },
-  {
-   "fieldname": "reason",
-   "fieldtype": "Small Text",
-   "label": "Reason",
-   "reqd": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Change IBAN Request",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Change IBAN Request",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
    "fieldname": "current_bank_details_section",
    "fieldtype": "Section Break",
-   "label": "Current Bank Details"
-  },
-  {
-   "fetch_from": "employee.bank_name",
-   "fieldname": "c_bank_name",
-   "fieldtype": "Read Only",
-   "label": "Bank Name"
+   "label": "Depedent Info"
   },
   {
    "fieldname": "column_break_hrnd",
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "employee.bank_ac_no",
-   "fieldname": "c_bank_ac_no",
-   "fieldtype": "Read Only",
-   "label": "Bank A/C No."
-  },
-  {
-   "fetch_from": "employee.iban",
    "fieldname": "c_iban",
    "fieldtype": "Read Only",
    "label": "IBAN"
   },
   {
    "fieldname": "new_bank_details_section",
-   "fieldtype": "Section Break",
-   "label": "New Bank Details"
-  },
-  {
-   "fetch_from": "employee.bank_name",
-   "fieldname": "bank_name",
-   "fieldtype": "Data",
-   "label": "Bank Name",
-   "reqd": 1
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_dayi",
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "employee.bank_ac_no",
-   "fieldname": "bank_ac_no",
-   "fieldtype": "Data",
-   "label": "Bank A/C No.",
-   "reqd": 1
-  },
-  {
-   "fieldname": "iban",
-   "fieldtype": "Data",
-   "label": "IBAN",
-   "reqd": 1
-  },
-  {
    "fieldname": "section_break_ecpv",
    "fieldtype": "Section Break"
   },
   {
-   "description": "Bank confirmation letter/statement showing new IBAN",
+   "fieldname": "reason",
+   "fieldtype": "Text",
+   "label": "Remarks",
+   "reqd": 1
+  },
+  {
+   "description": "School Invoice, Attendance Certificate, etc",
    "fieldname": "attachment",
    "fieldtype": "Attach",
    "label": "Attachment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Education Allowance Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Education Allowance Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "dependent_name",
+   "fieldtype": "Data",
+   "label": "Dependent Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Date",
+   "label": "Academic Year",
+   "options": "Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "relation",
+   "fieldtype": "Select",
+   "label": "Relation",
+   "options": "\nSon\nDaughter",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount_requested",
+   "fieldtype": "Currency",
+   "label": "Amount Requested",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "school_name",
+   "fieldtype": "Data",
+   "label": "School Name",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 12:34:48.547606",
+ "modified": "2025-04-26 13:19:20.798079",
  "modified_by": "Administrator",
  "module": "Common Customization",
- "name": "Change IBAN Request",
+ "name": "Education Allowance Request",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
