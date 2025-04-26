@@ -8,13 +8,17 @@
  "field_order": [
   "naming_series",
   "employee",
-  "request_date",
-  "document_language",
-  "document_type",
-  "column_break_8bbmu",
   "employee_name",
   "employment_number",
+  "column_break_8bbmu",
+  "request_date",
+  "request_subject",
+  "document_language",
+  "document_type",
+  "section_break_afny",
+  "attachments_column",
   "reason",
+  "attach_himf",
   "amended_from"
  ],
  "fields": [
@@ -76,6 +80,7 @@
    "search_index": 1
   },
   {
+   "default": "Today",
    "fieldname": "request_date",
    "fieldtype": "Date",
    "label": "Request Date",
@@ -94,12 +99,31 @@
    "label": "Document Type",
    "options": "Document Request Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "request_subject",
+   "fieldtype": "Small Text",
+   "label": "Request Subject",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_afny",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "attachments_column",
+   "fieldtype": "Column Break",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "attach_himf",
+   "fieldtype": "Attach"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-13 14:53:05.252481",
+ "modified": "2025-04-26 13:57:59.815622",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Document Request",
