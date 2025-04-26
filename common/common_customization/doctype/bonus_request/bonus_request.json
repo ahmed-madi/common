@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2025-03-13 15:54:40.819384",
+ "creation": "2025-04-26 13:14:04.391340",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -10,12 +10,12 @@
   "employee_name",
   "fixation_reason",
   "column_break_8bbmu",
-  "effective_date",
   "naming_series",
-  "amended_from",
+  "effective_date",
   "section_break_yips",
   "remarks",
-  "attachment"
+  "attachment",
+  "amended_from"
  ],
  "fields": [
   {
@@ -27,10 +27,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_8bbmu",
-   "fieldtype": "Column Break"
-  },
-  {
    "fetch_from": "employee.employee_name",
    "fieldname": "employee_name",
    "fieldtype": "Data",
@@ -38,27 +34,21 @@
    "read_only": 1
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Salary Fixation",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "fieldname": "fixation_reason",
+   "fieldtype": "Select",
+   "label": "Fixation Reason",
+   "options": "\nPromotion\nContract Revision\nAdjustment\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_8bbmu",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
    "options": "HR-SL-SFX-.####",
-   "reqd": 1
-  },
-  {
-   "fieldname": "fixation_reason",
-   "fieldtype": "Select",
-   "label": "Fixation Reason",
-   "options": "\nPromotion\nContract Revision\nAdjustment\nOther",
    "reqd": 1
   },
   {
@@ -79,17 +69,36 @@
   {
    "fieldname": "attachment",
    "fieldtype": "Attach",
-   "label": "Attachment",
-   "reqd": 1
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bonus Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bonus Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:07:35.822566",
+ "modified": "2025-04-26 13:14:13.721754",
  "modified_by": "Administrator",
  "module": "Common Customization",
- "name": "Salary Fixation",
+ "name": "Bonus Request",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [

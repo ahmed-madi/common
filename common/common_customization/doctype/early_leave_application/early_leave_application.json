@@ -1,21 +1,20 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "naming_series:",
- "creation": "2025-03-13 15:54:40.819384",
+ "autoname": "HR-SL-ELA-.####",
+ "creation": "2025-04-26 12:01:32.974193",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "employee",
   "employee_name",
-  "fixation_reason",
-  "column_break_8bbmu",
-  "effective_date",
-  "naming_series",
-  "amended_from",
-  "section_break_yips",
-  "remarks",
-  "attachment"
+  "department",
+  "column_break_tyec",
+  "exit_date",
+  "section_break_eyve",
+  "reason",
+  "attachment",
+  "amended_from"
  ],
  "fields": [
   {
@@ -27,70 +26,75 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_8bbmu",
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_tyec",
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "employee.employee_name",
-   "fieldname": "employee_name",
-   "fieldtype": "Data",
-   "label": "Employee Name",
-   "read_only": 1
+   "fieldname": "section_break_eyve",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Reason",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Salary Fixation",
+   "options": "Early Leave Application",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
   },
   {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Series",
-   "options": "HR-SL-SFX-.####",
-   "reqd": 1
-  },
-  {
-   "fieldname": "fixation_reason",
-   "fieldtype": "Select",
-   "label": "Fixation Reason",
-   "options": "\nPromotion\nContract Revision\nAdjustment\nOther",
-   "reqd": 1
-  },
-  {
-   "fieldname": "effective_date",
-   "fieldtype": "Date",
-   "label": "Effective Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "section_break_yips",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "remarks",
-   "fieldtype": "Small Text",
-   "label": "Remarks"
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Early Leave Application",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "attachment",
    "fieldtype": "Attach",
-   "label": "Attachment",
+   "label": "Attachment"
+  },
+  {
+   "default": "Today",
+   "fieldname": "exit_date",
+   "fieldtype": "Date",
+   "label": "Exit Date",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:07:35.822566",
+ "modified": "2025-04-26 12:02:43.981437",
  "modified_by": "Administrator",
  "module": "Common Customization",
- "name": "Salary Fixation",
- "naming_rule": "By \"Naming Series\" field",
+ "name": "Early Leave Application",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -107,9 +111,7 @@
   },
   {
    "create": 1,
-   "delete": 1,
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
@@ -127,7 +129,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct manager",
+   "role": "HR Manager",
    "share": 1,
    "submit": 1,
    "write": 1
@@ -138,11 +140,10 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Manager",
+   "role": "HR User",
    "share": 1,
    "submit": 1,
    "write": 1
