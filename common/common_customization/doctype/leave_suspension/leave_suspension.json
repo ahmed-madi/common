@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "HR-SL-LS-.####",
+ "autoname": "format:HR-LR-LS-{YY}{MM}{DD}-{####}",
  "creation": "2025-04-26 11:55:14.150314",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,9 +11,11 @@
   "department",
   "column_break_tyec",
   "leave_application",
-  "from_date",
-  "to_date",
+  "leave_from_date",
+  "leave_to_date",
   "section_break_eyve",
+  "return_date",
+  "column_break_aelr",
   "reason",
   "amended_from"
  ],
@@ -80,30 +82,43 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "from_date",
-   "fieldtype": "Date",
-   "label": "From Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "to_date",
-   "fieldtype": "Date",
-   "label": "To Date",
-   "reqd": 1
-  },
-  {
    "fieldname": "section_break_eyve",
    "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "leave_application.from_date",
+   "fieldname": "leave_from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "leave_application.to_date",
+   "fieldname": "leave_to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_aelr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "return_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Return Date",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 11:59:28.976728",
+ "modified": "2025-04-27 13:17:58.355938",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Leave Suspension",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
