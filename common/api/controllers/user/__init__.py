@@ -4,6 +4,7 @@ import frappe.utils
 from common.api.utils.jwt import prepare_token, get_access_expiration, generate_access_token
 from common.api.utils.response import build_success_response, build_error_response
 from common.api.utils import get_token_from_header
+from common.utils.hr import get_employee_from_user
 
 LOGOUT_FROM_ALL = True
 
@@ -101,3 +102,34 @@ def logout():
             """, token)
     frappe.db.commit()
     build_success_response(status_code=200, message="Logged out successfully", data=None)
+
+@frappe.whitelist()
+def user_info():
+    user = frappe.get_doc("User", frappe.session.user)
+    employee = get_employee_from_user(frappe.session.user)
+    data = frappe._dict()
+    data.update({
+        "user": user.name,
+        "email": user.email,
+        "language": user.language,
+        "full_name": user.full_name,
+        "roles": frappe.get_roles(frappe.session.user)
+    })
+    data.update(employee)
+    build_success_response(status_code=201, message="User Info", data=data)
+
+@frappe.whitelist()
+def employee_info(employeeId=""):
+    employee = frappe.db.exists("Employee", employeeId)
+    if not employee:
+        build_error_response(404, "Employee Not found", "The requested employee could not be found ID")
+        return
+
+    employee = frappe.get_doc("Employee", employee)
+    if not frappe.has_permission("Employee", "read", employee, frappe.session.user, False):
+        build_error_response(404, "Access denied: Insufficient privileges to view this information", "You do not have permission to access employee details")
+        return
+
+    data = frappe._dict()
+    data.update(employee.as_dict())
+    build_success_response(status_code=201, message="Employee {} Details".format(employee.name), data=data)
