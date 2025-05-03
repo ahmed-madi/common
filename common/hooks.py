@@ -198,7 +198,9 @@ app_include_css = [
 
 # Request Events
 # ----------------
-# before_request = ["common.utils.before_request"]
+before_request = [
+    "common.api.utils.request.before_request"
+]
 # after_request = ["common.utils.after_request"]
 
 # Job Events
