@@ -5,10 +5,14 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "attendance_tab",
   "working_days",
-  "annual_leave_type",
   "column_break_hxhn",
-  "allownaces_categories"
+  "allownaces_categories",
+  "leaves_tab",
+  "annual_leave_type",
+  "column_break_bbmd",
+  "cancel_allowed_before"
  ],
  "fields": [
   {
@@ -35,13 +39,34 @@
    "fieldtype": "Table",
    "label": "Allownaces Categories",
    "options": "HR Salary Component"
+  },
+  {
+   "fieldname": "attendance_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attendance"
+  },
+  {
+   "fieldname": "leaves_tab",
+   "fieldtype": "Tab Break",
+   "label": "Leaves"
+  },
+  {
+   "fieldname": "column_break_bbmd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Number of days allowed to cancel approved application ",
+   "fieldname": "cancel_allowed_before",
+   "fieldtype": "Int",
+   "label": "Cancel Leave Before (Days)",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-04 15:33:34.699567",
+ "modified": "2025-05-04 23:31:54.185283",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
