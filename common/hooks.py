@@ -131,9 +131,10 @@ app_include_css = [
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Leave Application": "common.overrides.leave_application.LeaveApplication",
+	"Leave Type": "common.overrides.leave_type.LeaveType",
+}
 
 # Document Events
 # ---------------
