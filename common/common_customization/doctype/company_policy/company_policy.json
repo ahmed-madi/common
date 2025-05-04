@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-05-04 15:24:09.595157",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "working_days",
+  "annual_leave_type",
+  "column_break_hxhn",
+  "allownaces_categories"
+ ],
+ "fields": [
+  {
+   "default": "30",
+   "fieldname": "working_days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Monthly Working Days",
+   "reqd": 1
+  },
+  {
+   "fieldname": "annual_leave_type",
+   "fieldtype": "Link",
+   "label": "Annual Leave Type",
+   "options": "Leave Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_hxhn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "allownaces_categories",
+   "fieldtype": "Table",
+   "label": "Allownaces Categories",
+   "options": "HR Salary Component"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-05-04 15:33:34.699567",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Company Policy",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
