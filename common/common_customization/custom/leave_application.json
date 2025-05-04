@@ -145,7 +145,7 @@
    "description": null,
    "docstatus": 0,
    "dt": "Leave Application",
-   "fetch_from": "leave_type.custom_reason_required",
+   "fetch_from": "leave_type.reason_required",
    "fetch_if_empty": 0,
    "fieldname": "reason_required",
    "fieldtype": "Check",
