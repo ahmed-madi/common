@@ -8,7 +8,7 @@ def build_success_response(status_code, message, data):
 
 def build_response(status=None, status_code=None, data=None, error=None, message=None):
     frappe.local.response["status"] = status
-    frappe.local.response["status_code"] = status_code
+    frappe.local.response["statusCode"] = status_code
     frappe.local.response["http_status_code"] = status_code
     frappe.local.response["data"] = data
     frappe.local.response["error"] = error
