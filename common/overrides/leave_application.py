@@ -25,5 +25,11 @@ class LeaveApplication(BaseLeaveApplication):
             frappe.throw(_("Attachment for Leave Type {0} is Required").format(_(self.leave_type)), frappe.MandatoryError)
 
     def validate_reason(self):
-        if frappe.db.get_value("Leave Type", self.leave_type, "reason_required") == 1 and not self.description or len(self.description) == 0:
+        if frappe.db.get_value("Leave Type", self.leave_type, "reason_required") == 1 and (not self.description or len(self.description) == 0):
             frappe.throw(_("Reason for Leave Type {0} is Required").format(_(self.leave_type)), frappe.MandatoryError)
+
+    def on_cancel(self):
+        super().on_cancel()
+        self.ignore_linked_doctypes = [
+            "Cancel Leave Application",
+        ]
