@@ -64,7 +64,8 @@ def document_list(doctype: str, fields: list | str):
             
             if isinstance(_fields, list):
                 fields = _fields
-
+        if "*" in fields:
+            fields = "*"
         limit_start = limit_start * limit_page_length
         args = frappe._dict(
             parent_doctype=parent,
@@ -85,14 +86,20 @@ def document_list(doctype: str, fields: list | str):
             "data_list": data,
             "page": limit_start+1,
             "perPage": limit_page_length,
-            "count": count,
+            "totalCount": count,
+            "pageCount": len(data),
         })
         return build_success_response(200, f"{doctype} fetched", response_data)
-    except frappe.DoesNotExistError as exc:
-        return build_error_response(404, f"failed to read {doctype}", exc)
     except Exception as exc:
-        print(frappe.get_traceback())
-        return build_error_response(500, f"failed to read {doctype}", exc)
+        http_status_code = 500
+        message = exc
+        if hasattr(exc, "http_status_code"):
+            http_status_code = exc.http_status_code
+        if hasattr(exc, "args"):
+            args = exc.args
+            if len(args) > 0:
+                message = args[0].split(":")[0]
+        return build_error_response(http_status_code, f"failed to read {doctype}", message)
 
 def create_doc(doctype: str):
     uploaded_files = []
@@ -108,7 +115,7 @@ def create_doc(doctype: str):
             })
         doc.insert()
         delete_duplicated_or_after_error(uploaded_files)
-        return build_success_response(202, f"{doctype} created", doc)
+        return build_success_response(201, f"{doctype} created", doc)
     except Exception as exc:
         http_status_code = 500
         message = exc
@@ -132,18 +139,48 @@ def handle_files(doc):
             uploaded_files.append(file_doc_name)
     return uploaded_files
 
-def read_doc(doctype: str, name: str):
+def read_doc(doctype: str, name: str, origin_fields:list=[]):
     try:
         doc = frappe.get_doc(doctype, name)
         if not doc.has_permission("read"):
             raise frappe.PermissionError
         doc.apply_fieldlevel_read_permissions()
-        # frappe.response.http_status_code = 202
-        return build_success_response(201, f"{doctype} fetched", doc)
-    except frappe.DoesNotExistError as exc:
-        return build_error_response(404, f"failed to read {doctype}", f"{doctype} {name} dose not exists")
+
+        user_fields = origin_fields
+        if "fields"  in frappe.request.args:
+            _fields = frappe.request.args["fields"]
+            if isinstance(_fields, list):
+                user_fields = _fields
+            else:
+                user_fields = frappe.parse_json(_fields)
+            
+            if isinstance(_fields, list):
+                user_fields = _fields
+ 
+        if "*" in user_fields:
+            user_fields = []
+
+        if len(user_fields) > 0:
+            doc = doc.as_dict()
+            result = frappe._dict()
+            for field in user_fields:
+                if hasattr(doc, field):
+                    result.update({
+                        field: getattr(doc, field)
+                    })
+            doc = result
+
+        return build_success_response(200, f"{doctype} fetched", doc)
     except Exception as exc:
-        return build_error_response(500, f"failed to read {doctype}", exc)
+        http_status_code = 500
+        message = exc
+        if hasattr(exc, "http_status_code"):
+            http_status_code = exc.http_status_code
+        if hasattr(exc, "args"):
+            args = exc.args
+            if len(args) > 0:
+                message = args[0].split(":")[0]
+        return build_error_response(http_status_code, f"failed to read {doctype}", message)
 
 def update_doc(doctype: str, name: str):
     try:
@@ -166,7 +203,15 @@ def update_doc(doctype: str, name: str):
         return build_success_response(200, f"{doctype} updated", doc)
     except Exception as exc:
         delete_duplicated_or_after_error(uploaded_files)
-        return build_error_response(500, f"failed to update {doctype}", exc)
+        http_status_code = 500
+        message = exc
+        if hasattr(exc, "http_status_code"):
+            http_status_code = exc.http_status_code
+        if hasattr(exc, "args"):
+            args = exc.args
+            if len(args) > 0:
+                message = args[0].split(":")[0]
+        return build_error_response(http_status_code, f"failed to update {doctype}", message)
 
 def delete_doc(doctype: str, name: str):
     try:
@@ -174,7 +219,15 @@ def delete_doc(doctype: str, name: str):
         # frappe.response.http_status_code = 202
         return build_success_response(202, f"{doctype} deleted", doc)
     except Exception as exc:
-        return build_error_response(500, f"failed to delete {doctype}", exc)
+        http_status_code = 500
+        message = exc
+        if hasattr(exc, "http_status_code"):
+            http_status_code = exc.http_status_code
+        if hasattr(exc, "args"):
+            args = exc.args
+            if len(args) > 0:
+                message = args[0].split(":")[0]
+        return build_error_response(http_status_code, f"failed to delete {doctype}", message)
 
 def handle_call(method: str):
     import frappe.handler
