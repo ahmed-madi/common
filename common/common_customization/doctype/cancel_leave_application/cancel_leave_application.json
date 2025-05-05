@@ -15,7 +15,8 @@
   "leave_application",
   "from_date",
   "to_date",
-  "amended_from"
+  "amended_from",
+  "status"
  ],
  "fields": [
   {
@@ -90,12 +91,19 @@
    "label": "Request Date",
    "permlevel": 1,
    "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-04 23:26:53.628308",
+ "modified": "2025-05-05 11:59:32.460164",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Cancel Leave Application",
@@ -195,5 +203,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }

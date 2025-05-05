@@ -37,6 +37,14 @@ class CancelLeaveApplication(Document):
 			frappe.throw(_("Employee has leave cancellation detected {0}").format(get_link_to_form("Cancel Leave Application", prev[0].name)), frappe.UniqueValidationError)
 	
 	def on_submit(self):
+		if self.status in ["Open", "Cancelled"]:
+			frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
+		if self.status != "Approved":
+			return
 		leave = frappe.get_doc("Leave Application", self.leave_application)
 		leave.cancel()
-		leave.add_comment(text="Cancelled by employee {}".format(self.name))
+		leave.add_comment(text="Cancelled by employee in {}".format(get_link_to_form("Cancel Leave Application", self.name, "Application")))
+	
+	def before_cancel(self):
+		self.status = "Cancelled"
+
