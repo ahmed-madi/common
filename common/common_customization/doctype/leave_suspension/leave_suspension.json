@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "format:HR-LR-LS-{YY}{MM}{DD}-{####}",
  "creation": "2025-04-26 11:55:14.150314",
  "doctype": "DocType",
@@ -11,10 +10,12 @@
   "department",
   "column_break_tyec",
   "leave_application",
+  "leave_type",
   "leave_from_date",
   "leave_to_date",
   "section_break_eyve",
   "return_date",
+  "status",
   "column_break_aelr",
   "reason",
   "amended_from"
@@ -109,12 +110,27 @@
    "in_list_view": 1,
    "label": "Return Date",
    "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "leave_application.leave_type",
+   "fieldname": "leave_type",
+   "fieldtype": "Read Only",
+   "label": "Leave Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-27 13:17:58.355938",
+ "modified": "2025-05-07 00:31:52.011492",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Leave Suspension",
@@ -176,5 +192,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }
