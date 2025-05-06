@@ -11,8 +11,10 @@
   "allownaces_categories",
   "leaves_tab",
   "annual_leave_type",
+  "max_wfh_days",
   "column_break_bbmd",
-  "cancel_allowed_before"
+  "cancel_allowed_before",
+  "return_unused_days"
  ],
  "fields": [
   {
@@ -60,13 +62,28 @@
    "fieldtype": "Int",
    "label": "Cancel Leave Before (Days)",
    "non_negative": 1
+  },
+  {
+   "default": "Return to Balance",
+   "fieldname": "return_unused_days",
+   "fieldtype": "Select",
+   "label": "Return Unused Days",
+   "options": "Return to Balance",
+   "reqd": 1
+  },
+  {
+   "description": "Max Days allowed to work from home per month",
+   "fieldname": "max_wfh_days",
+   "fieldtype": "Int",
+   "label": "Total Days to Work from Home",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-04 23:31:54.185283",
+ "modified": "2025-05-07 00:47:51.247755",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
