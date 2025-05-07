@@ -45,7 +45,7 @@ def prepare_token(user):
     doc.expiration_time = refresh_exp
     doc.save(ignore_permissions=True)
 
-    return {"access_toke": access_token, "refresh_token": refresh_token}
+    return {"access_token": access_token, "refresh_token": refresh_token}
 
 def check_token_and_set_user(jwt_token):
     try:
