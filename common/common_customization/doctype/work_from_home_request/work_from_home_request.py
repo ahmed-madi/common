@@ -74,7 +74,7 @@ class WorkFromHomeRequest(Document):
 
     def on_submit(self):
         if self.status in ["Open", "Cancelled"]:
-            frappe.throw(_("Only Leave Applications with status 'Approved' and 'Rejected' can be submitted"))
+            frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
 
         if self.status != "Approved":
             return
@@ -121,8 +121,6 @@ class WorkFromHomeRequest(Document):
             doc.db_set(
                 {
                     "status": status,
-                    "leave_type": self.leave_type,
-                    "leave_application": self.name,
                     "half_day_status": None,
                 }
             )
@@ -142,13 +140,13 @@ class WorkFromHomeRequest(Document):
     def validate_leave_overlap(self):
         if not self.name:
             # hack! if name is null, it could cause problems with !=
-            self.name = "New Leave Application"
+            self.name = "New Work From Home Request"
 
         for d in frappe.db.sql(
             """
             select
-                name, leave_type, posting_date, from_date, to_date, total_leave_days, half_day_date
-            from `tabLeave Application`
+                name, from_date, to_date, total_days
+            from `tabWork From Home Request`
             where employee = %(employee)s and docstatus < 2 and status in ('Open', 'Approved')
             and to_date >= %(from_date)s and from_date <= %(to_date)s
             and name != %(name)s""",
@@ -161,11 +159,8 @@ class WorkFromHomeRequest(Document):
             as_dict=1,
         ):
             if (
-                cint(self.half_day) == 1
-                and getdate(self.half_day_date) == getdate(d.half_day_date)
-                and (
-                    flt(self.total_leave_days) == 0.5
-                    or getdate(self.from_date) == getdate(d.to_date)
+                 (
+                     getdate(self.from_date) == getdate(d.to_date)
                     or getdate(self.to_date) == getdate(d.from_date)
                 )
             ):
@@ -174,9 +169,9 @@ class WorkFromHomeRequest(Document):
                 self.throw_overlap_error(d)
 
     def throw_overlap_error(self, d):
-        form_link = get_link_to_form("Leave Application", d.name)
-        msg = _("Employee {0} has already applied for {1} between {2} and {3} : {4}").format(
-            self.employee, d["leave_type"], formatdate(d["from_date"]), formatdate(d["to_date"]), form_link
+        form_link = get_link_to_form("Work From Home Request", d.name)
+        msg = _("Employee {0} has already applied for Work From Home Request between {1} and {2} : {3}").format(
+            self.employee, formatdate(d["from_date"]), formatdate(d["to_date"]), form_link
         )
         frappe.throw(msg, OverlapError)
 
