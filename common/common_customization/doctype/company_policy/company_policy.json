@@ -14,7 +14,11 @@
   "max_wfh_days",
   "column_break_bbmd",
   "cancel_allowed_before",
-  "return_unused_days"
+  "return_unused_days",
+  "validate_early_exit",
+  "early_exit_shift_type",
+  "early_exit_max_hours_per_day",
+  "early_exit_total_hours_allowed"
  ],
  "fields": [
   {
@@ -57,7 +61,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "Number of days allowed to cancel approved application ",
+   "description": "Number of days allowed to cancel a leave request before the leave start date",
    "fieldname": "cancel_allowed_before",
    "fieldtype": "Int",
    "label": "Cancel Leave Before (Days)",
@@ -67,7 +71,7 @@
    "default": "Return to Balance",
    "fieldname": "return_unused_days",
    "fieldtype": "Select",
-   "label": "Return Unused Days",
+   "label": "Return Unused Days Policy",
    "options": "Return to Balance",
    "reqd": 1
   },
@@ -77,13 +81,46 @@
    "fieldtype": "Int",
    "label": "Total Days to Work from Home",
    "non_negative": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "validate_early_exit",
+   "fieldtype": "Check",
+   "label": "Validate Exit Leave Hours"
+  },
+  {
+   "depends_on": "validate_early_exit",
+   "description": "It Used to validate and calculate exit hours",
+   "fieldname": "early_exit_shift_type",
+   "fieldtype": "Link",
+   "label": "Default Shift Type",
+   "mandatory_depends_on": "validate_early_exit",
+   "options": "Shift Type"
+  },
+  {
+   "depends_on": "validate_early_exit",
+   "fieldname": "early_exit_max_hours_per_day",
+   "fieldtype": "Float",
+   "label": "Max Hours per day",
+   "mandatory_depends_on": "validate_early_exit",
+   "non_negative": 1,
+   "precision": "1"
+  },
+  {
+   "depends_on": "validate_early_exit",
+   "fieldname": "early_exit_total_hours_allowed",
+   "fieldtype": "Float",
+   "label": "Total Hours Allowed to Exit",
+   "mandatory_depends_on": "validate_early_exit",
+   "non_negative": 1,
+   "precision": "1"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-07 00:47:51.247755",
+ "modified": "2025-05-07 11:31:36.117864",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
