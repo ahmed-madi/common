@@ -1,7 +1,6 @@
 {
  "actions": [],
- "autoname": "RWR-.####.",
- "allow_rename": 1,
+ "autoname": "format:HR-LR-RW-{YY}{MM}{DD}-{####}",
  "creation": "2025-03-13 14:41:51.746526",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,20 +8,13 @@
   "employee",
   "employee_name",
   "department",
-  "date_of_joining",
-  "employee_manger",
-  "column_break_6",
+  "amended_from",
   "status",
+  "column_break_6",
   "from_date",
   "to_date",
   "total_days",
-  "reason",
-  "is_manager",
-  "attachments_section",
-  "attachments",
-  "section_break_9",
-  "details",
-  "amended_from"
+  "reason"
  ],
  "fields": [
   {
@@ -47,25 +39,8 @@
    "options": "Department"
   },
   {
-   "fetch_from": "employee.date_of_joining",
-   "fieldname": "date_of_joining",
-   "fieldtype": "Date",
-   "label": "Date of Joining",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_6",
    "fieldtype": "Column Break"
-  },
-  {
-   "bold": 1,
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "hidden": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Status",
-   "options": "Open\nApproved\nRejected"
   },
   {
    "fieldname": "from_date",
@@ -83,7 +58,7 @@
   },
   {
    "fieldname": "total_days",
-   "fieldtype": "Data",
+   "fieldtype": "Read Only",
    "label": "Total Days",
    "read_only": 1
   },
@@ -94,54 +69,29 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "fieldname": "is_manager",
-   "fieldtype": "Check",
-   "label": "Is Manager"
-  },
-  {
-   "fieldname": "attachments_section",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Attachments"
-  },
-  {
-   "fieldname": "attachments",
-   "fieldtype": "Table",
-   "label": "Attachments",
-   "options": "Attachments"
-  },
-  {
-   "fieldname": "section_break_9",
-   "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Details"
-  },
-  {
-   "fieldname": "details",
-   "fieldtype": "Text Editor",
-   "label": "Details"
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
-   "options": "Remote work request"
+   "options": "Remote Work Request"
   },
   {
-   "fetch_from": "employee.leave_approver",
-   "fieldname": "employee_manger",
-   "fieldtype": "Read Only",
-   "label": "Employee Manger"
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 14:41:51.746526",
+ "modified": "2025-05-07 00:32:25.828657",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Remote Work Request",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -199,7 +149,9 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }
