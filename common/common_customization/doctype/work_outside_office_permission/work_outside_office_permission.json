@@ -1,7 +1,6 @@
 {
  "actions": [],
- "autoname": "WOP-.####.",
- "allow_rename": 1,
+ "autoname": "HR-SL-WOP-.####",
  "creation": "2025-03-13 14:36:59.606744",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,20 +8,18 @@
   "employee",
   "employee_name",
   "department",
+  "column_break_wiaz",
+  "work_type",
+  "location",
+  "section_break_4",
   "from_date",
+  "column_break_7",
   "to_date",
   "total_days",
-  "employee_manger",
-  "section_break_4",
-  "start_time",
-  "total_hours",
-  "column_break_7",
-  "end_time",
   "section_break_12",
-  "reason",
-  "is_manager",
-  "project",
-  "customer",
+  "justification",
+  "column_break_qtrw",
+  "attachment",
   "amended_from"
  ],
  "fields": [
@@ -70,46 +67,16 @@
   },
   {
    "fieldname": "section_break_4",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "start_time",
-   "fieldtype": "Time",
-   "in_list_view": 1,
-   "label": "Start Time",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "total_hours",
-   "fieldtype": "Read Only",
-   "label": "Total Hours"
+   "fieldtype": "Section Break",
+   "label": "Date & Time"
   },
   {
    "fieldname": "column_break_7",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "end_time",
-   "fieldtype": "Time",
-   "label": "End Time",
-   "reqd": 1
-  },
-  {
    "fieldname": "section_break_12",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "reason",
-   "fieldtype": "Text",
-   "label": "Reason",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "is_manager",
-   "fieldtype": "Check",
-   "label": "Is Manager"
   },
   {
    "fieldname": "amended_from",
@@ -118,33 +85,46 @@
    "options": "Work Outside Office Permission"
   },
   {
-   "fieldname": "project",
+   "fieldname": "column_break_wiaz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "work_type",
    "fieldtype": "Link",
-   "label": "Project",
-   "options": "Project",
+   "label": "Work Type",
+   "options": "Work Type",
    "reqd": 1
   },
   {
-   "fetch_from": "project.customer",
-   "fieldname": "customer",
+   "fieldname": "location",
    "fieldtype": "Data",
-   "label": "Customer Name",
-   "read_only": 1
+   "label": "Location",
+   "reqd": 1
   },
   {
-   "fetch_from": "employee.leave_approver",
-   "fieldname": "employee_manger",
-   "fieldtype": "Read Only",
-   "label": "Employee Manger"
+   "fieldname": "justification",
+   "fieldtype": "Text",
+   "label": "Justification",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qtrw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 14:36:59.606744",
+ "modified": "2025-04-30 08:06:37.355027",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Work Outside Office Permission",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -202,6 +182,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

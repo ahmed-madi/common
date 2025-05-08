@@ -46,27 +46,24 @@ class WorkFromHomeRequest(Document):
 
             frappe.throw(_("Total request days cannot exceed {} days.".format(max_days)))
 
-        start_of_year = get_year_start(from_date)
-        end_of_year = add_days(add_months(start_of_year, 11), 30)
         total_request_days = frappe.get_list(
             "Work From Home Request",
             fields=["sum(total_days) as sum"],
             filters={
                 "employee": employee,
-                "from_date": [">=", start_of_year],
-                "to_date": ["<", end_of_year],
                 "name": ["!=", name],
                 "docstatus": 1,
+                "status": "Approved"
             },
         )
-        total = flt(total_request_days[0].sum) + 1 if total_request_days else 0
+        total = flt(total_request_days[0].sum) if total_request_days else 0
         if total + flt(total_days) > max_days:
             if not xclient:
-                frappe.throw(_(f"Total request days cannot exceed {max_days} per year. You only have {cint(max_days-total)} day(s)."))
+                frappe.throw(_(f"Total request days cannot exceed {max_days}. You only have {flt(max_days-total)} day(s)."))
 
-            frappe.throw(_(f"Total request days cannot exceed {max_days} per year. You only have {cint(max_days-total)} day(s)."))
+            frappe.throw(_(f"Total request days cannot exceed {max_days}. You only have {flt(max_days-total)} day(s)."))
 
-    def before_save(self):
+    def before_validate(self):
         if self.from_date and self.to_date and date_diff(self.to_date, self.from_date) + 1 > 0:
             self.total_days = date_diff(self.to_date, self.from_date) + 1
         else:

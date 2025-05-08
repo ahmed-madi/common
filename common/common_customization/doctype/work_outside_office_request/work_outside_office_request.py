@@ -27,7 +27,7 @@ class WorkOutsideOfficeRequest(Document):
         validate_active_employee(self.employee)
         self.validate_dates()
         self.validate_leave_overlap()
-        self.validate_total_requests(self.name, self.from_date, self.employee, self.total_days)
+        # self.validate_total_requests(self.name, self.from_date, self.employee, self.total_days)
 
     def validate_dates(self):
         # if getdate(self.from_date) < getdate(nowdate()):
@@ -38,6 +38,7 @@ class WorkOutsideOfficeRequest(Document):
 
     @frappe.whitelist()
     def validate_total_requests(self, name, from_date, employee, total_days, xclient=False):
+        return
         max_days = cint(frappe.db.get_single_value("Company Policy", "max_wfh_days"))
         if max_days == 0:
             return
