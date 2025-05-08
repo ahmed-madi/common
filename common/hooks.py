@@ -46,7 +46,9 @@ app_include_css = [
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {
+    "Attendance" : "public/js/attendance_list.js"
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -131,9 +133,10 @@ app_include_css = [
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Leave Application": "common.overrides.leave_application.LeaveApplication",
+	"Leave Type": "common.overrides.leave_type.LeaveType",
+}
 
 # Document Events
 # ---------------
@@ -198,7 +201,9 @@ app_include_css = [
 
 # Request Events
 # ----------------
-# before_request = ["common.utils.before_request"]
+before_request = [
+    "common.api.utils.request.before_request"
+]
 # after_request = ["common.utils.after_request"]
 
 # Job Events

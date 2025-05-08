@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"IhD-GBh0Ec\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Staff Portal</span>\",\"col\":12}}]",
+ "content": "[{\"id\":\"IhD-GBh0Ec\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Staff Portal</span>\",\"col\":12}},{\"id\":\"3X2g_YFxhg\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Welcome to the Staff Portal!<br><br></span><span class=\\\"h5\\\" style=\\\"font-weight: normal;\\\">We\u2019re excited to welcome you to your all-in-one Staff Portal-your gateway to a more efficient and connected workplace. This portal is designed to make your daily tasks easier and more convenient, offering quick access to essential features such as:<br><br></span><b>Leave Requests</b>: Submit and track your leave applications with ease.<br><b>Self-Service Requests</b>: Submit and track your leave applications with ease.<br><b>HelpDesk</b>: Get support and find solutions to your queries quickly through our dedicated HelpDesk.<br><br>Explore the portal to discover how these tools can help streamline your workday. If you need assistance or have any questions, our support team is here to help. Welcome, and enjoy your experience!<br><span class=\\\"h5\\\" style=\\\"font-weight: normal;\\\"><br></span>\",\"col\":12}}]",
  "creation": "2025-04-13 12:47:57.888735",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Staff Portal",
  "links": [],
- "modified": "2025-04-13 13:18:37.941758",
+ "modified": "2025-05-07 15:50:54.827474",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Staff Portal",
@@ -23,7 +23,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 2.0,
+ "sequence_id": 6.0,
  "shortcuts": [],
  "title": "Staff Portal"
 }

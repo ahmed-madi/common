@@ -9,12 +9,15 @@
   "employee",
   "employee_name",
   "department",
-  "column_break_tyec",
-  "exit_date",
-  "section_break_eyve",
   "reason",
   "attachment",
-  "amended_from"
+  "column_break_tyec",
+  "exit_date",
+  "exit_time",
+  "total_exit_hours",
+  "remarks",
+  "amended_from",
+  "status"
  ],
  "fields": [
   {
@@ -42,10 +45,6 @@
   {
    "fieldname": "column_break_tyec",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_eyve",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "reason",
@@ -85,12 +84,40 @@
    "fieldtype": "Date",
    "label": "Exit Date",
    "reqd": 1
+  },
+  {
+   "fieldname": "exit_time",
+   "fieldtype": "Time",
+   "label": "Exit Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "total_exit_hours",
+   "fieldtype": "Float",
+   "label": "Total Exit Hours",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 12:02:43.981437",
+ "modified": "2025-05-07 12:14:09.001073",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Early Leave Application",
