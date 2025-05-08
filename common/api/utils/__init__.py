@@ -6,6 +6,10 @@ def get_request_form_data():
     else:
         data = frappe.form_dict.data
     try:
+        if isinstance(data, bytes):
+            values = frappe.request.values.to_dict()
+            if values:
+                return values
         return frappe.parse_json(data)
     except ValueError:
         values = frappe.request.values.to_dict()
@@ -24,6 +28,8 @@ def upload_file(fieldname):
     if not fieldname in frappe.request.files:
         return None
     file = frappe.request.files[fieldname]
+    if not file or file is None:
+        return None
     file_url = None
     if library_file := frappe.form_dict.get("library_file_name"):
         frappe.has_permission("File", doc=library_file, throw=True)

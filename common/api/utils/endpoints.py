@@ -103,6 +103,7 @@ def document_list(doctype: str, fields: list | str):
 
 def create_doc(doctype: str):
     uploaded_files = []
+    doc = None
     try:
         data = get_request_form_data()
         data.pop("doctype", None)
@@ -116,6 +117,13 @@ def create_doc(doctype: str):
         doc.insert()
         delete_duplicated_or_after_error(uploaded_files)
         return build_success_response(201, f"{doctype} created", doc)
+    except frappe.MandatoryError as exc:
+        http_status_code = 500
+        if hasattr(exc, "http_status_code"):
+            http_status_code = exc.http_status_code
+        errors = doc._get_missing_mandatory_fields()
+        missing_fields = [er[0] for er in errors]
+        return build_error_response(http_status_code, f"failed to create {doctype}", "Required values are missing", missing_fields)
     except Exception as exc:
         http_status_code = 500
         message = exc
@@ -125,6 +133,8 @@ def create_doc(doctype: str):
             args = exc.args
             if len(args) > 0:
                 message = args[0].split(":")[0]
+                if message == "Cannot link cancelled document":
+                    message = args[0]
         delete_duplicated_or_after_error(uploaded_files)
         return build_error_response(http_status_code, f"failed to create {doctype}", message)
 
@@ -183,6 +193,7 @@ def read_doc(doctype: str, name: str, origin_fields:list=[]):
         return build_error_response(http_status_code, f"failed to read {doctype}", message)
 
 def update_doc(doctype: str, name: str):
+    uploaded_files = []
     try:
         data = get_request_form_data()
         doc = frappe.get_doc(doctype, name, for_update=True)
@@ -205,6 +216,7 @@ def update_doc(doctype: str, name: str):
         delete_duplicated_or_after_error(uploaded_files)
         http_status_code = 500
         message = exc
+        print(exc)
         if hasattr(exc, "http_status_code"):
             http_status_code = exc.http_status_code
         if hasattr(exc, "args"):
@@ -220,13 +232,9 @@ def delete_doc(doctype: str, name: str):
         return build_success_response(202, f"{doctype} deleted", doc)
     except Exception as exc:
         http_status_code = 500
-        message = exc
+        message = f"{exc}"
         if hasattr(exc, "http_status_code"):
             http_status_code = exc.http_status_code
-        if hasattr(exc, "args"):
-            args = exc.args
-            if len(args) > 0:
-                message = args[0].split(":")[0]
         return build_error_response(http_status_code, f"failed to delete {doctype}", message)
 
 def handle_call(method: str):
