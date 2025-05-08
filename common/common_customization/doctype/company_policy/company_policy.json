@@ -76,7 +76,7 @@
    "reqd": 1
   },
   {
-   "description": "Max Days allowed to work from home per month",
+   "description": "Max Days allowed to work from home.",
    "fieldname": "max_wfh_days",
    "fieldtype": "Int",
    "label": "Total Days to Work from Home",
@@ -120,7 +120,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-07 11:31:36.117864",
+ "modified": "2025-05-08 15:25:08.903571",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
