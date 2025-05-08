@@ -136,6 +136,7 @@ doctype_list_js = {
 override_doctype_class = {
 	"Leave Application": "common.overrides.leave_application.LeaveApplication",
 	"Leave Type": "common.overrides.leave_type.LeaveType",
+	"Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",
 }
 
 # Document Events
