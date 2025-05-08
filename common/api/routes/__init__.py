@@ -1,4 +1,5 @@
 # Common Data
+from common.api.routes.common.company_policy import company_policy_rules
 from common.api.routes.common.employee import employee_rules
 from common.api.routes.common.holiday_list import holiday_list_rules
 from common.api.routes.common.leave_type import leave_type_rules
@@ -11,6 +12,7 @@ from common.api.routes.user import user_rules
 url_rules = []
 
 # Common Data
+url_rules += company_policy_rules
 url_rules += employee_rules
 url_rules += holiday_list_rules
 url_rules += leave_type_rules
