@@ -22,7 +22,7 @@
  "is_hidden": 0,
  "label": "Employee Tasks",
  "links": [],
- "modified": "2025-04-27 11:52:15.963836",
+ "modified": "2025-05-09 11:49:35.416013",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Tasks",
@@ -43,7 +43,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 8.0,
+ "sequence_id": 9.0,
  "shortcuts": [
   {
    "color": "Grey",
