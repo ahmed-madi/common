@@ -133,11 +133,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-07 01:26:16.443738",
+ "modified": "2025-05-09 11:53:12.097833",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Work Outside Office Request",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
