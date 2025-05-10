@@ -2,7 +2,7 @@ import frappe
 from frappe.utils import cint
 
 from common.api.utils import get_request_form_data, upload_file, delete_duplicated_or_after_error
-from common.api.utils.response import build_error_response, build_success_response
+from common.api.utils.response import build_error_response, build_success_response, handle_exception_response
 
 # All errors when create doc
 from hrms.hr.doctype.leave_application.leave_application import OverlapError
@@ -117,26 +117,8 @@ def create_doc(doctype: str):
         doc.insert()
         delete_duplicated_or_after_error(uploaded_files)
         return build_success_response(201, f"{doctype} created", doc)
-    except frappe.MandatoryError as exc:
-        http_status_code = 500
-        if hasattr(exc, "http_status_code"):
-            http_status_code = exc.http_status_code
-        errors = doc._get_missing_mandatory_fields()
-        missing_fields = [er[0] for er in errors]
-        return build_error_response(http_status_code, f"failed to create {doctype}", "Required values are missing", missing_fields)
     except Exception as exc:
-        http_status_code = 500
-        message = exc
-        if hasattr(exc, "http_status_code"):
-            http_status_code = exc.http_status_code
-        if hasattr(exc, "args"):
-            args = exc.args
-            if len(args) > 0:
-                message = args[0].split(":")[0]
-                if message == "Cannot link cancelled document":
-                    message = args[0]
-        delete_duplicated_or_after_error(uploaded_files)
-        return build_error_response(http_status_code, f"failed to create {doctype}", message)
+        return handle_exception_response(doc, exc, uploaded_files=uploaded_files)
 
 def handle_files(doc):
     meta = frappe.get_meta(doc.doctype)
@@ -213,17 +195,7 @@ def update_doc(doctype: str, name: str):
             frappe.get_doc(doc.parenttype, doc.parent).save()
         return build_success_response(200, f"{doctype} updated", doc)
     except Exception as exc:
-        delete_duplicated_or_after_error(uploaded_files)
-        http_status_code = 500
-        message = exc
-        print(exc)
-        if hasattr(exc, "http_status_code"):
-            http_status_code = exc.http_status_code
-        if hasattr(exc, "args"):
-            args = exc.args
-            if len(args) > 0:
-                message = args[0].split(":")[0]
-        return build_error_response(http_status_code, f"failed to update {doctype}", message)
+        return handle_exception_response(doc, exc, uploaded_files=uploaded_files)
 
 def delete_doc(doctype: str, name: str):
     try:

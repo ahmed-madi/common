@@ -1,5 +1,7 @@
 
 import frappe
+from common.api.utils import delete_duplicated_or_after_error
+
 def build_error_response(status_code, message, error, missing_data=None):
     return build_response(status="failed", status_code=status_code, message=message, error=error, missing_data=missing_data)
 
@@ -21,3 +23,31 @@ def build_response(status=None, status_code=None, data=None, error=None, message
     frappe.flags.error_message = None
 
 
+def handle_exception_response(doc, exception, uploaded_files=[]):
+    http_status_code = 500
+    message = exception
+    delete_duplicated_or_after_error(uploaded_files)
+
+    if hasattr(exception, "http_status_code"):
+        http_status_code = exception.http_status_code
+    # extract mandatory message
+    if isinstance(exception, frappe.MandatoryError):
+        errors = doc._get_missing_mandatory_fields()
+        missing_fields = [er[0] for er in errors]
+        return build_error_response(http_status_code, f"failed to create {doc.doctype}", "Required values are missing", missing_fields)
+    elif isinstance(exception, frappe.LinkValidationError):
+        if hasattr(exception, "args"):
+            args = exception.args
+            if len(args) > 0:
+                message = args[0]
+        return build_error_response(http_status_code, f"failed to create {doc.doctype}", message)
+    
+    # General exceptions
+    if hasattr(exception, "args"):
+        args = exception.args
+        if len(args) > 0:
+            message = args[0].split(":")[0]
+            if message == "Cannot link cancelled document":
+                message = args[0]
+    
+    return build_error_response(http_status_code, f"failed to create {doc.doctype}", message)
