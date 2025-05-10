@@ -1,5 +1,6 @@
 import frappe
 
+
 def get_request_form_data():
     if frappe.form_dict.data is None:
         data = frappe.safe_decode(frappe.request.get_data())
@@ -17,12 +18,14 @@ def get_request_form_data():
             return values
         return frappe.form_dict
 
+
 def get_token_from_header():
     jwt_token = ""
     auth_header = frappe.request.headers.get("Authorization")
     if auth_header and auth_header.startswith("Bearer "):
         jwt_token = auth_header.split(" ")[1]
     return jwt_token
+
 
 def upload_file(fieldname):
     if not fieldname in frappe.request.files:
@@ -41,7 +44,7 @@ def upload_file(fieldname):
         )
         file_url = doc.file_url
         filename = doc.file_name
-    
+
     content = file.stream.read()
     filename = file.filename
 
@@ -62,6 +65,7 @@ def upload_file(fieldname):
         "file_url": file_doc.file_url,
         "fieldname": fieldname,
     }
+
 
 def delete_duplicated_or_after_error(uploaded_files):
     for file in uploaded_files:

@@ -9,6 +9,7 @@ WHITELIST_PATHS = [
     "/api/v1/user/auth/refresh-token",
 ]
 
+
 def before_request():
     if request.path.startswith("/api/v1/") and request.path not in WHITELIST_PATHS:
         auth_header = frappe.get_request_header("Authorization", "")
@@ -18,5 +19,8 @@ def before_request():
             if not user_d:
                 return
         else:
-            build_error_response(401, "Authentication failed: Access token is no longer valid", "The provided access token is invalid")
-
+            build_error_response(
+                401,
+                "Authentication failed: Access token is no longer valid",
+                "The provided access token is invalid",
+            )

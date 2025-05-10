@@ -10,7 +10,8 @@ JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3600  # Token expires in 1 hour
 JWT_REFRESH_EXP_DELTA_SECONDS = 3600 * 24 * 7  # Token expires in 7 days
 
-def generate_access_token(user_id, now ,exp):
+
+def generate_access_token(user_id, now, exp):
     payload = {
         "user_id": user_id,
         "exp": exp,
@@ -18,12 +19,15 @@ def generate_access_token(user_id, now ,exp):
     }
     return jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
 
+
 def generate_refresh_token():
     refresh_token = secrets.token_urlsafe(32)
     return refresh_token
 
+
 def get_access_expiration(now):
     return add_to_date(now, seconds=JWT_EXP_DELTA_SECONDS)
+
 
 def prepare_token(user):
     now = now_datetime()
@@ -32,7 +36,7 @@ def prepare_token(user):
 
     refresh_token = generate_refresh_token()
     access_token = generate_access_token(user.name, now, access_exp)
-    
+
     doc = frappe.new_doc("HR Auth Access Token")
     doc.user = user.name
     doc.access_token = access_token
@@ -47,6 +51,7 @@ def prepare_token(user):
 
     return {"access_token": access_token, "refresh_token": refresh_token}
 
+
 def check_token_and_set_user(jwt_token):
     try:
         payload = jwt.decode(jwt_token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
@@ -58,7 +63,11 @@ def check_token_and_set_user(jwt_token):
         if frappe.db.get_value("User", user_id, "enabled") == 0:
             raise jwt.InvalidTokenError
         # Check if user has active access token
-        expiration_time = frappe.db.get_value("HR Auth Access Token", {"user": user_id, "status": "Active", "access_token": jwt_token}, "expiration_time")
+        expiration_time = frappe.db.get_value(
+            "HR Auth Access Token",
+            {"user": user_id, "status": "Active", "access_token": jwt_token},
+            "expiration_time",
+        )
         if not expiration_time:
             raise jwt.InvalidTokenError
         if time_diff_in_seconds(now_datetime(), expiration_time) > 0:
@@ -66,9 +75,21 @@ def check_token_and_set_user(jwt_token):
         frappe.set_user(user_id)
         return user_id
     except jwt.ExpiredSignatureError:
-        build_error_response(401, "Authentication failed: Access token is no longer valid", "The provided access token is invalid")
+        build_error_response(
+            401,
+            "Authentication failed: Access token is no longer valid",
+            "The provided access token is invalid",
+        )
     except jwt.InvalidTokenError:
-        build_error_response(401, "Authentication failed: Invalid access token provided", "Access token has expired")
+        build_error_response(
+            401,
+            "Authentication failed: Invalid access token provided",
+            "Access token has expired",
+        )
     except Exception as ex:
-        build_error_response(500, "Something went wrong on our end. Please try again later", "An unexpected error occurred on the server")
+        build_error_response(
+            500,
+            "Something went wrong on our end. Please try again later",
+            "An unexpected error occurred on the server",
+        )
     return None
