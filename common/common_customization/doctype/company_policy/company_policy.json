@@ -18,7 +18,10 @@
   "validate_early_exit",
   "early_exit_shift_type",
   "early_exit_max_hours_per_day",
-  "early_exit_total_hours_allowed"
+  "early_exit_total_hours_allowed",
+  "self_sevices_tab",
+  "restrict_backdated_sfx",
+  "sfx_w_roles"
  ],
  "fields": [
   {
@@ -114,13 +117,33 @@
    "mandatory_depends_on": "validate_early_exit",
    "non_negative": 1,
    "precision": "1"
+  },
+  {
+   "fieldname": "self_sevices_tab",
+   "fieldtype": "Tab Break",
+   "label": "Self Sevices"
+  },
+  {
+   "depends_on": "restrict_backdated_sfx",
+   "description": "Role Allowed to Create Backdated Salary Fixation",
+   "fieldname": "sfx_w_roles",
+   "fieldtype": "Table MultiSelect",
+   "label": "Salary Fixation Whitelist Role",
+   "mandatory_depends_on": "restrict_backdated_sfx",
+   "options": "Company Policy Whitelist Role"
+  },
+  {
+   "default": "0",
+   "fieldname": "restrict_backdated_sfx",
+   "fieldtype": "Check",
+   "label": "Restrict Backdated Salary Fixation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-08 15:25:08.903571",
+ "modified": "2025-05-09 12:22:49.160320",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
