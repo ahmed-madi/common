@@ -15,6 +15,9 @@ class BaseHRDocument(Document):
     
     def validate_backdate_restriction(self, restrict_check_field, whitelist_role_field, date_to_check=None):
         restrict_backdated = frappe.db.get_single_value("Company Policy", restrict_check_field)
+        if date_to_check and getdate(date_to_check) >= getdate():
+            return
+
         if not restrict_backdated:
             return
         whitelist_role = frappe.get_all("Company Policy Whitelist Role", filters={"parenttype": "Company Policy", "parentfield": whitelist_role_field}, pluck="role")
