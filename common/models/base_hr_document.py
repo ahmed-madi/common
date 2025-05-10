@@ -30,12 +30,13 @@ class BaseHRDocument(Document):
                     get_link_to_form("Company Policy", "Company Policy", _("Company Policy")),
                 )
             )
-        user_roles = frappe.get_roles(frappe.session.user)
-        for role in user_roles:
-            if role in whitelist_role:
-                return
+        # user_roles = frappe.get_roles(frappe.session.user)
+        # for role in user_roles:
+        #     if role in whitelist_role:
+        #         return
         if date_to_check and getdate(date_to_check) < getdate():
-            whitelist_role = "".join(["<li>{}</li>".format(_(r)) for r in whitelist_role] )
+            whitelist_role = "".join(["<li>{}</li>".format(frappe.bold(_(r))) for r in whitelist_role])
+            whitelist_role = f"<br /><br /><ul>{whitelist_role}</ul>"
             frappe.throw(
                 _("Only users with the following roles can create backdated in {} {}").format(
                     _(doc),
