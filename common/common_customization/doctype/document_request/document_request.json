@@ -1,34 +1,28 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "format:HR-SL-DOCR-{YY}{MM}{DD}-{####}",
  "creation": "2025-04-13 14:50:34.715968",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
   "employee",
   "employee_name",
-  "employment_number",
+  "department",
+  "status",
+  "ready_document",
   "column_break_8bbmu",
   "request_date",
+  "document_type",
   "request_subject",
   "document_language",
-  "document_type",
   "section_break_afny",
   "attachments_column",
   "reason",
-  "attach_himf",
+  "attachment",
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Series",
-   "options": "HR-DOCR-.####",
-   "reqd": 1
-  },
   {
    "fieldname": "employee",
    "fieldtype": "Link",
@@ -47,11 +41,6 @@
    "fieldtype": "Data",
    "label": "Employee Name",
    "read_only": 1
-  },
-  {
-   "fieldname": "employment_number",
-   "fieldtype": "Read Only",
-   "label": "Employment Number"
   },
   {
    "fieldname": "reason",
@@ -95,9 +84,8 @@
   },
   {
    "fieldname": "document_type",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Document Type",
-   "options": "Document Request Type",
    "reqd": 1
   },
   {
@@ -112,22 +100,42 @@
   },
   {
    "fieldname": "attachments_column",
-   "fieldtype": "Column Break",
-   "label": "Attachments"
+   "fieldtype": "Column Break"
   },
   {
-   "fieldname": "attach_himf",
-   "fieldtype": "Attach"
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Read Only",
+   "label": "Department"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ready_document",
+   "fieldtype": "Attach",
+   "label": "Ready Document",
+   "permlevel": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:57:59.815622",
+ "modified": "2025-05-10 14:29:59.394678",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Document Request",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -147,12 +155,25 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Employee",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "select": 1,
+   "share": 1
   },
   {
    "amend": 1,
@@ -170,6 +191,18 @@
    "write": 1
   },
   {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Direct manager",
+   "share": 1,
+   "write": 1
+  },
+  {
    "amend": 1,
    "cancel": 1,
    "create": 1,
@@ -180,6 +213,45 @@
    "read": 1,
    "report": 1,
    "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
    "share": 1,
    "submit": 1,
    "write": 1
