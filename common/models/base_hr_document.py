@@ -7,6 +7,9 @@ from hrms.hr.utils import validate_active_employee
 
 class BaseHRDocument(Document):
     def validate(self):
+        if hasattr(super(), 'validate'):
+            super().validate()
+
         self.validate_active_employee()
         self.validate_status()
 
@@ -49,5 +52,7 @@ class BaseHRDocument(Document):
             frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
 
     def before_cancel(self):
+        if hasattr(super(), 'before_cancel'):
+            super().before_cancel()
         self.status = "Cancelled"
     
