@@ -1,15 +1,15 @@
 {
  "actions": [],
- "autoname": "naming_series:",
+ "autoname": "format:HR-SL-IBANC-{YY}{MM}{DD}-{####}",
  "creation": "2025-04-13 23:27:57.218117",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
   "employee",
-  "column_break_8bbmu",
   "employee_name",
-  "employment_number",
+  "column_break_8bbmu",
+  "request_date",
+  "status",
   "current_bank_details_section",
   "c_bank_name",
   "column_break_hrnd",
@@ -18,21 +18,14 @@
   "new_bank_details_section",
   "bank_name",
   "column_break_dayi",
-  "bank_ac_no",
   "iban",
+  "bank_ac_no",
   "section_break_ecpv",
   "reason",
   "attachment",
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Series",
-   "options": "HR-SL-IBAN-.####",
-   "reqd": 1
-  },
   {
    "fieldname": "employee",
    "fieldtype": "Link",
@@ -51,11 +44,6 @@
    "fieldtype": "Data",
    "label": "Employee Name",
    "read_only": 1
-  },
-  {
-   "fieldname": "employment_number",
-   "fieldtype": "Read Only",
-   "label": "Employment Number"
   },
   {
    "fieldname": "reason",
@@ -111,12 +99,12 @@
    "label": "IBAN"
   },
   {
+   "depends_on": "employee",
    "fieldname": "new_bank_details_section",
    "fieldtype": "Section Break",
    "label": "New Bank Details"
   },
   {
-   "fetch_from": "employee.bank_name",
    "fieldname": "bank_name",
    "fieldtype": "Data",
    "label": "Bank Name",
@@ -127,11 +115,9 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "employee.bank_ac_no",
    "fieldname": "bank_ac_no",
    "fieldtype": "Data",
-   "label": "Bank A/C No.",
-   "reqd": 1
+   "label": "Bank A/C No."
   },
   {
    "fieldname": "iban",
@@ -149,16 +135,31 @@
    "fieldtype": "Attach",
    "label": "Attachment",
    "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 12:34:48.547606",
+ "modified": "2025-05-11 10:23:38.294074",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Change IBAN Request",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
