@@ -39,7 +39,7 @@ class RemoteWorkRequest(Document):
         start_of_year = get_year_start(from_date)
         end_of_year = add_days(add_months(start_of_year, 11), 30)
         total_request_days = frappe.get_list(
-            "Remote work request",
+            "Remote Work Request",
             fields=["sum(total_days) as sum"],
             filters={
                 "employee": employee,
