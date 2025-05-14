@@ -8,7 +8,6 @@
   "attendance_tab",
   "working_days",
   "column_break_hxhn",
-  "allownaces_categories",
   "leaves_tab",
   "annual_leave_type",
   "max_wfh_days",
@@ -21,7 +20,14 @@
   "early_exit_total_hours_allowed",
   "self_sevices_tab",
   "restrict_backdated_sfx",
-  "sfx_w_roles"
+  "sfx_w_roles",
+  "include_basic_in_sidl",
+  "include_housing_in_sidl",
+  "include_transportation_in_sidl",
+  "include_travel_in_sidl",
+  "include_other_in_sidl",
+  "salary_component_categories",
+  "column_break_nutw"
  ],
  "fields": [
   {
@@ -42,12 +48,6 @@
   {
    "fieldname": "column_break_hxhn",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "allownaces_categories",
-   "fieldtype": "Table",
-   "label": "Allownaces Categories",
-   "options": "HR Salary Component"
   },
   {
    "fieldname": "attendance_tab",
@@ -121,7 +121,7 @@
   {
    "fieldname": "self_sevices_tab",
    "fieldtype": "Tab Break",
-   "label": "Self Sevices"
+   "label": "HR Request & Self-Services"
   },
   {
    "depends_on": "restrict_backdated_sfx",
@@ -137,13 +137,53 @@
    "fieldname": "restrict_backdated_sfx",
    "fieldtype": "Check",
    "label": "Restrict Backdated Salary Fixation"
+  },
+  {
+   "fieldname": "salary_component_categories",
+   "fieldtype": "Table",
+   "label": "Salary Component Categories",
+   "options": "HR Salary Component"
+  },
+  {
+   "fieldname": "column_break_nutw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_basic_in_sidl",
+   "fieldtype": "Check",
+   "label": "Include Basic Salary in Salary Identification Letter"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_housing_in_sidl",
+   "fieldtype": "Check",
+   "label": "Include Housing Allowance in Salary Identification Letter"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_transportation_in_sidl",
+   "fieldtype": "Check",
+   "label": "Include Transportation Allowance in Salary Identification Letter"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_travel_in_sidl",
+   "fieldtype": "Check",
+   "label": "Include Travel Allowance in Salary Identification Letter"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_other_in_sidl",
+   "fieldtype": "Check",
+   "label": "Include Other Allowances in Salary Identification Letter"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-09 12:22:49.160320",
+ "modified": "2025-05-10 12:53:23.511885",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",

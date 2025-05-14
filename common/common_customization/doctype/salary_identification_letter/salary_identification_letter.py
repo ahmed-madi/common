@@ -2,8 +2,19 @@
 # For license information, please see license.txt
 
 # import frappe
-from frappe.model.document import Document
+from frappe.utils import getdate
+from common.models.base_hr_document import BaseHRDocument
 
 
-class SalaryIdentificationLetter(Document):
-	pass
+class SalaryIdentificationLetter(BaseHRDocument):
+	def before_validate(self):
+		if not self.request_date:
+			self.request_date = getdate()
+
+	def on_submit(self):
+		if self.status != "Approved":
+			return
+		self.generate_signed_file()
+	
+	def generate_signed_file(self):
+		pass
