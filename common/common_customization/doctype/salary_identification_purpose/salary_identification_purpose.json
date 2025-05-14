@@ -1,19 +1,19 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:request_type",
- "creation": "2025-04-13 14:52:21.051154",
+ "autoname": "field:purpose",
+ "creation": "2025-05-10 12:30:28.806057",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "request_type"
+  "purpose"
  ],
  "fields": [
   {
-   "fieldname": "request_type",
+   "fieldname": "purpose",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Request Type",
+   "label": "Purpose",
    "reqd": 1,
    "unique": 1
   }
@@ -21,10 +21,10 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-13 14:55:38.665760",
+ "modified": "2025-05-10 12:32:49.863691",
  "modified_by": "Administrator",
  "module": "Common Customization",
- "name": "Document Request Type",
+ "name": "Salary Identification Purpose",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
@@ -41,35 +41,54 @@
    "write": 1
   },
   {
-   "read": 1,
-   "role": "Employee",
-   "select": 1
-  },
-  {
    "create": 1,
    "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
    "read": 1,
+   "report": 1,
    "role": "HR User",
-   "select": 1,
+   "share": 1,
    "write": 1
   },
   {
    "create": 1,
    "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
    "read": 1,
+   "report": 1,
    "role": "HR Manager",
-   "select": 1,
+   "share": 1,
    "write": 1
   },
   {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
    "read": 1,
+   "report": 1,
    "role": "HR Specialist",
-   "select": 1
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "select": 1,
+   "share": 1
   }
  ],
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
- "title_field": "request_type"
+ "states": []
 }

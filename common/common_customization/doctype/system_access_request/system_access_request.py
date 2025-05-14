@@ -2,8 +2,7 @@
 # For license information, please see license.txt
 
 # import frappe
-from frappe.model.document import Document
+from common.models.base_hr_document import BaseHRDocument
 
-
-class DocumentRequestType(Document):
+class SystemAccessRequest(BaseHRDocument):
 	pass

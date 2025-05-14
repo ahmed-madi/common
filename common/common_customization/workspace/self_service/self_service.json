@@ -161,7 +161,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-04-27 11:52:16.075249",
+ "modified": "2025-05-09 11:49:35.300477",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Self Service",
@@ -171,7 +171,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 10.0,
+ "sequence_id": 8.0,
  "shortcuts": [],
  "title": "Self Service"
 }
