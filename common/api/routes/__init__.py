@@ -1,6 +1,7 @@
 # Common Data
 from common.api.routes.common.company_policy import company_policy_rules
 from common.api.routes.common.employee import employee_rules
+from common.api.routes.common.fiscal_year import fiscal_year_rules
 from common.api.routes.common.holiday_list import holiday_list_rules
 from common.api.routes.common.language import language_rules
 from common.api.routes.common.leave_type import leave_type_rules
@@ -11,6 +12,7 @@ from common.api.routes.common.work_type import work_type_rules
 
 # HR Requests
 from common.api.routes.hr_requests.access_system import access_system_rules
+from common.api.routes.hr_requests.education_allowance import education_allowance_rules
 from common.api.routes.hr_requests.change_iban import change_iban_rules
 from common.api.routes.hr_requests.document_request import document_request_rules
 from common.api.routes.hr_requests.salary_fixation import salary_fixation_rules
@@ -33,6 +35,7 @@ url_rules = []
 # Common Data
 url_rules += company_policy_rules
 url_rules += employee_rules
+url_rules += fiscal_year_rules
 url_rules += holiday_list_rules
 url_rules += language_rules
 url_rules += leave_type_rules
@@ -43,6 +46,7 @@ url_rules += work_type_rules
 
 #HR Requests
 url_rules += access_system_rules
+url_rules += education_allowance_rules
 url_rules += change_iban_rules
 url_rules += document_request_rules
 url_rules += salary_fixation_rules

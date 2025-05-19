@@ -63,6 +63,7 @@ def handle_exception_response(
             args = exception.args
             if len(args) > 0:
                 message = args[0]
+        message = message.strip()
         return build_error_response(http_status_code, title, message)
 
     # General exceptions
@@ -72,5 +73,9 @@ def handle_exception_response(
             message = args[0].split(":")[0]
             if message == "Cannot link cancelled document":
                 message = args[0]
+            if '. It should be one of ' in message:
+                # general select issue!
+                message = message.replace('"', "'")
+            message = message.strip()
 
     return build_error_response(http_status_code, title, message)

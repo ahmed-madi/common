@@ -105,7 +105,9 @@ def document_list(doctype: str, fields: list | str):
             http_status_code = exc.http_status_code
         if hasattr(exc, "args"):
             args = exc.args
-            if len(args) > 0:
+            if len(args) > 1 and isinstance(args[0], int):
+                message = args[1]
+            elif len(args) > 0:
                 message = args[0].split(":")[0]
         return build_error_response(
             http_status_code, f"failed to read {doctype}", message
@@ -185,8 +187,10 @@ def read_doc(doctype: str, name: str, origin_fields: list = []):
             http_status_code = exc.http_status_code
         if hasattr(exc, "args"):
             args = exc.args
-            if len(args) > 0:
+            if len(args) > 0 and isinstance(args[0], str):
                 message = args[0].split(":")[0]
+            elif len(args) > 1 and isinstance(args[0], int):
+                message = args[1]
         return build_error_response(
             http_status_code, f"failed to read {doctype}", message
         )

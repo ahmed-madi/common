@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "naming_series:",
+ "autoname": "format:HR-SL-EDUA-{YY}{MM}{DD}-{####}",
  "creation": "2025-04-26 13:00:53.385854",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -8,30 +8,24 @@
   "employee",
   "employee_name",
   "column_break_8bbmu",
-  "naming_series",
+  "request_date",
+  "status",
   "current_bank_details_section",
   "dependent_name",
   "academic_year",
   "column_break_hrnd",
   "relation",
-  "c_iban",
+  "school_name",
   "new_bank_details_section",
   "amount_requested",
   "column_break_dayi",
-  "school_name",
   "attachment",
   "section_break_ecpv",
-  "reason",
-  "amended_from"
+  "remarks",
+  "amended_from",
+  "linked_expense_claim"
  ],
  "fields": [
-  {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Series",
-   "options": "HR-SL-EAR-.####",
-   "reqd": 1
-  },
   {
    "fieldname": "employee",
    "fieldtype": "Link",
@@ -61,11 +55,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "c_iban",
-   "fieldtype": "Read Only",
-   "label": "IBAN"
-  },
-  {
    "fieldname": "new_bank_details_section",
    "fieldtype": "Section Break"
   },
@@ -76,12 +65,6 @@
   {
    "fieldname": "section_break_ecpv",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "reason",
-   "fieldtype": "Text",
-   "label": "Remarks",
-   "reqd": 1
   },
   {
    "description": "School Invoice, Attendance Certificate, etc",
@@ -118,9 +101,9 @@
   },
   {
    "fieldname": "academic_year",
-   "fieldtype": "Date",
+   "fieldtype": "Link",
    "label": "Academic Year",
-   "options": "Year",
+   "options": "Fiscal Year",
    "reqd": 1
   },
   {
@@ -131,10 +114,12 @@
    "reqd": 1
   },
   {
+   "default": "0",
    "fieldname": "amount_requested",
    "fieldtype": "Currency",
    "label": "Amount Requested",
    "non_negative": 1,
+   "precision": "2",
    "reqd": 1
   },
   {
@@ -142,16 +127,43 @@
    "fieldtype": "Data",
    "label": "School Name",
    "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "linked_expense_claim",
+   "fieldtype": "Link",
+   "label": "Linked Expense Claim",
+   "options": "Expense Claim",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:19:20.798079",
+ "modified": "2025-05-19 11:01:35.475497",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Education Allowance Request",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -171,6 +183,7 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
@@ -206,6 +219,33 @@
    "role": "HR Manager",
    "share": 1,
    "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
    "write": 1
   }
  ],
