@@ -12,7 +12,9 @@ def build_error_response(status_code, message, error, missing_data=None):
     )
 
 
-def build_success_response(status_code, message, data):
+def build_success_response(status_code, message, data, extra_data={}):
+    if extra_data:
+        data.update(extra_data)
     return build_response(
         status="success", status_code=status_code, message=message, data=data
     )
@@ -35,20 +37,23 @@ def build_response(
     if missing_data:
         frappe.local.response["missing_data"] = missing_data
     # frappe.local.response["type"] = "json"
-    frappe.local.message_log = None
+    frappe.local.message_log = []
     frappe.local.debug_log = None
     frappe.flags.error_message = None
 
 
 def handle_exception_response(
-    doc, doctype, exception, uploaded_files=[], for_update=False
+    doc, doctype, exception, uploaded_files=[], for_update=False, for_delete=False
 ):
     http_status_code = 500
     message = exception
     delete_duplicated_or_after_error(uploaded_files)
-    title = (
-        f"failed to update {doctype}" if for_update else f"failed to create {doctype}"
-    )
+    if for_delete:
+        title = f"failed to update {doctype}"
+    else:
+        title = (
+            f"failed to update {doctype}" if for_update else f"failed to create {doctype}"
+        )
     if hasattr(exception, "http_status_code"):
         http_status_code = exception.http_status_code
     # extract mandatory message
@@ -64,6 +69,9 @@ def handle_exception_response(
             if len(args) > 0:
                 message = args[0]
         message = message.strip()
+        return build_error_response(http_status_code, title, message)
+    elif isinstance(exception, frappe.DoesNotExistError):
+        message = "Does not exist"
         return build_error_response(http_status_code, title, message)
 
     # General exceptions

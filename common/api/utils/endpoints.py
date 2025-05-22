@@ -13,7 +13,7 @@ from common.api.utils.response import (
 )
 
 
-def document_list(doctype: str, fields: list | str):
+def document_list(doctype: str, fields: list | str, force_fields=False, user_filters={}):
     filters = None
     or_filters = None
     group_by = None
@@ -37,18 +37,22 @@ def document_list(doctype: str, fields: list | str):
                 limit_start = 1
         if "order_by" in frappe.request.args:
             order_by = frappe.request.args["order_by"]
+        
+        if user_filters:
+            filters = user_filters
+        else:
+            if "filters" in frappe.request.args:
+                filters = frappe.request.args["filters"]
+                if isinstance(filters, dict):
+                    filters = filters
+                else:
+                    filters = frappe.parse_json(filters)
 
-        if "filters" in frappe.request.args:
-            filters = frappe.request.args["filters"]
-            if isinstance(filters, dict):
-                filters = filters
-            else:
-                filters = frappe.parse_json(filters)
-
-            if isinstance(filters, dict):
-                filters = filters
-            else:
-                filters = None
+                if isinstance(filters, dict):
+                    filters = filters
+                else:
+                    filters = None
+        
 
         if "or_filters" in frappe.request.args:
             or_filters = frappe.request.args["or_filters"]
@@ -61,17 +65,18 @@ def document_list(doctype: str, fields: list | str):
                 or_filters = or_filters
             else:
                 or_filters = None
-        if "fields" in frappe.request.args:
-            _fields = frappe.request.args["fields"]
-            if isinstance(_fields, list):
-                _fields = _fields
-            else:
-                _fields = frappe.parse_json(_fields)
+        if not force_fields:
+            if "fields" in frappe.request.args:
+                _fields = frappe.request.args["fields"]
+                if isinstance(_fields, list):
+                    _fields = _fields
+                else:
+                    _fields = frappe.parse_json(_fields)
 
-            if isinstance(_fields, list):
-                fields = _fields
-        if "*" in fields:
-            fields = "*"
+                if isinstance(_fields, list):
+                    fields = _fields
+            if "*" in fields:
+                fields = "*"
         limit_start = limit_start * limit_page_length
         args = frappe._dict(
             parent_doctype=parent,
@@ -114,7 +119,7 @@ def document_list(doctype: str, fields: list | str):
         )
 
 
-def create_doc(doctype: str):
+def create_doc(doctype: str, default_data={}):
     uploaded_files = []
     doc = None
     try:
@@ -129,6 +134,7 @@ def create_doc(doctype: str):
                     f"{fieldname}": file.get("file_url"),
                 }
             )
+        doc.update(default_data)
         doc.insert()
         delete_duplicated_or_after_error(uploaded_files)
         return build_success_response(201, f"{doctype} created", doc)
@@ -149,37 +155,51 @@ def handle_files(doc):
             uploaded_files.append(file_doc_name)
     return uploaded_files
 
+def load_extra_data(doctype, name):
+    extra_data = {}
+    if doctype == "HR Ticket":
+        comments = frappe.get_all(
+            "HR Ticket Comment",
+            filters={"hr_ticket": name},
+            fields=["name", "hr_ticket", "comment", "attachment", "parent_comment", "creation as created_at", "owner as created_by"],
+        )
+        extra_data.update({
+            "comments": comments
+        })
+    return extra_data
 
-def read_doc(doctype: str, name: str, origin_fields: list = []):
+
+def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=False):
     try:
         doc = frappe.get_doc(doctype, name)
         if not doc.has_permission("read"):
             raise frappe.PermissionError
         doc.apply_fieldlevel_read_permissions()
+        extra_data = load_extra_data(doc.doctype, doc.name)
 
-        user_fields = origin_fields
-        if "fields" in frappe.request.args:
-            _fields = frappe.request.args["fields"]
-            if isinstance(_fields, list):
-                user_fields = _fields
-            else:
-                user_fields = frappe.parse_json(_fields)
+        if not force_fields:
+            user_fields = origin_fields
+            if "fields" in frappe.request.args:
+                _fields = frappe.request.args["fields"]
+                if isinstance(_fields, list):
+                    user_fields = _fields
+                else:
+                    user_fields = frappe.parse_json(_fields)
 
-            if isinstance(_fields, list):
-                user_fields = _fields
+                if isinstance(_fields, list):
+                    user_fields = _fields
 
-        if "*" in user_fields:
-            user_fields = []
-
-        if len(user_fields) > 0:
-            doc = doc.as_dict()
-            result = frappe._dict()
-            for field in user_fields:
-                if hasattr(doc, field):
-                    result.update({field: getattr(doc, field)})
-            doc = result
-
-        return build_success_response(200, f"{doctype} fetched", doc)
+            if "*" in user_fields:
+                user_fields = []
+            if len(user_fields) > 0:
+                doc = doc.as_dict()
+                result = frappe._dict()
+                for field in user_fields:
+                    if hasattr(doc, field):
+                        result.update({field: getattr(doc, field)})
+                doc = result
+        
+        return build_success_response(200, f"{doctype} fetched", doc, extra_data)
     except Exception as exc:
         http_status_code = 500
         message = exc
@@ -196,7 +216,7 @@ def read_doc(doctype: str, name: str, origin_fields: list = []):
         )
 
 
-def update_doc(doctype: str, name: str):
+def update_doc(doctype: str, name: str, default_data={}):
     uploaded_files = []
     doc = None
     try:
@@ -213,6 +233,7 @@ def update_doc(doctype: str, name: str):
                     f"{fieldname}": file.get("file_url"),
                 }
             )
+        doc.update(default_data)
         doc.save()
         delete_duplicated_or_after_error(uploaded_files)
         # check for child table doctype
@@ -232,6 +253,10 @@ def delete_doc(doctype: str, name: str):
         # frappe.response.http_status_code = 202
         return build_success_response(202, f"{doctype} deleted", doc)
     except Exception as exc:
+        print(frappe.get_traceback())
+        return handle_exception_response(
+            None, doctype, exc, uploaded_files=[], for_delete=True
+        )
         http_status_code = 500
         message = f"{exc}"
         if hasattr(exc, "http_status_code"):
