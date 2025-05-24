@@ -6,9 +6,9 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "cd hr_service && yarn install",
-    "dev": "cd hr_service && yarn dev",
-    "build": "cd hr_service && yarn build"
+    "postinstall": "cd hr-service && yarn install",
+    "dev": "cd hr-service && yarn dev",
+    "build": "cd hr-service && yarn build"
   },
   "keywords": [],
   "author": "",
