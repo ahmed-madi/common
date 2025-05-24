@@ -51,6 +51,10 @@ class BaseHRDocument(Document):
         if self.docstatus == 1 and self.status in ["Open", "Cancelled"]:
             frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
 
+    def validate_from_to_dates(self, from_date=None, to_date=None, msg="To date cannot be before from date"):
+        if from_date and to_date and (getdate(to_date) < getdate(from_date)):
+            frappe.throw(_(msg))
+
     def before_cancel(self):
         if hasattr(super(), 'before_cancel'):
             super().before_cancel()
