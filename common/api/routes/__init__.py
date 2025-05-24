@@ -23,6 +23,7 @@ from common.api.routes.hr_requests.club_request import club_request_rules
 from common.api.routes.hr_requests.document_request import document_request_rules
 from common.api.routes.hr_requests.salary_fixation import salary_fixation_rules
 from common.api.routes.hr_requests.salary_identification_letter import salary_identification_letter_rules
+from common.api.routes.hr_requests.training_request import training_request_rules
 from common.api.routes.hr_requests.visa_application import visa_application_rules
 
 # Leave Requests
@@ -64,6 +65,7 @@ url_rules += club_request_rules
 url_rules += document_request_rules
 url_rules += salary_fixation_rules
 url_rules += salary_identification_letter_rules
+url_rules += training_request_rules
 url_rules += visa_application_rules
 
 # Leave Requests

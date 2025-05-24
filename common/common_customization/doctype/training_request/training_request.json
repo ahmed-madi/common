@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "TR-.#####.",
+ "autoname": "format:HR-SL-TRN-{YY}{MM}{DD}-{####}",
  "creation": "2025-03-13 14:29:03.420385",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -10,10 +10,12 @@
   "employee_name",
   "department",
   "column_break_hmybe",
+  "request_date",
   "training_title",
   "training_type",
   "start_date",
   "end_date",
+  "status",
   "section_break_4",
   "training_provider",
   "training_duration",
@@ -46,7 +48,8 @@
    "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
-   "options": "Department"
+   "options": "Department",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_4",
@@ -94,6 +97,7 @@
    "fieldtype": "Float",
    "label": "Training Duration  (Hours)",
    "non_negative": 1,
+   "precision": "1",
    "reqd": 1
   },
   {
@@ -111,7 +115,8 @@
    "fieldname": "training_price",
    "fieldtype": "Currency",
    "label": "Training Price",
-   "mandatory_depends_on": "is_paid"
+   "mandatory_depends_on": "is_paid",
+   "non_negative": 1
   },
   {
    "fieldname": "training_description",
@@ -139,16 +144,31 @@
    "fieldtype": "Data",
    "label": "Training Provider",
    "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:25:06.169807",
+ "modified": "2025-05-24 10:07:17.129354",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Training Request",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -183,7 +203,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct manager",
+   "role": "Direct Manager",
    "share": 1,
    "submit": 1,
    "write": 1
