@@ -12,6 +12,7 @@ from common.api.routes.common.system_access_level import system_access_level_rul
 from common.api.routes.common.work_type import work_type_rules
 
 # HelpDesk Requests
+from common.api.routes.helpdesk.issue import ticket_issue_rules
 from common.api.routes.helpdesk.ticket_comment import ticket_comment_rules
 from common.api.routes.helpdesk.ticket import ticket_rules
 
@@ -54,6 +55,7 @@ url_rules += system_access_level_rules
 url_rules += work_type_rules
 
 # HelpDesk Requests
+url_rules += ticket_issue_rules
 url_rules += ticket_comment_rules
 url_rules += ticket_rules
 
