@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ClubName(Document):
+class HRIssueType(Document):
 	pass

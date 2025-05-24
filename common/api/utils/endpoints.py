@@ -124,8 +124,11 @@ def create_doc(doctype: str, default_data={}):
     doc = None
     try:
         data = get_request_form_data()
-        data.pop("doctype", None)
-        doc = frappe.new_doc(doctype, **data)
+        if not isinstance(data, bytes):
+            data.pop("doctype", None)
+            doc = frappe.new_doc(doctype, **data)
+        else:
+            doc = frappe.new_doc(doctype)
         uploaded_files = handle_files(doc)
         for file in uploaded_files:
             fieldname = file.get("fieldname")
@@ -222,9 +225,10 @@ def update_doc(doctype: str, name: str, default_data={}):
     try:
         data = get_request_form_data()
         doc = frappe.get_doc(doctype, name, for_update=True)
-        if "flags" in data:
-            del data["flags"]
-        doc.update(data)
+        if not isinstance(data, bytes):
+            if "flags" in data:
+                del data["flags"]
+            doc.update(data)
         uploaded_files = handle_files(doc)
         for file in uploaded_files:
             fieldname = file.get("fieldname")
