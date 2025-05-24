@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"LpAnc6t9qY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Support</span>\",\"col\":12}},{\"id\":\"K1kalnwXD0\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"HR Ticket\",\"col\":4}}]",
+ "content": "[{\"id\":\"LpAnc6t9qY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Support</span>\",\"col\":12}},{\"id\":\"8ImqF2ZFHH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Issue Type\",\"col\":3}},{\"id\":\"q3OACL67s6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Issue Priority\",\"col\":3}},{\"id\":\"iXEzzQgrIJ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"K1kalnwXD0\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"HR Ticket\",\"col\":4}}]",
  "creation": "2025-05-23 08:09:53.604155",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "HR Support",
  "links": [],
- "modified": "2025-05-23 08:11:06.861790",
+ "modified": "2025-05-24 15:15:23.967630",
  "modified_by": "Administrator",
  "module": "HR Support",
  "name": "HR Support",
@@ -30,6 +30,23 @@
  ],
  "roles": [],
  "sequence_id": 39.0,
- "shortcuts": [],
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Add Issue Type",
+   "link_to": "HR Issue Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Add Issue Priority",
+   "link_to": "HR Issue Priority",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
  "title": "HR Support"
 }
