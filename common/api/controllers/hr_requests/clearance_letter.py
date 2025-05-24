@@ -1,10 +1,11 @@
 
 from common.api.utils.endpoints import document_list, create_doc, read_doc, update_doc ,delete_doc
+LIST_FIELDS = ["employee", "employee_name", "request_date", "letter_purpose", "clearance_document", "status", "docstatus"]
+FORM_FIELDS = LIST_FIELDS + ["preferred_language", "remarks"]
 
 def clearance_letter_list():
     doctype = "Clearance Letter Request"
-    fields = ["*"]
-    return document_list(doctype, fields)
+    return document_list(doctype, LIST_FIELDS)
 
 def create_clearance_letter():
     doctype = "Clearance Letter Request"
@@ -12,7 +13,7 @@ def create_clearance_letter():
 
 def read_clearance_letter(name: str):
     doctype = "Clearance Letter Request"    
-    return read_doc(doctype, name)
+    return read_doc(doctype, name, origin_fields=FORM_FIELDS)
 
 
 def update_clearance_letter(name: str):
