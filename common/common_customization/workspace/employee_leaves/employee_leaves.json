@@ -1,0 +1,226 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"ty30KbQYaK\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Apply for Leaves</span>\",\"col\":12}},{\"id\":\"qeEiV1s59L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Type\",\"col\":4}},{\"id\":\"nmDz0Z6vh_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Apply for Leave\",\"col\":4}},{\"id\":\"VbSYzUq6MN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Balance (Report)\",\"col\":4}},{\"id\":\"veDZfuPKAL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cancel Leave\",\"col\":4}},{\"id\":\"rW1sU0YKU_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Suspension\",\"col\":4}},{\"id\":\"8ckhzF8DAq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Early Leave\",\"col\":4}},{\"id\":\"cUhSuXlkVR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work From Home\",\"col\":4}},{\"id\":\"YE3vZ_TFcy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Compensatory Leave\",\"col\":4}},{\"id\":\"fomMGDWa7M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Outside Office\",\"col\":4}},{\"id\":\"smzgSI-RSk\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7pPPc1KjKe\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Leave Applications\",\"col\":4}},{\"id\":\"BUmVKefqLe\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Compensatory Leave\",\"col\":4}},{\"id\":\"3j7JnklWuF\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Remote Work Request\",\"col\":4}},{\"id\":\"wTOHsed_gn\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xZxTEQ6ov7\",\"type\":\"card\",\"data\":{\"card_name\":\"Leaves\",\"col\":4}},{\"id\":\"7m2p1EhTGO\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave Policy\",\"col\":4}},{\"id\":\"047YcCLqxs\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave Control Panel\",\"col\":4}}]",
+ "creation": "2025-04-13 13:42:06.095767",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "reply-all",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Employee Leaves",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leaves",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Type",
+   "link_count": 0,
+   "link_to": "Leave Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Period",
+   "link_count": 0,
+   "link_to": "Leave Period",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Holiday List",
+   "link_count": 0,
+   "link_to": "Holiday List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Block List",
+   "link_count": 0,
+   "link_to": "Leave Block List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Policy",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Policy",
+   "link_count": 0,
+   "link_to": "Leave Policy",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Policy Assignment",
+   "link_count": 0,
+   "link_to": "Leave Policy Assignment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Control Panel",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Control Panel",
+   "link_count": 0,
+   "link_to": "Leave Control Panel",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Leave Allocation",
+   "link_count": 0,
+   "link_to": "Leave Allocation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-05-09 11:49:35.189230",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Employee Leaves",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Staff Portal",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Leave Application",
+   "label": "Leave Applications",
+   "quick_list_filter": "[]"
+  },
+  {
+   "document_type": "Compensatory Leave Request",
+   "label": "Compensatory Leave",
+   "quick_list_filter": "[]"
+  },
+  {
+   "document_type": "Remote Work Request",
+   "label": "Remote Work Request",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 7.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Apply for Leave",
+   "link_to": "Leave Application",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Leave Suspension",
+   "link_to": "Leave Suspension",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Leave Balance (Report)",
+   "link_to": "Employee Leave Balance",
+   "report_ref_doctype": "Employee",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Early Leave",
+   "link_to": "Early Leave Application",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Compensatory Leave",
+   "link_to": "Compensatory Leave Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Work Outside Office",
+   "link_to": "Work Outside Office Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Work From Home",
+   "link_to": "Work From Home Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Leave Type",
+   "link_to": "Leave Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Cancel Leave",
+   "link_to": "Cancel Leave Application",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Employee Leaves"
+}

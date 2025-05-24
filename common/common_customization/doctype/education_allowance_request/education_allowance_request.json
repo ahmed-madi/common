@@ -1,0 +1,256 @@
+{
+ "actions": [],
+ "autoname": "format:HR-SL-EDUA-{YY}{MM}{DD}-{####}",
+ "creation": "2025-04-26 13:00:53.385854",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "column_break_8bbmu",
+  "request_date",
+  "status",
+  "current_bank_details_section",
+  "dependent_name",
+  "academic_year",
+  "column_break_hrnd",
+  "relation",
+  "school_name",
+  "new_bank_details_section",
+  "amount_requested",
+  "column_break_dayi",
+  "attachment",
+  "section_break_ecpv",
+  "remarks",
+  "amended_from",
+  "linked_expense_claim"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_8bbmu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "current_bank_details_section",
+   "fieldtype": "Section Break",
+   "label": "Depedent Info"
+  },
+  {
+   "fieldname": "column_break_hrnd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "new_bank_details_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_dayi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ecpv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "School Invoice, Attendance Certificate, etc",
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Education Allowance Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Education Allowance Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "dependent_name",
+   "fieldtype": "Data",
+   "label": "Dependent Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "Fiscal Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "relation",
+   "fieldtype": "Select",
+   "label": "Relation",
+   "options": "\nSon\nDaughter",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "amount_requested",
+   "fieldtype": "Currency",
+   "label": "Amount Requested",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "school_name",
+   "fieldtype": "Data",
+   "label": "School Name",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "linked_expense_claim",
+   "fieldtype": "Link",
+   "label": "Linked Expense Claim",
+   "options": "Expense Claim",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-05-19 11:01:35.475497",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Education Allowance Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Direct manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

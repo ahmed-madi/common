@@ -1,20 +1,27 @@
 {
  "actions": [],
- "autoname": "naming_series:",
  "allow_rename": 1,
+ "autoname": "format:HR-SL-SFX-{YY}{MM}{DD}-{####}",
  "creation": "2025-03-13 15:54:40.819384",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
   "employee",
-  "bank_name",
-  "column_break_8bbmu",
   "employee_name",
-  "employment_number",
-  "end_date",
-  "reason",
-  "amended_from"
+  "fixation_reason",
+  "column_break_8bbmu",
+  "effective_date",
+  "amended_from",
+  "status",
+  "bank_details_section",
+  "salary_mode",
+  "bank_name",
+  "column_break_ypeg",
+  "employee_iban",
+  "bank_ac_no",
+  "section_break_yips",
+  "remarks",
+  "attachment"
  ],
  "fields": [
   {
@@ -23,14 +30,6 @@
    "in_list_view": 1,
    "label": "Employee",
    "options": "Employee",
-   "reqd": 1
-  },
-  {
-   "fieldname": "bank_name",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Bank Name",
-   "options": "Bank",
    "reqd": 1
   },
   {
@@ -55,37 +54,86 @@
    "search_index": 1
   },
   {
-   "fieldname": "reason",
-   "fieldtype": "Small Text",
-   "label": "Reason",
+   "fieldname": "fixation_reason",
+   "fieldtype": "Link",
+   "label": "Fixation Reason",
+   "options": "Fixation Reason",
    "reqd": 1
   },
   {
-   "fieldname": "end_date",
+   "default": "Today",
+   "fieldname": "effective_date",
    "fieldtype": "Date",
-   "label": "End Date",
+   "label": "Effective Date",
    "reqd": 1
   },
   {
-   "fieldname": "naming_series",
+   "fieldname": "section_break_yips",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Series",
-   "options": "HR-SL-SFX-.####",
+   "in_list_view": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Open\nApproved\nRejected\nCancelled",
    "reqd": 1
   },
   {
-   "fieldname": "employment_number",
+   "fetch_from": "employee.salary_mode",
+   "fieldname": "salary_mode",
    "fieldtype": "Read Only",
-   "label": "Employment Number"
+   "label": "Salary Mode"
+  },
+  {
+   "fetch_from": "employee.iban",
+   "fieldname": "employee_iban",
+   "fieldtype": "Read Only",
+   "label": "Employee IBAN"
+  },
+  {
+   "fieldname": "bank_details_section",
+   "fieldtype": "Section Break",
+   "label": "Bank Details"
+  },
+  {
+   "fetch_from": "employee.bank_name",
+   "fieldname": "bank_name",
+   "fieldtype": "Read Only",
+   "label": "Bank Name"
+  },
+  {
+   "fieldname": "column_break_ypeg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.bank_ac_no",
+   "fieldname": "bank_ac_no",
+   "fieldtype": "Read Only",
+   "label": "Bank A/C No."
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 15:54:40.819384",
+ "modified": "2025-05-10 10:46:36.105513",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Salary Fixation",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -143,6 +191,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

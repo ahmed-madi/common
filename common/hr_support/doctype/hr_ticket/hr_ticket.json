@@ -1,0 +1,400 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-05-22 07:40:42.997365",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "email_append_to": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "subject_section",
+  "subject",
+  "employee",
+  "employee_name",
+  "user",
+  "raised_by",
+  "cc_email",
+  "cb00",
+  "naming_series",
+  "status",
+  "priority",
+  "issue_type",
+  "issue_split_from",
+  "phone",
+  "sb_details",
+  "description",
+  "service_level_section",
+  "response_by",
+  "cb",
+  "sla_resolution_by",
+  "on_hold_since",
+  "total_hold_time",
+  "section_break_19",
+  "opening_date",
+  "sla_resolution_date",
+  "column_break1",
+  "opening_time",
+  "resolution_time",
+  "additional_info",
+  "department",
+  "column_break_16",
+  "project",
+  "via_customer_portal",
+  "attachment",
+  "rating",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "subject_section",
+   "fieldtype": "Section Break",
+   "options": "fa fa-flag"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "ISS-.YYYY.-",
+   "print_hide": 1,
+   "set_only_once": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_standard_filter": 1,
+   "label": "Subject",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "depends_on": "eval:doc.__islocal",
+   "fieldname": "raised_by",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Raised By (Email)",
+   "oldfieldname": "raised_by",
+   "oldfieldtype": "Data",
+   "options": "Email"
+  },
+  {
+   "fieldname": "cb00",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "oldfieldname": "status",
+   "oldfieldtype": "Select",
+   "options": "Open\nReplied\nOn Hold\nResolved\nClosed",
+   "search_index": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Priority",
+   "options": "HR Issue Priority",
+   "permlevel": 2
+  },
+  {
+   "fieldname": "issue_type",
+   "fieldtype": "Link",
+   "label": "Issue Type",
+   "options": "HR Issue Type"
+  },
+  {
+   "fieldname": "issue_split_from",
+   "fieldtype": "Link",
+   "label": "Issue Split From",
+   "options": "HR Ticket",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.status!=\"Closed\"",
+   "fieldname": "sb_details",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "bold": 1,
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "in_global_search": 1,
+   "label": "Description",
+   "oldfieldname": "problem_description",
+   "oldfieldtype": "Text",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "service_level_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval: doc.status != 'Replied' && doc.service_level_agreement;",
+   "fieldname": "response_by",
+   "fieldtype": "Datetime",
+   "label": "Response By",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "cb",
+   "fieldtype": "Column Break",
+   "options": "fa fa-pushpin",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.status != 'Replied' && doc.service_level_agreement;",
+   "fieldname": "sla_resolution_by",
+   "fieldtype": "Datetime",
+   "label": "Resolution By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "on_hold_since",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "On Hold Since",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_hold_time",
+   "fieldtype": "Duration",
+   "label": "Total Hold Time",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_19",
+   "fieldtype": "Section Break",
+   "label": "Resolution Details"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "column_break1",
+   "fieldtype": "Column Break",
+   "oldfieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "opening_date",
+   "fieldtype": "Date",
+   "label": "Opening Date",
+   "no_copy": 1,
+   "oldfieldname": "opening_date",
+   "oldfieldtype": "Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "opening_time",
+   "fieldtype": "Time",
+   "label": "Opening Time",
+   "no_copy": 1,
+   "oldfieldname": "opening_time",
+   "oldfieldtype": "Time",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "sla_resolution_date",
+   "fieldtype": "Datetime",
+   "label": "Resolution Date",
+   "no_copy": 1,
+   "oldfieldname": "resolution_date",
+   "oldfieldtype": "Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "resolution_time",
+   "fieldtype": "Duration",
+   "label": "Resolution Time",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "additional_info",
+   "fieldtype": "Section Break",
+   "label": "Reference",
+   "options": "fa fa-pushpin",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "default": "0",
+   "fieldname": "via_customer_portal",
+   "fieldtype": "Check",
+   "label": "Via Customer Portal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "label": "Employee",
+   "oldfieldname": "customer",
+   "oldfieldtype": "Link",
+   "options": "Employee",
+   "print_hide": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Read Only",
+   "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.user_id",
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cc_email",
+   "fieldtype": "Data",
+   "label": "CC Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "rating",
+   "fieldtype": "Rating",
+   "label": "Rating"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "HR Ticket",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "icon": "fa fa-ticket",
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-05-24 15:16:21.157287",
+ "modified_by": "Administrator",
+ "module": "HR Support",
+ "name": "HR Ticket",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 2,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Support Team",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "search_fields": "status,employee,employee_name,subject,raised_by",
+ "sender_field": "raised_by",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "subject_field": "subject",
+ "timeline_field": "employee",
+ "title_field": "subject",
+ "track_changes": 1,
+ "track_seen": 1
+}

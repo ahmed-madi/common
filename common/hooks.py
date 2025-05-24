@@ -25,7 +25,9 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/common/css/common.css"
+app_include_css = [
+    "/assets/common/css/common-style3.css",
+]
 # app_include_js = "/assets/common/js/common.js"
 
 # include js, css files in header of web template
@@ -44,7 +46,9 @@ app_license = "mit"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {
+    "Attendance" : "public/js/attendance_list.js"
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -129,9 +133,11 @@ app_license = "mit"
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Leave Application": "common.overrides.leave_application.LeaveApplication",
+	"Leave Type": "common.overrides.leave_type.LeaveType",
+	"Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",
+}
 
 # Document Events
 # ---------------
@@ -196,7 +202,9 @@ app_license = "mit"
 
 # Request Events
 # ----------------
-# before_request = ["common.utils.before_request"]
+before_request = [
+    "common.api.utils.request.before_request"
+]
 # after_request = ["common.utils.after_request"]
 
 # Job Events

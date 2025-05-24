@@ -1,7 +1,7 @@
 {
  "actions": [],
- "autoname": "TR-.#####.",
  "allow_rename": 1,
+ "autoname": "format:HR-SL-TRN-{YY}{MM}{DD}-{####}",
  "creation": "2025-03-13 14:29:03.420385",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -10,12 +10,22 @@
   "employee_name",
   "department",
   "column_break_hmybe",
-  "objectives",
+  "request_date",
+  "training_title",
+  "training_type",
+  "start_date",
+  "end_date",
+  "status",
   "section_break_4",
-  "course_info",
+  "training_provider",
+  "training_duration",
+  "column_break_egpc",
+  "is_paid",
+  "training_price",
   "section_break_g56lj",
-  "reason",
-  "column_break_kclba",
+  "training_description",
+  "section_break_zate",
+  "attachment",
   "amended_from"
  ],
  "fields": [
@@ -38,19 +48,13 @@
    "fieldname": "department",
    "fieldtype": "Link",
    "label": "Department",
-   "options": "Department"
+   "options": "Department",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_4",
    "fieldtype": "Section Break",
    "label": "Course information"
-  },
-  {
-   "fieldname": "course_info",
-   "fieldtype": "Table",
-   "label": "Course info",
-   "options": "Course info",
-   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -66,33 +70,105 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "reason",
-   "fieldtype": "Small Text",
-   "label": "Reason",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_kclba",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "section_break_g56lj",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "objectives",
-   "fieldtype": "Text",
-   "label": "Objective of the course",
+   "fieldname": "training_type",
+   "fieldtype": "Select",
+   "label": "Training Type",
+   "options": "\nInternal\nExternal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "training_duration",
+   "fieldtype": "Float",
+   "label": "Training Duration  (Hours)",
+   "non_negative": 1,
+   "precision": "1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_egpc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_paid",
+   "fieldtype": "Check",
+   "label": "Is Paid"
+  },
+  {
+   "depends_on": "is_paid",
+   "fieldname": "training_price",
+   "fieldtype": "Currency",
+   "label": "Training Price",
+   "mandatory_depends_on": "is_paid",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "training_description",
+   "fieldtype": "Small Text",
+   "label": "Training Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_zate",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "training_title",
+   "fieldtype": "Data",
+   "label": "Training Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "training_provider",
+   "fieldtype": "Data",
+   "label": "Training Provider",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 14:29:03.420385",
+ "modified": "2025-05-24 10:07:17.129354",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Training Request",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -127,7 +203,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct manager",
+   "role": "Direct Manager",
    "share": 1,
    "submit": 1,
    "write": 1
@@ -146,6 +222,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

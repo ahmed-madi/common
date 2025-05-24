@@ -1,7 +1,7 @@
 {
  "actions": [],
- "autoname": "HR-SL-CLA-.####",
  "allow_rename": 1,
+ "autoname": "format:HR-LR-CLA-{YY}{MM}{DD}-{####}",
  "creation": "2025-03-13 15:56:35.323082",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,9 +9,14 @@
   "employee",
   "employee_name",
   "department",
-  "leave_application",
   "reason",
-  "amended_from"
+  "column_break_yukx",
+  "request_date",
+  "leave_application",
+  "from_date",
+  "to_date",
+  "amended_from",
+  "status"
  ],
  "fields": [
   {
@@ -31,9 +36,8 @@
   {
    "fetch_from": "employee.department",
    "fieldname": "department",
-   "fieldtype": "Link",
+   "fieldtype": "Read Only",
    "label": "Department",
-   "options": "Department",
    "read_only": 1
   },
   {
@@ -60,15 +64,50 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "column_break_yukx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "leave_application.from_date",
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "leave_application.to_date",
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Request Date",
+   "permlevel": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 15:56:35.323082",
+ "modified": "2025-05-05 11:59:32.460164",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Cancel Leave Application",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -84,14 +123,29 @@
    "write": 1
   },
   {
+   "amend": 1,
    "create": 1,
+   "delete": 1,
    "email": 1,
+   "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Employee",
+   "select": 1,
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "select": 1,
+   "share": 1
   },
   {
    "amend": 1,
@@ -104,9 +158,20 @@
    "read": 1,
    "report": 1,
    "role": "HR Manager",
-   "set_user_permissions": 1,
    "share": 1,
    "submit": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
    "write": 1
   },
   {
@@ -119,13 +184,25 @@
    "read": 1,
    "report": 1,
    "role": "HR User",
-   "set_user_permissions": 1,
    "share": 1,
    "submit": 1,
    "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }

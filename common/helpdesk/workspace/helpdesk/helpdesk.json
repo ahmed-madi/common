@@ -1,0 +1,197 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"drCEiV2BPz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Help Desk</span>\",\"col\":12}},{\"id\":\"X7bI0bOEMN\",\"type\":\"card\",\"data\":{\"card_name\":\"Master\",\"col\":4}},{\"id\":\"55etebHNAj\",\"type\":\"card\",\"data\":{\"card_name\":\"Requests\",\"col\":4}},{\"id\":\"KlN8GzJjal\",\"type\":\"card\",\"data\":{\"card_name\":\"Maintenance Requests\",\"col\":4}}]",
+ "creation": "2025-04-16 12:24:54.624942",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "support",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "HelpDesk",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Master",
+   "link_count": 5,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Device Request Type",
+   "link_count": 0,
+   "link_to": "Device Request Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Server Request Type",
+   "link_count": 0,
+   "link_to": "Server Request Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "IT Maintenance Problem",
+   "link_count": 0,
+   "link_to": "IT Maintenance Problem",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Security Maintenance Problem",
+   "link_count": 0,
+   "link_to": "Security Maintenance Problem",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stationary Request Type",
+   "link_count": 0,
+   "link_to": "Stationary Request Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Maintenance Requests",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Facility Maintenance Support",
+   "link_count": 0,
+   "link_to": "Facility Maintenance Support",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "IT Maintenance Support Request",
+   "link_count": 0,
+   "link_to": "IT Maintenance Support Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Security Maintenance Support",
+   "link_count": 0,
+   "link_to": "Security Maintenance Support",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Requests",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Business Card Request",
+   "link_count": 0,
+   "link_to": "Business Card Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Device Request",
+   "link_count": 0,
+   "link_to": "Device Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Email Request",
+   "link_count": 0,
+   "link_to": "Email Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Server Request",
+   "link_count": 0,
+   "link_to": "Server Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Software License Request",
+   "link_count": 0,
+   "link_to": "Software License Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Stationary Request",
+   "link_count": 0,
+   "link_to": "Stationary Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-05-09 11:49:35.697056",
+ "modified_by": "Administrator",
+ "module": "Helpdesk",
+ "name": "HelpDesk",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Staff Portal",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 11.0,
+ "shortcuts": [],
+ "title": "HelpDesk"
+}
