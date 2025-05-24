@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "attendance_tab",
+  "company",
   "working_days",
   "column_break_hxhn",
   "leaves_tab",
@@ -27,7 +28,10 @@
   "include_travel_in_sidl",
   "include_other_in_sidl",
   "salary_component_categories",
-  "column_break_nutw"
+  "column_break_nutw",
+  "max_education_allowance",
+  "expense_claim_type",
+  "expense_claim_account"
  ],
  "fields": [
   {
@@ -177,13 +181,42 @@
    "fieldname": "include_other_in_sidl",
    "fieldtype": "Check",
    "label": "Include Other Allowances in Salary Identification Letter"
+  },
+  {
+   "default": "0",
+   "description": "Max Education Allowance for each employee per year",
+   "fieldname": "max_education_allowance",
+   "fieldtype": "Currency",
+   "label": "Max Education Allowance"
+  },
+  {
+   "description": "Expense Claim Type for Education Allowance",
+   "fieldname": "expense_claim_type",
+   "fieldtype": "Link",
+   "label": "Expense Claim Type",
+   "options": "Expense Claim Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expense_claim_account",
+   "fieldtype": "Link",
+   "label": "Expense Claim Payment Account",
+   "options": "Account",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-10 12:53:23.511885",
+ "modified": "2025-05-19 10:23:42.838089",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
