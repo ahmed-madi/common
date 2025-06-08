@@ -11,28 +11,37 @@
   "column_break_hxhn",
   "leaves_tab",
   "annual_leave_type",
+  "column_break_ceka",
   "max_wfh_days",
-  "column_break_bbmd",
+  "cancel_leave_section",
   "cancel_allowed_before",
+  "column_break_okgy",
   "return_unused_days",
+  "section_break_nfby",
   "validate_early_exit",
   "early_exit_shift_type",
   "early_exit_max_hours_per_day",
   "early_exit_total_hours_allowed",
   "self_sevices_tab",
+  "salary_fixation_section",
   "restrict_backdated_sfx",
+  "column_break_vruq",
   "sfx_w_roles",
+  "salary_identification_letter_section",
   "include_basic_in_sidl",
   "include_housing_in_sidl",
   "include_transportation_in_sidl",
   "include_travel_in_sidl",
   "include_other_in_sidl",
+  "column_break_kaeu",
   "salary_component_categories",
-  "column_break_nutw",
-  "max_education_allowance",
+  "expense_claim_section",
   "expense_claim_type",
+  "column_break_nutw",
   "expense_claim_account",
-  "training_allowed_before"
+  "training_allowed_before",
+  "section_break_adry",
+  "max_education_allowance"
  ],
  "fields": [
   {
@@ -63,10 +72,6 @@
    "fieldname": "leaves_tab",
    "fieldtype": "Tab Break",
    "label": "Leaves"
-  },
-  {
-   "fieldname": "column_break_bbmd",
-   "fieldtype": "Column Break"
   },
   {
    "description": "Number of days allowed to cancel a leave request before the leave start date",
@@ -126,7 +131,7 @@
   {
    "fieldname": "self_sevices_tab",
    "fieldtype": "Tab Break",
-   "label": "HR Request & Self-Services"
+   "label": "HR Request"
   },
   {
    "depends_on": "restrict_backdated_sfx",
@@ -157,31 +162,31 @@
    "default": "0",
    "fieldname": "include_basic_in_sidl",
    "fieldtype": "Check",
-   "label": "Include Basic Salary in Salary Identification Letter"
+   "label": "Include Basic Salary"
   },
   {
    "default": "0",
    "fieldname": "include_housing_in_sidl",
    "fieldtype": "Check",
-   "label": "Include Housing Allowance in Salary Identification Letter"
+   "label": "Include Housing Allowance "
   },
   {
    "default": "0",
    "fieldname": "include_transportation_in_sidl",
    "fieldtype": "Check",
-   "label": "Include Transportation Allowance in Salary Identification Letter"
+   "label": "Include Transportation Allowance"
   },
   {
    "default": "0",
    "fieldname": "include_travel_in_sidl",
    "fieldtype": "Check",
-   "label": "Include Travel Allowance in Salary Identification Letter"
+   "label": "Include Travel Allowance"
   },
   {
    "default": "0",
    "fieldname": "include_other_in_sidl",
    "fieldtype": "Check",
-   "label": "Include Other Allowances in Salary Identification Letter"
+   "label": "Include Other Allowances"
   },
   {
    "default": "0",
@@ -217,13 +222,58 @@
    "fieldname": "training_allowed_before",
    "fieldtype": "Int",
    "label": "Apply Training Request Before (Days)"
+  },
+  {
+   "fieldname": "salary_fixation_section",
+   "fieldtype": "Section Break",
+   "label": "Salary Fixation"
+  },
+  {
+   "fieldname": "column_break_vruq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "salary_identification_letter_section",
+   "fieldtype": "Section Break",
+   "label": "Salary Identification Letter"
+  },
+  {
+   "fieldname": "column_break_kaeu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expense_claim_section",
+   "fieldtype": "Section Break",
+   "label": "Expense Claim"
+  },
+  {
+   "fieldname": "section_break_adry",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cancel_leave_section",
+   "fieldtype": "Section Break",
+   "label": "Cancel leave"
+  },
+  {
+   "fieldname": "column_break_okgy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_nfby",
+   "fieldtype": "Section Break",
+   "label": "Early Leave"
+  },
+  {
+   "fieldname": "column_break_ceka",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-24 10:04:45.228992",
+ "modified": "2025-06-05 15:21:37.873079",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
