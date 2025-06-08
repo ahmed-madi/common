@@ -1,11 +1,10 @@
 from common.api.utils.endpoints import document_list, create_doc, read_doc, update_doc ,delete_doc
 
-LIST_FIELDS = ["applicant", "applicant_name", "posting_date", "loan_product"]
+LIST_FIELDS = ["name", "applicant", "applicant_name", "posting_date", "loan_product", "status", "docstatus"]
 FORM_FIELDS = LIST_FIELDS + ["is_term_loan", "loan_purpose", "attachment", "repayment_method", "repayment_amount", "repayment_periods"]
 
 def loan_list():
     doctype = "Loan Application"
-    fields = ["*"]
     return document_list(doctype, fields=LIST_FIELDS)
 
 def create_loan():
