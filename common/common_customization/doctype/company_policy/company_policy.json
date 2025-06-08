@@ -41,7 +41,9 @@
   "expense_claim_account",
   "training_allowed_before",
   "section_break_adry",
-  "max_education_allowance"
+  "max_education_allowance",
+  "employee_loan_section",
+  "employee_loan_policies"
  ],
  "fields": [
   {
@@ -248,7 +250,8 @@
   },
   {
    "fieldname": "section_break_adry",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Education Allowance"
   },
   {
    "fieldname": "cancel_leave_section",
@@ -267,13 +270,25 @@
   {
    "fieldname": "column_break_ceka",
    "fieldtype": "Column Break"
+  },
+  {
+   "description": "Policies in top of table have higher priority when checking loan amount.",
+   "fieldname": "employee_loan_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Loan"
+  },
+  {
+   "fieldname": "employee_loan_policies",
+   "fieldtype": "Table",
+   "label": "Employee Loan Policies",
+   "options": "Employee Loan Policy"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-05 15:21:37.873079",
+ "modified": "2025-06-08 14:28:04.975659",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",

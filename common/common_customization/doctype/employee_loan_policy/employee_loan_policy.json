@@ -1,0 +1,62 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-06-08 14:06:29.005459",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "policy_based_on",
+  "criteria",
+  "limits_type",
+  "loan_limits"
+ ],
+ "fields": [
+  {
+   "fieldname": "policy_based_on",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Policy Based On",
+   "options": "\nEmployee Grade\nDesignation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "loan_limits",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Loan Limits",
+   "reqd": 1
+  },
+  {
+   "fieldname": "criteria",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Loan Employee Criteria",
+   "options": "policy_based_on",
+   "reqd": 1
+  },
+  {
+   "description": "A percentage of the employee\u2019s salary or fixed amount",
+   "fieldname": "limits_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Loan Limits Type",
+   "options": "\nPercentage\nFixed Amount",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-06-08 14:33:49.632323",
+ "modified_by": "Administrator",
+ "module": "Common Customization",
+ "name": "Employee Loan Policy",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
