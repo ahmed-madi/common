@@ -7,6 +7,7 @@ from common.api.routes.common.fiscal_year import fiscal_year_rules
 from common.api.routes.common.holiday_list import holiday_list_rules
 from common.api.routes.common.language import language_rules
 from common.api.routes.common.leave_type import leave_type_rules
+from common.api.routes.common.loan_product import loan_product_rules
 from common.api.routes.common.salary_component import salary_component_rules
 from common.api.routes.common.salary_fixation_reason import salary_fixation_reason_rules
 from common.api.routes.common.system_access_level import system_access_level_rules
@@ -20,6 +21,7 @@ from common.api.routes.helpdesk.ticket import ticket_rules
 # HR Requests
 from common.api.routes.hr_requests.access_system import access_system_rules
 from common.api.routes.hr_requests.education_allowance import education_allowance_rules
+from common.api.routes.hr_requests.loan import loan_rules
 from common.api.routes.hr_requests.change_iban import change_iban_rules
 from common.api.routes.hr_requests.clearance_letter import clearance_letter_rules
 from common.api.routes.hr_requests.club_request import club_request_rules
@@ -52,6 +54,7 @@ url_rules += fiscal_year_rules
 url_rules += holiday_list_rules
 url_rules += language_rules
 url_rules += leave_type_rules
+url_rules += loan_product_rules
 url_rules += salary_component_rules
 url_rules += salary_fixation_reason_rules
 url_rules += system_access_level_rules
@@ -65,6 +68,7 @@ url_rules += ticket_rules
 # HR Requests
 url_rules += access_system_rules
 url_rules += education_allowance_rules
+url_rules += loan_rules
 url_rules += change_iban_rules
 url_rules += clearance_letter_rules
 url_rules += club_request_rules
