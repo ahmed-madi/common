@@ -3,6 +3,7 @@ from frappe.utils import cint
 
 from common.api.utils import (
     get_request_form_data,
+    format_data,
     upload_file,
     delete_duplicated_or_after_error,
 )
@@ -126,6 +127,7 @@ def create_doc(doctype: str, default_data={}):
         data = get_request_form_data()
         if not isinstance(data, bytes):
             data.pop("doctype", None)
+            data = format_data(data, doctype)
             doc = frappe.new_doc(doctype, **data)
         else:
             doc = frappe.new_doc(doctype)
@@ -142,6 +144,7 @@ def create_doc(doctype: str, default_data={}):
         delete_duplicated_or_after_error(uploaded_files)
         return build_success_response(201, f"{doctype} created", doc)
     except Exception as exc:
+        print(frappe.get_traceback())
         return handle_exception_response(
             doc, doctype, exc, uploaded_files=uploaded_files
         )
@@ -228,6 +231,7 @@ def update_doc(doctype: str, name: str, default_data={}):
         if not isinstance(data, bytes):
             if "flags" in data:
                 del data["flags"]
+            data = format_data(data, doctype)
             doc.update(data)
         uploaded_files = handle_files(doc)
         for file in uploaded_files:
