@@ -43,7 +43,9 @@
   "section_break_adry",
   "max_education_allowance",
   "employee_loan_section",
-  "employee_loan_policies"
+  "employee_loan_policies",
+  "employee_resignation_section",
+  "resignation_notice_days"
  ],
  "fields": [
   {
@@ -282,13 +284,25 @@
    "fieldtype": "Table",
    "label": "Employee Loan Policies",
    "options": "Employee Loan Policy"
+  },
+  {
+   "fieldname": "employee_resignation_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Resignation"
+  },
+  {
+   "default": "0",
+   "fieldname": "resignation_notice_days",
+   "fieldtype": "Int",
+   "label": "Resignation Notice Days",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-08 14:28:04.975659",
+ "modified": "2025-06-12 11:22:28.211438",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
