@@ -11,6 +11,10 @@
   "employee_name",
   "employee_department",
   "amended_from",
+  "column_break_utyt",
+  "request_date",
+  "management_area",
+  "content_section",
   "subject",
   "message",
   "attachment"
@@ -66,13 +70,36 @@
    "fieldname": "attachment",
    "fieldtype": "Attach",
    "label": "Attachment"
+  },
+  {
+   "fieldname": "content_section",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "column_break_utyt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "management_area",
+   "fieldtype": "Link",
+   "label": "Management Area",
+   "options": "Department",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-12 12:12:04.323707",
+ "modified": "2025-06-12 12:20:28.697036",
  "modified_by": "Administrator",
  "module": "HR Support",
  "name": "Request to Management",
