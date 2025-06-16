@@ -55,15 +55,10 @@ def refresh_token(refresh_token="", user=""):
         return build_error_response(status_code=401, message="Invalid or expired refresh token", error="Invalid or expired refresh token")
     
     refresh_token_doc = frappe.get_doc("HR Auth Refresh Token", refresh_token_doc)
-    new_expire = get_access_expiration(now)
-    new_token = generate_access_token(refresh_token_doc.user, now, new_expire)
     user = frappe.get_doc("User", refresh_token_doc.user)
-    
-    doc = frappe.new_doc("HR Auth Access Token")
-    doc.user = user.name
-    doc.access_token = new_token
-    doc.expiration_time = new_expire
-    doc.save(ignore_permissions=True)
+    tokens = prepare_token(user)
+    # refresh_token_doc.status = "Revoked"
+    # refresh_token_doc.save(ignore_permissions=True)
     frappe.db.commit()
     data = frappe._dict()
     data.update({
@@ -72,7 +67,7 @@ def refresh_token(refresh_token="", user=""):
         "language": user.language,
         "full_name": user.full_name,
     })
-    data.update({"access_token": new_token})
+    data.update(tokens)
     build_success_response(status_code=200, message="New access token generated successfully", data=data)
 
 @frappe.whitelist()
