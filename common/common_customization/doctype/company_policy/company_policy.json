@@ -43,7 +43,12 @@
   "section_break_adry",
   "max_education_allowance",
   "employee_loan_section",
-  "employee_loan_policies"
+  "employee_loan_policies",
+  "employee_resignation_section",
+  "resignation_notice_days",
+  "roles_restrictions_tab",
+  "suggestions_and_complaints_section",
+  "suggestions_whitelist_role"
  ],
  "fields": [
   {
@@ -282,13 +287,42 @@
    "fieldtype": "Table",
    "label": "Employee Loan Policies",
    "options": "Employee Loan Policy"
+  },
+  {
+   "fieldname": "employee_resignation_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Resignation"
+  },
+  {
+   "default": "0",
+   "fieldname": "resignation_notice_days",
+   "fieldtype": "Int",
+   "label": "Resignation Notice Days",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "roles_restrictions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Roles & Restrictions"
+  },
+  {
+   "description": "User with this role can read suggestions and complaints.",
+   "fieldname": "suggestions_whitelist_role",
+   "fieldtype": "Link",
+   "label": "Suggestions Whitelist Role",
+   "options": "Role"
+  },
+  {
+   "fieldname": "suggestions_and_complaints_section",
+   "fieldtype": "Section Break",
+   "label": "Suggestions & Complaints"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-08 14:28:04.975659",
+ "modified": "2025-06-12 12:03:49.548660",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",

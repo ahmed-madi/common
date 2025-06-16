@@ -1,27 +1,33 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:HR-SL-ER-{YY}{MM}{DD}-{####}",
- "creation": "2025-03-13 14:59:51.480630",
+ "autoname": "format:HR-HD-RTM-{YY}{MM}{DD}-{####}",
+ "creation": "2025-06-12 12:06:16.626560",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_3g7i",
   "employee",
   "employee_name",
-  "date_of_joining",
-  "column_break_ypzs3",
-  "request_date",
-  "last_working_day",
-  "reasons_for_resignation",
-  "section_break_xgsvo",
+  "employee_department",
   "amended_from",
-  "column_break_cych",
-  "status"
+  "column_break_utyt",
+  "request_date",
+  "management_area",
+  "content_section",
+  "subject",
+  "message",
+  "attachment"
  ],
  "fields": [
   {
+   "fieldname": "section_break_3g7i",
+   "fieldtype": "Section Break"
+  },
+  {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -30,72 +36,73 @@
    "fetch_from": "employee.employee_name",
    "fieldname": "employee_name",
    "fieldtype": "Read Only",
-   "in_list_view": 1,
    "label": "Employee Name"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "employee_department",
+   "fieldtype": "Read Only",
+   "label": "Employee Department"
   },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Employee Resignation",
+   "options": "Request to Management",
    "print_hide": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
-   "fieldname": "column_break_ypzs3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "reasons_for_resignation",
+   "fieldname": "subject",
    "fieldtype": "Small Text",
-   "label": "Reasons for Resignation",
+   "label": "Subject",
    "reqd": 1
   },
   {
-   "fetch_from": "employee.date_of_joining",
-   "fieldname": "date_of_joining",
-   "fieldtype": "Read Only",
-   "label": "Date of Joining"
+   "fieldname": "message",
+   "fieldtype": "Text",
+   "label": "Message",
+   "reqd": 1
   },
   {
-   "fieldname": "section_break_xgsvo",
-   "fieldtype": "Section Break"
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "content_section",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "column_break_utyt",
+   "fieldtype": "Column Break"
   },
   {
    "default": "Today",
    "fieldname": "request_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Request Date",
    "reqd": 1
   },
   {
-   "fieldname": "last_working_day",
-   "fieldtype": "Date",
-   "label": "Last Working Day",
+   "fieldname": "management_area",
+   "fieldtype": "Link",
+   "label": "Management Area",
+   "options": "Department",
    "reqd": 1
-  },
-  {
-   "default": "Open",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "\nOpen\nApproved\nRejected\nCancelled",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_cych",
-   "fieldtype": "Column Break"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-12 11:21:07.682043",
+ "modified": "2025-06-12 12:20:28.697036",
  "modified_by": "Administrator",
- "module": "Common Customization",
- "name": "Employee Resignation",
+ "module": "HR Support",
+ "name": "Request to Management",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
@@ -108,12 +115,13 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "select": 1,
    "share": 1,
    "submit": 1,
    "write": 1
   },
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "email": 1,
    "export": 1,
@@ -124,6 +132,7 @@
    "role": "Employee",
    "select": 1,
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
@@ -135,7 +144,6 @@
    "read": 1,
    "report": 1,
    "role": "HR Manager",
-   "select": 1,
    "share": 1,
    "submit": 1,
    "write": 1
@@ -148,24 +156,8 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Specialist",
-   "select": 1,
+   "role": "HR User",
    "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Direct Manager",
-   "select": 1,
-   "share": 1,
-   "submit": 1,
    "write": 1
   }
  ],

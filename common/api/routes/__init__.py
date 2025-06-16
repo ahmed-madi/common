@@ -15,11 +15,13 @@ from common.api.routes.common.work_type import work_type_rules
 
 # HelpDesk Requests
 from common.api.routes.helpdesk.issue import ticket_issue_rules
+from common.api.routes.helpdesk.request_to_management import request_to_management_rules
 from common.api.routes.helpdesk.ticket_comment import ticket_comment_rules
 from common.api.routes.helpdesk.ticket import ticket_rules
 
 # HR Requests
 from common.api.routes.hr_requests.access_system import access_system_rules
+from common.api.routes.hr_requests.employee_resignation import employee_resignation_rules
 from common.api.routes.hr_requests.education_allowance import education_allowance_rules
 from common.api.routes.hr_requests.loan import loan_rules
 from common.api.routes.hr_requests.change_iban import change_iban_rules
@@ -62,11 +64,13 @@ url_rules += work_type_rules
 
 # HelpDesk Requests
 url_rules += ticket_issue_rules
+url_rules += request_to_management_rules
 url_rules += ticket_comment_rules
 url_rules += ticket_rules
 
 # HR Requests
 url_rules += access_system_rules
+url_rules += employee_resignation_rules
 url_rules += education_allowance_rules
 url_rules += loan_rules
 url_rules += change_iban_rules

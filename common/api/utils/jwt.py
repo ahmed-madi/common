@@ -15,7 +15,7 @@ def generate_access_token(user_id, now, exp):
     payload = {
         "user_id": user_id,
         "exp": exp,
-        # "iat": now
+        "iat": f"{now}",
     }
     return jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
 
