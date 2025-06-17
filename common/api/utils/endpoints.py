@@ -144,7 +144,6 @@ def create_doc(doctype: str, default_data={}):
         delete_duplicated_or_after_error(uploaded_files)
         return build_success_response(201, f"{doctype} created", doc)
     except Exception as exc:
-        print(frappe.get_traceback())
         return handle_exception_response(
             doc, doctype, exc, uploaded_files=uploaded_files
         )
@@ -249,7 +248,6 @@ def update_doc(doctype: str, name: str, default_data={}):
             frappe.get_doc(doc.parenttype, doc.parent).save()
         return build_success_response(200, f"{doctype} updated", doc)
     except Exception as exc:
-        print(frappe.get_traceback())
         return handle_exception_response(
             doc, doctype, exc, uploaded_files=uploaded_files, for_update=True
         )
@@ -261,16 +259,8 @@ def delete_doc(doctype: str, name: str):
         # frappe.response.http_status_code = 202
         return build_success_response(202, f"{doctype} deleted", doc)
     except Exception as exc:
-        print(frappe.get_traceback())
         return handle_exception_response(
             None, doctype, exc, uploaded_files=[], for_delete=True
-        )
-        http_status_code = 500
-        message = f"{exc}"
-        if hasattr(exc, "http_status_code"):
-            http_status_code = exc.http_status_code
-        return build_error_response(
-            http_status_code, f"failed to delete {doctype}", message
         )
 
 
