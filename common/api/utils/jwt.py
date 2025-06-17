@@ -1,5 +1,4 @@
 import jwt
-import datetime
 import secrets
 import frappe
 from frappe.utils import time_diff_in_seconds, now_datetime, add_to_date
@@ -12,10 +11,11 @@ JWT_REFRESH_EXP_DELTA_SECONDS = 3600 * 24 * 7  # Token expires in 7 days
 
 
 def generate_access_token(user_id, now, exp):
+    now = now.timestamp() + JWT_EXP_DELTA_SECONDS
     payload = {
         "user_id": user_id,
         "exp": exp,
-        "iat": f"{now}",
+        "timestamp": now,
     }
     return jwt.encode(payload, JWT_SECRET_KEY, JWT_ALGORITHM)
 

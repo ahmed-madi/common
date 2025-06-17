@@ -1,7 +1,7 @@
 import frappe
 from frappe.auth import LoginManager
 import frappe.utils
-from common.api.utils.jwt import prepare_token, get_access_expiration, generate_access_token
+from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 from common.api.utils import get_token_from_header
 from common.utils.hr import get_employee_from_user
