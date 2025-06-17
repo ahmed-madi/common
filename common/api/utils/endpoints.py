@@ -105,6 +105,7 @@ def document_list(doctype: str, fields: list | str, force_fields=False, user_fil
         )
         return build_success_response(200, f"{doctype} fetched", response_data)
     except Exception as exc:
+        print(frappe.get_traceback())
         http_status_code = 500
         message = exc
         if hasattr(exc, "http_status_code"):
@@ -182,8 +183,8 @@ def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=Fal
         doc.apply_fieldlevel_read_permissions()
         extra_data = load_extra_data(doc.doctype, doc.name)
 
+        user_fields = origin_fields
         if not force_fields:
-            user_fields = origin_fields
             if "fields" in frappe.request.args:
                 _fields = frappe.request.args["fields"]
                 if isinstance(_fields, list):
@@ -196,13 +197,13 @@ def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=Fal
 
             if "*" in user_fields:
                 user_fields = []
-            if len(user_fields) > 0:
-                doc = doc.as_dict()
-                result = frappe._dict()
-                for field in user_fields:
-                    if hasattr(doc, field):
-                        result.update({field: getattr(doc, field)})
-                doc = result
+        if len(user_fields) > 0:
+            doc = doc.as_dict()
+            result = frappe._dict()
+            for field in user_fields:
+                if hasattr(doc, field):
+                    result.update({field: getattr(doc, field)})
+            doc = result
         
         return build_success_response(200, f"{doctype} fetched", doc, extra_data)
     except Exception as exc:
