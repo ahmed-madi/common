@@ -111,7 +111,7 @@ def user_info():
         "roles": frappe.get_roles(frappe.session.user)
     })
     data.update(employee)
-    build_success_response(status_code=201, message="User Info", data=data)
+    build_success_response(status_code=200, message="User Info", data=data)
 
 @frappe.whitelist()
 def employee_info(employeeId=""):
@@ -127,4 +127,4 @@ def employee_info(employeeId=""):
 
     data = frappe._dict()
     data.update(employee.as_dict())
-    build_success_response(status_code=201, message="Employee {} Details".format(employee.name), data=data)
+    build_success_response(status_code=200, message="Employee {} Details".format(employee.name), data=data)
