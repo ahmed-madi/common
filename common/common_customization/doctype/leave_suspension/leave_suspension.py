@@ -43,7 +43,7 @@ class LeaveSuspension(Document):
 			filters={"leave_application": self.leave_application, "employee": self.employee, "docstatus": ["!=", 2], "name": ["!=", self.name]}
 		)
 		if len(prev) > 0:
-			frappe.throw(_("Employee has suspension detected {0}").format(get_link_to_form("Leave Suspension", prev[0].name)), frappe.UniqueValidationError)
+			frappe.throw(_("A duplicated suspension record has been found for the employee: {0}.").format(get_link_to_form("Leave Suspension", prev[0].name)), frappe.UniqueValidationError)
 	
 	def on_submit(self):
 		if self.status in ["Open", "Cancelled"]:
