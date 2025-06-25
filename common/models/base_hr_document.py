@@ -1,7 +1,8 @@
 import frappe
 from frappe import _
-from frappe.utils import getdate, get_link_to_form
+from frappe.utils import getdate, get_link_to_form, cstr, strip_html
 from frappe.model.document import Document
+from frappe.model import table_fields
 
 from hrms.hr.utils import validate_active_employee
 
@@ -59,4 +60,36 @@ class BaseHRDocument(Document):
         if hasattr(super(), 'before_cancel'):
             super().before_cancel()
         self.status = "Cancelled"
+
+    def get_msg(self, df):
+        if df.fieldtype in table_fields:
+            return "{}: {}: {}".format(
+                _("Error"), _("Data missing in table"), _(df.label, context=df.parent)
+            )
+
+        # check if parentfield exists (only applicable for child table doctype)
+        elif self.get("parentfield"):
+            return "{}: {} {} #{}: {}: {}".format(
+                _("Error"),
+                frappe.bold(_(self.doctype)),
+                _("Row"),
+                self.idx,
+                _("Value missing for"),
+                _(df.label, context=df.parent),
+            )
+
+        return _("Error: Value missing for {0}: {1}").format(_(df.parent), _(df.label, context=df.parent))
+
+    def has_content(self, df):
+        value = cstr(self.get(df.fieldname))
+        has_text_content = strip_html(value).strip()
+        has_img_tag = "<img" in value
+        has_text_or_img_tag = has_text_content or has_img_tag
+
+        if df.fieldtype == "Text Editor" and has_text_or_img_tag:
+            return True
+        elif df.fieldtype == "Code" and df.options == "HTML" and has_text_or_img_tag:
+            return True
+        else:
+            return has_text_content
     
