@@ -22,5 +22,4 @@ class SalaryFixation(BaseHRDocument):
 
         iban = salary_mode_details[0].get("iban")
         if not iban:
-            frappe.throw(_("Selected {} must have a valid IBAN").format(get_link_to_form("Employee", self.employee, _("Employee"))))
-        
+            frappe.throw(_("Selected Employee {} must have a valid IBAN").format(get_link_to_form("Employee", self.employee, _("Employee"))))
