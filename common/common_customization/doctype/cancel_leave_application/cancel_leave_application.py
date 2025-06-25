@@ -23,10 +23,11 @@ class CancelLeaveApplication(Document):
 			frappe.throw(_("Only approved applications can be canceled"), frappe.InvalidStatusError)
 		
 		if date_diff(leave.from_date, nowdate()) < 1:
-			frappe.throw(_("Unable to cancel application currently in progress"), frappe.InvalidStatusError)
+			frappe.throw(_("Cancellation is not possible as the application has either already ended or is currently in progress"), frappe.InvalidStatusError)
+
 		cancel_allowed_before = cint(frappe.db.get_single_value("Company Policy", "cancel_allowed_before"))
 		if cancel_allowed_before > 0 and date_diff(leave.from_date, self.request_date) < cancel_allowed_before:
-			frappe.throw(_("Cancel application must be before {} days from start").format(cancel_allowed_before), frappe.InvalidStatusError)
+			frappe.throw(_("Cancellation of the application is only allowed if done {} days before the start").format(cancel_allowed_before), frappe.InvalidStatusError)
 	
 	def validate_previous_records(self):
 		prev =  frappe.get_all(
