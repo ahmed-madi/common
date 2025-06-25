@@ -2,38 +2,29 @@
 # For license information, please see license.txt
 import frappe
 from frappe import _
-from frappe.model.document import Document
 from frappe.utils import (
     date_diff,
     flt,
     cint,
-    get_year_start,
-    add_months,
-    add_days,
-    nowdate,
     getdate,
     formatdate,
     get_link_to_form,
 )
-from hrms.hr.utils import validate_active_employee, get_holiday_dates_for_employee
+from hrms.hr.utils import get_holiday_dates_for_employee
 from erpnext.buying.doctype.supplier_scorecard.supplier_scorecard import daterange
-
+from common.models.base_hr_document import BaseHRDocument
 class OverlapError(frappe.ValidationError):
     pass
 
-class WorkFromHomeRequest(Document):
+class WorkFromHomeRequest(BaseHRDocument):
     def validate(self):
-        validate_active_employee(self.employee)
         self.validate_dates()
         self.validate_leave_overlap()
         self.validate_total_requests(self.name, self.from_date, self.employee, self.total_days)
 
     def validate_dates(self):
-        # if getdate(self.from_date) < getdate(nowdate()):
-        #     frappe.throw(_("From date can't be in the past"))
-
         if self.from_date and self.to_date and date_diff(self.to_date, self.from_date) < 0:
-            frappe.throw(_("To date cannot be before from date"))
+            frappe.throw(_("To date can not be before from date"))
 
     @frappe.whitelist()
     def validate_total_requests(self, name, from_date, employee, total_days, xclient=False):
@@ -70,12 +61,8 @@ class WorkFromHomeRequest(Document):
             self.total_days = 0
 
     def on_submit(self):
-        if self.status in ["Open", "Cancelled"]:
-            frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
-
         if self.status != "Approved":
             return
-        
         self.update_attendance()
 
     def update_attendance(self):
@@ -172,9 +159,6 @@ class WorkFromHomeRequest(Document):
         )
         frappe.throw(msg, OverlapError)
 
-    def before_cancel(self):
-        self.status = "Cancelled"
-    
     def on_cancel(self):
         if hasattr(super(), 'on_cancel'):
             super().on_cancel()
