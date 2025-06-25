@@ -22,6 +22,8 @@
   "early_exit_shift_type",
   "early_exit_max_hours_per_day",
   "early_exit_total_hours_allowed",
+  "column_break_vpct",
+  "do_not_permit_early_leave",
   "self_sevices_tab",
   "salary_fixation_section",
   "restrict_backdated_sfx",
@@ -316,13 +318,24 @@
    "fieldname": "suggestions_and_complaints_section",
    "fieldtype": "Section Break",
    "label": "Suggestions & Complaints"
+  },
+  {
+   "fieldname": "column_break_vpct",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "If the employee is not assigned to a shift.",
+   "fieldname": "do_not_permit_early_leave",
+   "fieldtype": "Check",
+   "label": "Do not permit early leave"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-12 12:03:49.548660",
+ "modified": "2025-06-25 15:32:11.022344",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
