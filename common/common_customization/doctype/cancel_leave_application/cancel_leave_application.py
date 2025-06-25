@@ -4,13 +4,12 @@
 import frappe
 from frappe import _, bold
 from frappe.utils import nowdate, date_diff, get_link_to_form, cint
-from frappe.model.document import Document
 
-from hrms.hr.utils import validate_active_employee
+from common.models.base_hr_document import BaseHRDocument
 
-class CancelLeaveApplication(Document):
+class CancelLeaveApplication(BaseHRDocument):
 	def validate(self):
-		validate_active_employee(self.employee)
+		super().validate()
 		self.validate_leave_application()
 		self.validate_previous_records()
 
@@ -38,14 +37,8 @@ class CancelLeaveApplication(Document):
 			frappe.throw(_("A duplicated cancellation record has been found for the employee: {0}.").format(get_link_to_form("Cancel Leave Application", prev[0].name)), frappe.UniqueValidationError)
 	
 	def on_submit(self):
-		if self.status in ["Open", "Cancelled"]:
-			frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
 		if self.status != "Approved":
 			return
 		leave = frappe.get_doc("Leave Application", self.leave_application)
 		leave.cancel()
 		leave.add_comment(text="Cancelled by employee in {}".format(get_link_to_form("Cancel Leave Application", self.name, "Application")))
-	
-	def before_cancel(self):
-		self.status = "Cancelled"
-
