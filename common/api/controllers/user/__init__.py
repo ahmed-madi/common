@@ -1,6 +1,6 @@
 import frappe
 from frappe.auth import LoginManager
-import frappe.utils
+from frappe.utils import now_datetime
 from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 from common.api.utils import get_token_from_header
@@ -45,7 +45,7 @@ def refresh_token(refresh_token="", user=""):
     user = frappe.db.exists("User", user)
     if not user:
         return build_error_response(status_code=401, message="Invalid or expired refresh token", error="Invalid or expired refresh token")
-    now = frappe.utils.now_datetime()
+    now = now_datetime()
     refresh_token_doc = frappe.db.get_value(
         "HR Auth Refresh Token",
         {"refresh_token": refresh_token, "user": user, "status": 'Active', "expiration_time": (">", now)},
@@ -117,12 +117,12 @@ def user_info():
 def employee_info(employeeId=""):
     employee = frappe.db.exists("Employee", employeeId)
     if not employee:
-        build_error_response(404, "Employee Not found", "The requested employee could not be found ID")
+        build_error_response(404, "Employee Not found", "The requested employee could not be found")
         return
 
     employee = frappe.get_doc("Employee", employee)
     if not frappe.has_permission("Employee", "read", employee, frappe.session.user, False):
-        build_error_response(404, "Access denied: Insufficient privileges to view this information", "You do not have permission to access employee details")
+        build_error_response(403, "Access denied: Insufficient privileges to view this information", "You do not have permission to access employee details")
         return
 
     data = frappe._dict()
