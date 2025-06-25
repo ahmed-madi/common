@@ -11,7 +11,7 @@ from frappe.utils import (
 	get_url_to_list,
 	get_link_to_form,
 )
-from hrms.hr.utils import validate_active_employee, get_leave_period
+from hrms.hr.utils import get_leave_period
 from common.models.base_hr_document import BaseHRDocument
 
 class LeaveSuspension(BaseHRDocument):
