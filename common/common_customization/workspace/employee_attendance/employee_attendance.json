@@ -18,7 +18,7 @@
  "is_hidden": 0,
  "label": "Employee Attendance",
  "links": [],
- "modified": "2025-05-09 11:49:35.554119",
+ "modified": "2025-06-26 09:40:51.233052",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Attendance",
@@ -44,7 +44,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 10.0,
+ "sequence_id": 11.0,
  "shortcuts": [
   {
    "color": "Grey",

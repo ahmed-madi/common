@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "HR Support",
  "links": [],
- "modified": "2025-05-24 15:50:12.543283",
+ "modified": "2025-06-26 09:40:51.127045",
  "modified_by": "Administrator",
  "module": "HR Support",
  "name": "HR Support",
@@ -39,7 +39,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 39.0,
+ "sequence_id": 9.0,
  "shortcuts": [
   {
    "color": "Grey",
