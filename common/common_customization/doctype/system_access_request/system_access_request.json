@@ -20,6 +20,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -39,6 +40,8 @@
    "default": "Today",
    "fieldname": "request_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Request Date",
    "reqd": 1
   },
@@ -83,6 +86,8 @@
   {
    "fieldname": "system_access_level",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "System Access Level",
    "options": "System Access Level",
    "reqd": 1
@@ -91,7 +96,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-11 13:55:33.522569",
+ "modified": "2025-06-26 08:35:21.334962",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "System Access Request",
@@ -132,7 +137,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct manager",
+   "role": "Direct Manager",
    "share": 1,
    "submit": 1,
    "write": 1
@@ -156,5 +161,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }
