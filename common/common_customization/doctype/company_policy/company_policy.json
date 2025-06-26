@@ -44,6 +44,8 @@
   "training_allowed_before",
   "section_break_adry",
   "max_education_allowance",
+  "column_break_oauy",
+  "education_allowance_whitelist",
   "employee_loan_section",
   "employee_loan_policies",
   "employee_resignation_section",
@@ -329,13 +331,25 @@
    "fieldname": "do_not_permit_early_leave",
    "fieldtype": "Check",
    "label": "Do not permit early leave"
+  },
+  {
+   "fieldname": "column_break_oauy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Users with the appropriate role will be permitted to submit an Education Allowance Request if the requested amount exceeds the maximum allowed limit",
+   "fieldname": "education_allowance_whitelist",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Whitelist Role",
+   "options": "Role"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-25 15:32:11.022344",
+ "modified": "2025-06-26 08:58:14.352238",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
