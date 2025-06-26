@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import nowdate, flt, get_link_to_form, get_year_start, get_year_ending, getdate
+from frappe.utils import nowdate, flt, get_link_to_form
 
 from erpnext import get_default_cost_center
 
@@ -48,10 +48,11 @@ class EducationAllowanceRequest(BaseHRDocument):
         if not sum:
             return
         sum = flt(sum[0][0])
+        sum += flt(self.amount_requested)
         if max_education_allowance > 0 and sum > max_education_allowance:
             frappe.throw(
-                _("You have exceeded the maximum allowed education allowance for year {}, maximum allowed amount {}").format(
-                    self.academic_year, max_education_allowance,
+                _("You have exceeded the maximum allowed allowance for year {} {} Maximum allowed amount {} and Total requested amount {}").format(
+                    self.academic_year, '<br>', max_education_allowance, sum,
                 )
             )
 
