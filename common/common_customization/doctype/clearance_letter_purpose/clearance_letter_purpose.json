@@ -17,7 +17,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-24 16:16:49.605486",
+ "modified": "2025-06-26 09:25:55.006557",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Clearance Letter Purpose",
@@ -71,6 +71,7 @@
    "share": 1
   }
  ],
+ "quick_entry": 1,
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
