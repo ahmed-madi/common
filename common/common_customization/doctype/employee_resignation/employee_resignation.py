@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, cint, date_diff
+from frappe.utils import cint, date_diff
 from common.models.base_hr_document import BaseHRDocument
 
 class EmployeeResignation(BaseHRDocument):
