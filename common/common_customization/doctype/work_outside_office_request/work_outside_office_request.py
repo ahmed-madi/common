@@ -3,7 +3,6 @@
 
 import frappe
 from frappe import _
-from frappe.model.document import Document
 from frappe.utils import (
     date_diff,
     flt,
@@ -16,15 +15,17 @@ from frappe.utils import (
     formatdate,
     get_link_to_form,
 )
-from hrms.hr.utils import validate_active_employee, get_holiday_dates_for_employee
+from hrms.hr.utils import get_holiday_dates_for_employee
 from erpnext.buying.doctype.supplier_scorecard.supplier_scorecard import daterange
+
+from common.models.base_hr_document import BaseHRDocument
 
 class OverlapError(frappe.ValidationError):
     pass
 
-class WorkOutsideOfficeRequest(Document):
+class WorkOutsideOfficeRequest(BaseHRDocument):
     def validate(self):
-        validate_active_employee(self.employee)
+        super().validate()
         self.validate_dates()
         self.validate_leave_overlap()
         # self.validate_total_requests(self.name, self.from_date, self.employee, self.total_days)
@@ -75,12 +76,8 @@ class WorkOutsideOfficeRequest(Document):
             self.total_days = 0
 
     def on_submit(self):
-        if self.status in ["Open", "Cancelled"]:
-            frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
-
         if self.status != "Approved":
             return
-        
         self.update_attendance()
 
     def update_attendance(self):
@@ -176,9 +173,6 @@ class WorkOutsideOfficeRequest(Document):
         )
         frappe.throw(msg, OverlapError)
 
-    def before_cancel(self):
-        self.status = "Cancelled"
-    
     def on_cancel(self):
         if hasattr(super(), 'on_cancel'):
             super().on_cancel()

@@ -16,8 +16,8 @@
   "exit_time",
   "total_exit_hours",
   "remarks",
-  "amended_from",
-  "status"
+  "status",
+  "amended_from"
  ],
  "fields": [
   {
@@ -49,7 +49,6 @@
   {
    "fieldname": "reason",
    "fieldtype": "Text",
-   "in_list_view": 1,
    "label": "Reason",
    "reqd": 1
   },
@@ -82,12 +81,14 @@
    "default": "Today",
    "fieldname": "exit_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Exit Date",
    "reqd": 1
   },
   {
    "fieldname": "exit_time",
    "fieldtype": "Time",
+   "in_list_view": 1,
    "label": "Exit Time",
    "reqd": 1
   },
@@ -117,7 +118,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-09 11:52:50.935131",
+ "modified": "2025-06-25 15:23:06.004462",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Early Leave Application",
@@ -179,5 +180,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }

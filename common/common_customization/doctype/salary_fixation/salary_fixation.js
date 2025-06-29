@@ -6,8 +6,8 @@ frappe.ui.form.on("Salary Fixation", {
         frm.set_query("employee", function(doc){
             return {
                 filters: {
-                    salary_mode: "Bank",
-                    iban: ["is", "set"],
+                    // salary_mode: "Bank",
+                    // iban: ["is", "set"],
                     status: 'Active'
                 }
             }

@@ -11,7 +11,6 @@
   "fixation_reason",
   "column_break_8bbmu",
   "effective_date",
-  "amended_from",
   "status",
   "bank_details_section",
   "salary_mode",
@@ -21,13 +20,15 @@
   "bank_ac_no",
   "section_break_yips",
   "remarks",
-  "attachment"
+  "attachment",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -64,6 +65,8 @@
    "default": "Today",
    "fieldname": "effective_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Effective Date",
    "reqd": 1
   },
@@ -96,12 +99,16 @@
    "fetch_from": "employee.salary_mode",
    "fieldname": "salary_mode",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Salary Mode"
   },
   {
    "fetch_from": "employee.iban",
    "fieldname": "employee_iban",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee IBAN"
   },
   {
@@ -113,6 +120,8 @@
    "fetch_from": "employee.bank_name",
    "fieldname": "bank_name",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Bank Name"
   },
   {
@@ -123,13 +132,15 @@
    "fetch_from": "employee.bank_ac_no",
    "fieldname": "bank_ac_no",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Bank A/C No."
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-10 10:46:36.105513",
+ "modified": "2025-06-25 16:11:28.957880",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Salary Fixation",
@@ -170,7 +181,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct manager",
+   "role": "Direct Manager",
    "share": 1,
    "submit": 1,
    "write": 1
@@ -194,5 +205,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }

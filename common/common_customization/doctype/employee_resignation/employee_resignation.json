@@ -8,6 +8,7 @@
  "field_order": [
   "employee",
   "employee_name",
+  "department",
   "date_of_joining",
   "column_break_ypzs3",
   "request_date",
@@ -22,6 +23,8 @@
   {
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -56,6 +59,7 @@
    "fetch_from": "employee.date_of_joining",
    "fieldname": "date_of_joining",
    "fieldtype": "Read Only",
+   "in_list_view": 1,
    "label": "Date of Joining"
   },
   {
@@ -67,12 +71,14 @@
    "fieldname": "request_date",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Request Date",
    "reqd": 1
   },
   {
    "fieldname": "last_working_day",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Last Working Day",
    "reqd": 1
   },
@@ -87,12 +93,19 @@
   {
    "fieldname": "column_break_cych",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Department"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-12 11:21:07.682043",
+ "modified": "2025-06-26 09:37:04.928795",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Resignation",
@@ -172,5 +185,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }

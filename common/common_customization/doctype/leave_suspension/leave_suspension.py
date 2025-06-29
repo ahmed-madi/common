@@ -11,12 +11,12 @@ from frappe.utils import (
 	get_url_to_list,
 	get_link_to_form,
 )
-from frappe.model.document import Document
+from hrms.hr.utils import get_leave_period
+from common.models.base_hr_document import BaseHRDocument
 
-from hrms.hr.utils import validate_active_employee, get_leave_period
-class LeaveSuspension(Document):
+class LeaveSuspension(BaseHRDocument):
 	def validate(self):
-		validate_active_employee(self.employee)
+		super().validate()
 		self.validate_leave_application()
 		self.validate_previous_records()
 
@@ -43,15 +43,11 @@ class LeaveSuspension(Document):
 			filters={"leave_application": self.leave_application, "employee": self.employee, "docstatus": ["!=", 2], "name": ["!=", self.name]}
 		)
 		if len(prev) > 0:
-			frappe.throw(_("Employee has suspension detected {0}").format(get_link_to_form("Leave Suspension", prev[0].name)), frappe.UniqueValidationError)
+			frappe.throw(_("A duplicated suspension record has been found for the employee: {0}.").format(get_link_to_form("Leave Suspension", prev[0].name)), frappe.UniqueValidationError)
 	
 	def on_submit(self):
-		if self.status in ["Open", "Cancelled"]:
-			frappe.throw(_("Only Leave Applications with status 'Approved' and 'Rejected' can be submitted"))
-
 		if self.status != "Approved":
 			return
-
 		return_unused_days = frappe.db.get_single_value("Company Policy", "return_unused_days") or "Return to Balance"
 		if return_unused_days == "Return to Balance":
 			self.return_leave_balance()
@@ -138,9 +134,6 @@ class LeaveSuspension(Document):
 
 	def make_leave_encashment(self):
 		pass
-	
-	def before_cancel(self):
-		self.status = "Cancelled"
 	
 	def on_cancel(self):
 		if hasattr(super(), 'on_cancel'):

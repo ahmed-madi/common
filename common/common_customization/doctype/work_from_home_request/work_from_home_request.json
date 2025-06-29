@@ -101,7 +101,6 @@
    "default": "Today",
    "fieldname": "request_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Request Date",
    "reqd": 1
   }
@@ -109,7 +108,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-07 00:41:26.047585",
+ "modified": "2025-06-25 15:55:40.167596",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Work From Home Request",
@@ -150,7 +149,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct manager",
+   "role": "Direct Manager",
    "share": 1,
    "submit": 1,
    "write": 1

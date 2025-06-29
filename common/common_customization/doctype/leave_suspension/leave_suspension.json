@@ -46,7 +46,6 @@
   {
    "fieldname": "leave_application",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Leave Application",
    "options": "Leave Application",
    "reqd": 1
@@ -130,7 +129,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-07 00:31:52.011492",
+ "modified": "2025-06-25 15:17:34.439426",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Leave Suspension",

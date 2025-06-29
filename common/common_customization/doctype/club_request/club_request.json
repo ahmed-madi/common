@@ -30,6 +30,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -104,6 +105,7 @@
   {
    "fieldname": "club_name",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Club Name",
    "options": "Club",
    "reqd": 1
@@ -123,6 +125,8 @@
    "default": "Today",
    "fieldname": "request_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Request Date",
    "reqd": 1
   },
@@ -137,6 +141,8 @@
   {
    "fieldname": "participation_role",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Participation Role"
   },
   {
@@ -156,7 +162,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-24 14:02:14.791535",
+ "modified": "2025-06-26 08:43:06.413470",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Club Request",
@@ -217,5 +223,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }

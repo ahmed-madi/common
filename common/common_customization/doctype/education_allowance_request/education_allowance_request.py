@@ -34,11 +34,25 @@ class EducationAllowanceRequest(BaseHRDocument):
     def validate_requested_amount(self):
         if flt(self.amount_requested) <= 0:
             frappe.throw(_("Requested amount can not be zero or negative number"))
+        education_allowance_whitelist = flt(frappe.db.get_single_value("Company Policy", "education_allowance_whitelist"))
+        if education_allowance_whitelist in frappe.get_roles(frappe.session.user):
+            return
+        
         max_education_allowance = flt(frappe.db.get_single_value("Company Policy", "max_education_allowance"))
-        if max_education_allowance > 0 and flt(self.amount_requested) > max_education_allowance:
+        sum = frappe.db.sql("""
+                            SELECT SUM(amount_requested)
+                            FROM `tabEducation Allowance Request`
+                            WHERE name!='{}' AND academic_year='{}' AND employee='{}'
+                                AND docstatus=1 AND status='Approved'
+                        """.format(self.name, self.academic_year, self.employee))
+        if not sum:
+            return
+        sum = flt(sum[0][0])
+        sum += flt(self.amount_requested)
+        if max_education_allowance > 0 and sum > max_education_allowance:
             frappe.throw(
-                _("You have exceeded the maximum allowed education allowance, {}").format(
-                    max_education_allowance,
+                _("You have exceeded the maximum allowed allowance for year {} {} Maximum allowed amount {} and Total requested amount {}").format(
+                    self.academic_year, '<br>', max_education_allowance, sum,
                 )
             )
 

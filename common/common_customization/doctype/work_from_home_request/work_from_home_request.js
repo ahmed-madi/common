@@ -2,6 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Work From Home Request", {
+    refresh(frm) {
+        frm.set_query("employee", (doc) => {
+            return {
+                filters: {
+                    status: "Active",
+                },
+            };
+        });
+    },
     async onload(frm) {
         frm.max_wfh_days = cint(await frappe.db.get_single_value("Company Policy", "max_wfh_days"))
     },
