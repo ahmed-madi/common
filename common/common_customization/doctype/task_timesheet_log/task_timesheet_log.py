@@ -38,6 +38,8 @@ class TaskTimesheetLog(BaseHRDocument):
         return missing
 
     def on_submit(self):
+        if self.status != "Approved":
+            return
         self.create_timehseet()
     
     def create_timehseet(self):

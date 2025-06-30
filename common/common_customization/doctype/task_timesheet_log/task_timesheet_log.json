@@ -9,6 +9,7 @@
   "task",
   "employee",
   "employee_name",
+  "status",
   "column_break_mjvd",
   "posting_date",
   "start_time",
@@ -43,6 +44,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -62,6 +64,7 @@
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Posting Date",
    "reqd": 1
   },
@@ -78,6 +81,7 @@
   {
    "fieldname": "total_hours",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Total Hours",
    "non_negative": 1
   },
@@ -101,6 +105,8 @@
   {
    "fieldname": "task",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Task",
    "options": "Task",
    "reqd": 1
@@ -118,13 +124,22 @@
    "fieldtype": "Small Text",
    "label": "Description",
    "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nApproved\nRejected\nCancelled"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-30 17:02:16.625920",
+ "modified": "2025-06-30 17:14:47.087286",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Task Timesheet Log",
@@ -153,7 +168,6 @@
    "role": "Employee",
    "select": 1,
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
