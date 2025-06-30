@@ -43,6 +43,9 @@ from common.api.routes.leave_requests.leave_suspension import leave_suspension_r
 from common.api.routes.leave_requests.leave import leave_application_rules
 from common.api.routes.leave_requests.work_from_home import work_from_home_rules
 
+# Project Management
+from common.api.routes.project_managements.task import task_rules
+
 # User Auth/Info
 from common.api.routes.user import user_rules
 
@@ -92,6 +95,9 @@ url_rules += leave_cancellation_rules
 url_rules += leave_suspension_rules
 url_rules += leave_application_rules
 url_rules += work_from_home_rules
+
+# Project Management
+url_rules += task_rules
 
 # User Auth/Info
 url_rules += user_rules
