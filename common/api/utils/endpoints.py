@@ -145,6 +145,7 @@ def create_doc(doctype: str, default_data={}):
         delete_duplicated_or_after_error(uploaded_files)
         return build_success_response(201, f"{doctype} created", doc)
     except Exception as exc:
+        print(frappe.get_traceback())
         return handle_exception_response(
             doc, doctype, exc, uploaded_files=uploaded_files
         )

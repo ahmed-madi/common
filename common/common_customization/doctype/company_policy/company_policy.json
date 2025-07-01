@@ -37,15 +37,14 @@
   "include_other_in_sidl",
   "column_break_kaeu",
   "salary_component_categories",
-  "expense_claim_section",
-  "expense_claim_type",
-  "column_break_nutw",
-  "expense_claim_account",
-  "training_allowed_before",
   "section_break_adry",
   "max_education_allowance",
-  "column_break_oauy",
   "education_allowance_whitelist",
+  "column_break_oauy",
+  "expense_claim_type",
+  "expense_claim_account",
+  "training_request_section",
+  "training_allowed_before",
   "employee_loan_section",
   "employee_loan_policies",
   "employee_resignation_section",
@@ -166,10 +165,6 @@
    "options": "HR Salary Component"
   },
   {
-   "fieldname": "column_break_nutw",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "0",
    "fieldname": "include_basic_in_sidl",
    "fieldtype": "Check",
@@ -251,11 +246,6 @@
   {
    "fieldname": "column_break_kaeu",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "expense_claim_section",
-   "fieldtype": "Section Break",
-   "label": "Expense Claim"
   },
   {
    "fieldname": "section_break_adry",
@@ -343,13 +333,18 @@
    "ignore_user_permissions": 1,
    "label": "Whitelist Role",
    "options": "Role"
+  },
+  {
+   "fieldname": "training_request_section",
+   "fieldtype": "Section Break",
+   "label": "Training Request"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-26 08:58:14.352238",
+ "modified": "2025-06-26 11:09:06.917317",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",

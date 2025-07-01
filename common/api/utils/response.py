@@ -1,4 +1,5 @@
 import frappe
+from erpnext.projects.doctype.timesheet.timesheet import OverlapError
 from common.api.utils import delete_duplicated_or_after_error
 
 
@@ -78,6 +79,8 @@ def handle_exception_response(
     if hasattr(exception, "args"):
         args = exception.args
         if len(args) > 0:
+            if isinstance(exception, OverlapError):
+                return build_error_response(http_status_code, title, args[0])
             message = args[0].split(":")[0]
             if message == "Cannot link cancelled document":
                 message = args[0]

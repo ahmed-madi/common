@@ -49,6 +49,9 @@ class BaseHRDocument(Document):
             )
     
     def validate_status(self):
+        if not hasattr(super(), 'status'):
+            return
+
         if self.docstatus == 1 and self.status in ["Open", "Cancelled"]:
             frappe.throw(_("Only Applications with status 'Approved' and 'Rejected' can be submitted"))
 
@@ -59,7 +62,9 @@ class BaseHRDocument(Document):
     def before_cancel(self):
         if hasattr(super(), 'before_cancel'):
             super().before_cancel()
-        self.status = "Cancelled"
+
+        if hasattr(super(), 'status'):
+            self.status = "Cancelled"
 
     def get_msg(self, df):
         if df.fieldtype in table_fields:
