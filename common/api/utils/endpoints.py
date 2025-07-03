@@ -14,14 +14,18 @@ from common.api.utils.response import (
 )
 
 
-def document_list(doctype: str, fields: list | str, force_fields=False, user_filters={}):
-    filters = None
+def document_list(doctype: str, fields: list | str, force_fields=False, user_filters={}, force_user_filters=False):
+    filters = {}
     or_filters = None
     group_by = None
     order_by = None
     limit_start = 0
     limit_page_length = 20
     parent = None
+
+    if not isinstance(user_filters, dict):
+        user_filters = {}
+
     try:
         if "limit_page_length" in frappe.request.args:
             limit_page_length = cint(frappe.request.args["limit_page_length"])
@@ -38,22 +42,27 @@ def document_list(doctype: str, fields: list | str, force_fields=False, user_fil
                 limit_start = 1
         if "order_by" in frappe.request.args:
             order_by = frappe.request.args["order_by"]
-        
-        if user_filters:
-            filters = user_filters
-        else:
-            if "filters" in frappe.request.args:
-                filters = frappe.request.args["filters"]
-                if isinstance(filters, dict):
-                    filters = filters
-                else:
-                    filters = frappe.parse_json(filters)
 
-                if isinstance(filters, dict):
-                    filters = filters
-                else:
-                    filters = None
+        if "filters" in frappe.request.args:
+            filters = frappe.request.args["filters"]
+            if isinstance(filters, dict):
+                filters = filters
+            else:
+                filters = frappe.parse_json(filters)
+
+            if isinstance(filters, dict):
+                filters = filters
+            else:
+                filters = {}
         
+        if force_user_filters:
+            filters.update(user_filters)
+        else:
+            if not filters:
+                filters = user_filters
+            if user_filters:
+                user_filters.update(filters)
+                filters = user_filters
 
         if "or_filters" in frappe.request.args:
             or_filters = frappe.request.args["or_filters"]
