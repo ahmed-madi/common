@@ -10,7 +10,7 @@ def ticket_comment_list(ticket: str):
         "hr_ticket": ticket
     }
     fields = ["name", "hr_ticket", "comment", "attachment", "parent_comment", "creation as created_at", "owner as created_by"]
-    return document_list(doctype, fields, force_fields=True, user_filters=filters)
+    return document_list(doctype, fields, force_fields=True, user_filters=filters, force_user_filters=True)
 
 def create_ticket_comment(ticket):
     read_ticket(ticket)
