@@ -5,6 +5,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "tab_5_tab",
+  "active_event_only",
   "attendance_tab",
   "company",
   "working_days",
@@ -300,11 +302,11 @@
    "label": "Roles & Restrictions"
   },
   {
-   "description": "User with this role can read suggestions and complaints.",
+   "description": "User with any role can read suggestions and complaints.",
    "fieldname": "suggestions_whitelist_role",
-   "fieldtype": "Link",
-   "label": "Suggestions Whitelist Role",
-   "options": "Role"
+   "fieldtype": "Table MultiSelect",
+   "label": "Suggestions Whitelist Roles",
+   "options": "Company Policy Whitelist Role"
   },
   {
    "fieldname": "suggestions_and_complaints_section",
@@ -338,13 +340,25 @@
    "fieldname": "training_request_section",
    "fieldtype": "Section Break",
    "label": "Training Request"
+  },
+  {
+   "fieldname": "tab_5_tab",
+   "fieldtype": "Tab Break",
+   "label": "Company Portal"
+  },
+  {
+   "default": "0",
+   "description": "Only events that are both Open and Published will be displayed on the Portal",
+   "fieldname": "active_event_only",
+   "fieldtype": "Check",
+   "label": "Show Active Event Only"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-26 11:09:06.917317",
+ "modified": "2025-07-03 12:40:08.956637",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
