@@ -14,6 +14,10 @@ from common.api.routes.common.salary_fixation_reason import salary_fixation_reas
 from common.api.routes.common.system_access_level import system_access_level_rules
 from common.api.routes.common.work_type import work_type_rules
 
+# Company
+from common.api.routes.company import company_rules
+
+
 # Help Desk Requests
 from common.api.routes.helpdesk.issue import ticket_issue_rules
 from common.api.routes.helpdesk.employee_feedback import employee_feedback_rules
@@ -68,7 +72,10 @@ url_rules += salary_fixation_reason_rules
 url_rules += system_access_level_rules
 url_rules += work_type_rules
 
-# HelpDesk Requests
+# Company
+url_rules += company_rules
+
+# Help Desk Requests
 url_rules += ticket_issue_rules
 url_rules += employee_feedback_rules
 url_rules += request_to_management_rules
