@@ -10,10 +10,10 @@
   "employee",
   "employee_name",
   "employee_department",
-  "amended_from",
   "column_break_utyt",
   "request_date",
   "management_area",
+  "amended_from",
   "content_section",
   "subject",
   "message",
@@ -28,6 +28,7 @@
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
    "reqd": 1
@@ -84,12 +85,16 @@
    "default": "Today",
    "fieldname": "request_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Request Date",
    "reqd": 1
   },
   {
    "fieldname": "management_area",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Management Area",
    "options": "Department",
    "reqd": 1
@@ -99,10 +104,10 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-12 12:20:28.697036",
+ "modified": "2025-07-02 12:05:36.902788",
  "modified_by": "Administrator",
  "module": "HR Support",
- "name": "Request to Management",
+ "name": "Employee Inquiry",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
@@ -164,5 +169,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "employee_name"
 }
