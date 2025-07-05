@@ -17,6 +17,9 @@ from common.api.routes.common.work_type import work_type_rules
 # Company
 from common.api.routes.company import company_rules
 
+# Employee
+from common.api.routes.employee import employee_info_rules
+
 
 # Help Desk Requests
 from common.api.routes.helpdesk.issue import ticket_issue_rules
@@ -74,6 +77,9 @@ url_rules += work_type_rules
 
 # Company
 url_rules += company_rules
+
+# Employee Info Requests
+url_rules += employee_info_rules
 
 # Help Desk Requests
 url_rules += ticket_issue_rules

@@ -5,5 +5,5 @@
 from common.models.base_hr_document import BaseHRDocument
 
 
-class EmployeeAchievement(BaseHRDocument):
-    pass
+class EmployeeCertification(BaseHRDocument):
+	pass

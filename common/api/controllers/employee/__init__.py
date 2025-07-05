@@ -1,0 +1,99 @@
+import frappe
+from common.api.utils.endpoints import document_list, create_doc, update_doc ,delete_doc, read_doc
+
+# Employee
+def employee_info(employee: str):
+    doctype = "Employee" 
+    return read_doc(doctype, employee)
+
+
+def update_employee_info(employee: str):
+    doctype = "Employee"
+    only_for = ["cell_number", "personal_email", "current_address", "linkedin_profile_url"]
+    return update_doc(doctype, employee, keys_to_update=only_for)
+
+# Employee Achievement
+def achievement_list(employee: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Achievement"
+    filters = {
+        "employee": employee
+    }
+
+    LIST_FIELDS = ["name", "employee", "employee_name", "title", "date", "description", "attachment", "status", "docstatus"]
+    return document_list(doctype, LIST_FIELDS, force_fields=True, user_filters=filters, force_user_filters=True)
+
+def create_achievement(employee: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Achievement"
+    default_data = {
+        "employee": employee
+    }
+    return create_doc(doctype, default_data=default_data)
+
+
+def update_achievement(employee: str, name: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Achievement"
+    default_data = {
+       "employee": employee
+    }
+    return update_doc(doctype, name, default_data=default_data)
+
+
+def delete_achievement(employee: str, name: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Achievement"
+    return delete_doc(doctype, name)
+
+
+
+
+
+# Employee Certification
+def certification_list(employee: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Certification"
+    filters = {
+        "employee": employee
+    }
+    LIST_FIELDS = ["name", "employee", "employee_name", "certificate_title", "issuing_organization", "date_of_issue", "attachment", "status", "docstatus"]
+    return document_list(doctype, LIST_FIELDS, force_fields=True, user_filters=filters, force_user_filters=True)
+
+def create_certification(employee: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Certification"
+    default_data = {
+        "employee": employee
+    }
+    return create_doc(doctype, default_data=default_data)
+
+def update_certification(employee: str, name: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Certification"
+    default_data = {
+       "employee": employee
+    }
+    return update_doc(doctype, name, default_data=default_data)
+
+
+def delete_certification(employee: str, name: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Certification"
+    return delete_doc(doctype, name)
