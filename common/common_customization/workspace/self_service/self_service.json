@@ -45,55 +45,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Employee Requests",
-   "link_count": 4,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Salary Fixation",
-   "link_count": 0,
-   "link_to": "Salary Fixation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Change IBAN Request",
-   "link_count": 0,
-   "link_to": "Change IBAN Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "System Access Request",
-   "link_count": 0,
-   "link_to": "System Access Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Club Request",
-   "link_count": 0,
-   "link_to": "Club Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "HR Requests",
    "link_count": 6,
    "link_type": "DocType",
@@ -159,9 +110,78 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Requests",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Salary Fixation",
+   "link_count": 0,
+   "link_to": "Salary Fixation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Change IBAN Request",
+   "link_count": 0,
+   "link_to": "Change IBAN Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "System Access Request",
+   "link_count": 0,
+   "link_to": "System Access Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Club Request",
+   "link_count": 0,
+   "link_to": "Club Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Achievement",
+   "link_count": 0,
+   "link_to": "Employee Achievement",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Certification",
+   "link_count": 0,
+   "link_to": "Employee Certification",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-06-26 09:40:51.048324",
+ "modified": "2025-07-05 10:00:43.811139",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Self Service",
