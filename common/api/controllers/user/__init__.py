@@ -110,7 +110,65 @@ def user_info():
         "full_name": user.full_name,
         "roles": frappe.get_roles(frappe.session.user)
     })
+    certifications = achievements = custodies = []
+    last_salary_structure_assignment = {}
+    last_salary_structure = {}
+    last_salary_slip_based_on_last_salary_structure = {}
+    last_salary_slip = {}
+
+    if employee and employee.get("name"):
+        name = employee.get("name")
+        certifications = frappe.db.sql("""
+                            SELECT name, employee, employee_name, certificate_title, issuing_organization,
+                                    date_of_issue, attachment, status, docstatus
+                            FROM `tabEmployee Certification`
+                            WHERE employee='{}'""".format(name), as_dict=True)
+        achievements = frappe.db.sql("""
+                            SELECT name, employee, employee_name, title, date, description,
+                                    attachment, status, docstatus
+                            FROM `tabEmployee Achievement`
+                            WHERE employee='{}'""".format(name), as_dict=True)
+        
+        
+        assignments = frappe.get_all(
+            "Salary Structure Assignment",
+            filters={"employee": name, "docstatus": 1},
+            fields=["*"],
+            order_by="from_date",
+        )
+        salary_slip = frappe.get_all(
+            "Salary Slip",
+            filters={"employee": name, "docstatus": 1},
+            fields=["name", "salary_structure"],
+            order_by="start_date",
+        )
+        if len(salary_slip) > 0:
+            last_salary_slip = frappe.get_doc("Salary Slip", salary_slip[0].name)
+            
+
+        if len(assignments) > 0:
+            last_salary_structure_assignment = assignments[0]
+            last_salary_structure = frappe.get_doc("Salary Structure", last_salary_structure_assignment.salary_structure)
+            for slip in salary_slip:
+                if slip.salary_structure != last_salary_structure_assignment.salary_structure:
+                    continue
+                last_salary_slip_based_on_last_salary_structure = frappe.get_doc("Salary Slip", slip.name)
+                break
+        custodies = frappe.db.sql("""
+                            SELECT *
+                            FROM `tabAsset`
+                            WHERE docstatus=1 AND custodian='{}'""".format(name), as_dict=True)
+
     data.update(employee)
+    data.update({
+        "certifications": certifications,
+        "achievements": achievements,
+        "last_salary_structure_assignment": last_salary_structure_assignment,
+        "last_salary_structure": last_salary_structure,
+        "last_salary_slip_based_on_last_salary_structure": last_salary_slip_based_on_last_salary_structure,
+        "last_salary_slip": last_salary_slip,
+        "custodies": custodies,
+    })
     build_success_response(status_code=200, message="User Info", data=data)
 
 @frappe.whitelist()
