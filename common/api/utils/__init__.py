@@ -1,11 +1,15 @@
 import frappe
 from frappe.utils import cint, flt
 
-def format_data(data, doctype):
+def format_data(data, doctype, keys_to_update=[]):
     if not isinstance(data, dict):
         return data
+    valid_data = {}
     meta = frappe.get_meta(doctype)
+    has_keys = len(keys_to_update) > 0
     for k, v in data.items():
+        if has_keys and k not in keys_to_update:
+            continue
         field = meta.get_field(k)
         if not field:
             continue
@@ -13,10 +17,10 @@ def format_data(data, doctype):
             v = flt(v)
         elif field.fieldtype in ["Int", "Check"]:
             v = cint(v)
-        data.update({
+        valid_data.update({
             f"{k}": v,
         })
-    return data
+    return valid_data
 
 def get_request_form_data():
     if frappe.form_dict.data is None:
