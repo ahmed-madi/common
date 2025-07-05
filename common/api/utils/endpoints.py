@@ -182,13 +182,67 @@ def load_extra_data(doctype, name):
         extra_data.update({
             "comments": comments
         })
+    elif doctype == "Employee":
+        certifications = frappe.db.sql("""
+                            SELECT name, employee, employee_name, certificate_title, issuing_organization,
+                                    date_of_issue, attachment, status, docstatus
+                            FROM `tabEmployee Certification`
+                            WHERE employee='{}'""".format(name), as_dict=True)
+        achievements = frappe.db.sql("""
+                            SELECT name, employee, employee_name, title, date, description,
+                                    attachment, status, docstatus
+                            FROM `tabEmployee Achievement`
+                            WHERE employee='{}'""".format(name), as_dict=True)
+
+        last_salary_structure_assignment = {}
+        last_salary_structure = {}
+        last_salary_slip_based_on_last_salary_structure = {}
+        last_salary_slip = {}
+
+        assignments = frappe.get_all(
+            "Salary Structure Assignment",
+            filters={"employee": name, "docstatus": 1},
+            fields=["*"],
+            order_by="from_date",
+        )
+        salary_slip = frappe.get_all(
+            "Salary Slip",
+            filters={"employee": name, "docstatus": 1},
+            fields=["name", "salary_structure"],
+            order_by="start_date",
+        )
+        if len(salary_slip) > 0:
+            last_salary_slip = frappe.get_doc("Salary Slip", salary_slip[0].name)
+
+        if len(assignments) > 0:
+            last_salary_structure_assignment = assignments[0]
+            last_salary_structure = frappe.get_doc("Salary Structure", last_salary_structure_assignment.salary_structure)
+            for slip in salary_slip:
+                if slip.salary_structure != last_salary_structure_assignment.salary_structure:
+                    continue
+                last_salary_slip_based_on_last_salary_structure = frappe.get_doc("Salary Slip", slip.name)
+                break
+        custodies = frappe.db.sql("""
+                            SELECT *
+                            FROM `tabAsset`
+                            WHERE docstatus=1 AND custodian='{}'""".format(name), as_dict=True)
+
+        extra_data.update({
+            "certifications": certifications,
+            "achievements": achievements,
+            "last_salary_structure_assignment": last_salary_structure_assignment,
+            "last_salary_structure": last_salary_structure,
+            "last_salary_slip_based_on_last_salary_structure": last_salary_slip_based_on_last_salary_structure,
+            "last_salary_slip": last_salary_slip,
+            "custodies": custodies,
+        })
     return extra_data
 
 
-def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=False):
+def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=False, ignore_perms=False):
     try:
         doc = frappe.get_doc(doctype, name)
-        if not doc.has_permission("read"):
+        if not ignore_perms and not doc.has_permission("read"):
             raise frappe.PermissionError
         doc.apply_fieldlevel_read_permissions()
         extra_data = load_extra_data(doc.doctype, doc.name)
@@ -207,8 +261,8 @@ def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=Fal
 
             if "*" in user_fields:
                 user_fields = []
+        if doc: doc = doc.as_dict()
         if len(user_fields) > 0:
-            doc = doc.as_dict()
             result = frappe._dict()
             for field in user_fields:
                 if hasattr(doc, field):
@@ -232,16 +286,21 @@ def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=Fal
         )
 
 
-def update_doc(doctype: str, name: str, default_data={}):
+def update_doc(doctype: str, name: str, default_data={}, ignore_perms=False, keys_to_update=[]):
     uploaded_files = []
+    find_by = {
+        "name": name
+    }
+    if default_data:
+        find_by.update(default_data)
     doc = None
     try:
         data = get_request_form_data()
-        doc = frappe.get_doc(doctype, name, for_update=True)
+        doc = frappe.get_doc(doctype, find_by, for_update=True)
         if not isinstance(data, bytes):
             if "flags" in data:
                 del data["flags"]
-            data = format_data(data, doctype)
+            data = format_data(data, doctype, keys_to_update=keys_to_update)
             doc.update(data)
         uploaded_files = handle_files(doc)
         for file in uploaded_files:
