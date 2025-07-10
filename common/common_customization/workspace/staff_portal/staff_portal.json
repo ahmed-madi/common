@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"IhD-GBh0Ec\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Staff Portal</span>\",\"col\":12}},{\"id\":\"Rjo7G5y3FB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Company Policy\",\"col\":3}},{\"id\":\"Tab7VuoIk_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Organizational Chart\",\"col\":3}},{\"id\":\"rU9hf-I_AQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fiscal Year List\",\"col\":3}},{\"id\":\"v8KrgpNJOx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Languages List\",\"col\":3}},{\"id\":\"kHZyw5Bm-0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loan Product\",\"col\":3}},{\"id\":\"ifF4sJBRAC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Company Holidays\",\"col\":3}},{\"id\":\"JwraQDmVBp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave List\",\"col\":3}},{\"id\":\"d6qFK_V0KK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Period\",\"col\":3}},{\"id\":\"UO5CCdz3N6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Policy\",\"col\":4}},{\"id\":\"iFNTh7eigy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Component\",\"col\":4}},{\"id\":\"apclwtaQKx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Structure\",\"col\":4}},{\"id\":\"c0Rkp1zMZe\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XiToqulqgR\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Active Employee\",\"col\":4}},{\"id\":\"0aLDgBFJfN\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Department\",\"col\":4}},{\"id\":\"6R2GIvbIKz\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Project\",\"col\":4}},{\"id\":\"7rIbUtbyeb\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Open Events\",\"col\":4}}]",
+ "content": "[{\"id\":\"IhD-GBh0Ec\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Staff Portal</span>\",\"col\":12}},{\"id\":\"Rjo7G5y3FB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Company Policy\",\"col\":3}},{\"id\":\"Tab7VuoIk_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Organizational Chart\",\"col\":3}},{\"id\":\"rU9hf-I_AQ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fiscal Year List\",\"col\":3}},{\"id\":\"v8KrgpNJOx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Languages List\",\"col\":3}},{\"id\":\"kHZyw5Bm-0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loan Product\",\"col\":3}},{\"id\":\"ifF4sJBRAC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Company Holidays\",\"col\":3}},{\"id\":\"JwraQDmVBp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave List\",\"col\":3}},{\"id\":\"d6qFK_V0KK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Period\",\"col\":3}},{\"id\":\"UO5CCdz3N6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Policy\",\"col\":4}},{\"id\":\"iFNTh7eigy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Component\",\"col\":4}},{\"id\":\"apclwtaQKx\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Structure\",\"col\":4}},{\"id\":\"c0Rkp1zMZe\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"XiToqulqgR\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Active Employee\",\"col\":4}},{\"id\":\"0aLDgBFJfN\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Department\",\"col\":4}},{\"id\":\"6R2GIvbIKz\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Project\",\"col\":4}},{\"id\":\"7rIbUtbyeb\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Open Events\",\"col\":4}},{\"id\":\"HdeDMkr_er\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Published Newsletters\",\"col\":4}}]",
  "creation": "2025-04-13 12:47:57.888735",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Staff Portal",
  "links": [],
- "modified": "2025-07-03 16:15:28.915472",
+ "modified": "2025-07-10 10:37:39.321178",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Staff Portal",
@@ -22,6 +22,11 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [
+  {
+   "document_type": "Company Newsletter",
+   "label": "Published Newsletters",
+   "quick_list_filter": "[[\"Company Newsletter\",\"published\",\"=\",1,false]]"
+  },
   {
    "document_type": "Event",
    "label": "Open Events",
