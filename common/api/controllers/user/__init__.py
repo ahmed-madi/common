@@ -1,6 +1,7 @@
 import frappe
 from frappe.auth import LoginManager
 from frappe.utils import now_datetime
+from hrms.hr.doctype.shift_assignment.shift_assignment import get_employee_shift
 from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 from common.api.utils import get_token_from_header
@@ -24,7 +25,9 @@ def login(username: str, password: str):
         if not user:
             frappe.throw("Invalid username or password", frappe.AuthenticationError)
         login_manager.authenticate(user, password)
-        
+        if user != "Administrator" and frappe.db.get_value("Employee", {"user_id": user}, "name") is None:
+            frappe.throw(msg="Employee not found", exc=frappe.NotFound)
+
         user = frappe.get_doc("User", user)
         tokens = prepare_token(user)
         frappe.db.commit()
@@ -37,6 +40,8 @@ def login(username: str, password: str):
         })
         data.update(tokens)
         build_success_response(status_code=200, message="Login successful", data=data)
+    except frappe.NotFound as exc:
+        build_error_response(status_code=409, message="Invalid employee account", error="Invalid credentials")
     except frappe.AuthenticationError as exc:
         build_error_response(status_code=401, message="Invalid username or password", error="Invalid credentials")
 
@@ -111,10 +116,12 @@ def user_info():
         "roles": frappe.get_roles(frappe.session.user)
     })
     certifications = achievements = custodies = []
-    last_salary_structure_assignment = {}
-    last_salary_structure = {}
-    last_salary_slip_based_on_last_salary_structure = {}
-    last_salary_slip = {}
+    last_salary_structure_assignment = None
+    last_salary_structure = None
+    last_salary_slip_based_on_last_salary_structure = None
+    last_salary_slip = None
+    last_log = None
+    employee_shift = None
 
     if employee and employee.get("name"):
         name = employee.get("name")
@@ -158,6 +165,15 @@ def user_info():
                             SELECT *
                             FROM `tabAsset`
                             WHERE docstatus=1 AND custodian='{}'""".format(name), as_dict=True)
+        last_logs = frappe.get_all(
+            "Employee Checkin",
+            filters={"employee": name},
+            fields= ["name", "employee", "employee_name", "log_type", "time", "device_id"],
+            order_by="time desc",
+        )
+        if last_logs:
+            last_log = last_logs[0]
+        employee_shift = get_employee_shift(name, consider_default_shift=True, next_shift_direction='reverse')
 
     data.update(employee)
     data.update({
@@ -168,6 +184,8 @@ def user_info():
         "last_salary_slip_based_on_last_salary_structure": last_salary_slip_based_on_last_salary_structure,
         "last_salary_slip": last_salary_slip,
         "custodies": custodies,
+        "last_log": last_log,
+        "employee_shift": employee_shift,
     })
     build_success_response(status_code=200, message="User Info", data=data)
 

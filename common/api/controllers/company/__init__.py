@@ -9,7 +9,7 @@ from common.api.utils.response import (
     build_success_response,
 )
 
-LIST_FIELDS = ["name", "subject", "published", "event_category", "color", "starts_on", "ends_on", "event_location", "status"]
+LIST_FIELDS = ["name", "subject", "published", "event_category", "color", "cover_image", "starts_on", "ends_on", "event_location", "status"]
 FROM_FIELDS = LIST_FIELDS + ["description"]
 
 def event_list():
@@ -71,3 +71,17 @@ def department_structure():
 
     departments = build_organization_tree(parent=parent, company=company)
     return build_success_response(200, f"Department Structure", departments)
+
+NEWS_LIST_FIELDS = ["name", "subject", "publish_on", "cover_image", "published", "cover_image", "intro_description", "list_image"]
+NEWS_FROM_FIELDS = NEWS_LIST_FIELDS + ["description"]
+
+def newsletter_list():
+    doctype = "Company Newsletter"
+    filters = {
+        "published": 1,
+    }
+    return document_list(doctype, NEWS_LIST_FIELDS, force_fields=True, user_filters=filters)
+
+def read_newsletter(name: str):
+    doctype = "Company Newsletter"
+    return read_doc(doctype, name, origin_fields=NEWS_FROM_FIELDS, force_fields=True)
