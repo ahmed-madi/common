@@ -97,3 +97,13 @@ def delete_certification(employee: str, name: str):
         return
     doctype = "Employee Certification"
     return delete_doc(doctype, name)
+
+def create_checkin(employee: str):
+    read_doc("Employee", employee, ["name"], force_fields=True)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Employee Checkin"
+    default_data = {
+        "employee": employee
+    }
+    return create_doc(doctype, default_data=default_data)
