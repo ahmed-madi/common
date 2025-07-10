@@ -12,7 +12,19 @@ from common.api.utils.response import (
     build_success_response,
     handle_exception_response,
 )
-
+def load_extra_list_data(data, doctype):
+    if not isinstance(data, list):
+        return
+    if doctype == "Company Newsletter":
+        for d in data:
+            images_gallery = frappe.get_all(
+                "Image Attachment",
+                filters={"parent": d["name"], "parentfield": "images_gallery", "parenttype": doctype},
+                pluck="image"
+            )
+            d.update({
+                "images_gallery": images_gallery,
+            })
 
 def document_list(doctype: str, fields: list | str, force_fields=False, user_filters={}, force_user_filters=False):
     filters = {}
@@ -102,6 +114,7 @@ def document_list(doctype: str, fields: list | str, force_fields=False, user_fil
         count = len(frappe.get_list(doctype, limit_page_length=999999999))
         # evaluate frappe.get_list
         data = frappe.call(frappe.client.get_list, doctype, **args)
+        load_extra_list_data(data, doctype)
         response_data = frappe._dict()
         response_data.update(
             {
