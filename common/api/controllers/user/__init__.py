@@ -25,7 +25,9 @@ def login(username: str, password: str):
         if not user:
             frappe.throw("Invalid username or password", frappe.AuthenticationError)
         login_manager.authenticate(user, password)
-        
+        if user != "Administrator" and frappe.db.get_value("Employee", {"user_id": user}, "name") is None:
+            frappe.throw(msg="Employee not found", exc=frappe.NotFound)
+
         user = frappe.get_doc("User", user)
         tokens = prepare_token(user)
         frappe.db.commit()
@@ -38,6 +40,8 @@ def login(username: str, password: str):
         })
         data.update(tokens)
         build_success_response(status_code=200, message="Login successful", data=data)
+    except frappe.NotFound as exc:
+        build_error_response(status_code=409, message="Invalid employee account", error="Invalid credentials")
     except frappe.AuthenticationError as exc:
         build_error_response(status_code=401, message="Invalid username or password", error="Invalid credentials")
 
