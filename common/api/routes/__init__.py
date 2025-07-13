@@ -9,6 +9,7 @@ from common.api.routes.common.holiday_list import holiday_list_rules
 from common.api.routes.common.language import language_rules
 from common.api.routes.common.leave_type import leave_type_rules
 from common.api.routes.common.loan_product import loan_product_rules
+from common.api.routes.common.project import project_rules
 from common.api.routes.common.salary_component import salary_component_rules
 from common.api.routes.common.salary_fixation_reason import salary_fixation_reason_rules
 from common.api.routes.common.system_access_level import system_access_level_rules
@@ -70,6 +71,7 @@ url_rules += holiday_list_rules
 url_rules += language_rules
 url_rules += leave_type_rules
 url_rules += loan_product_rules
+url_rules += project_rules
 url_rules += salary_component_rules
 url_rules += salary_fixation_reason_rules
 url_rules += system_access_level_rules
