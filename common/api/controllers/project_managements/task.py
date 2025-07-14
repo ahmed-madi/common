@@ -2,7 +2,7 @@
 import frappe
 from common.api.utils.endpoints import document_list, create_doc, read_doc, update_doc ,delete_doc
 
-LIST_FIELDS = fields = ["name", "subject", "subject", "status", "priority", "assigned_to", "employee_name", "project", "exp_start_date", "exp_end_date"]
+LIST_FIELDS = fields = ["name", "subject", "status", "priority", "assigned_to", "employee_name", "project", "exp_start_date", "exp_end_date"]
 FROM_FIELDS = LIST_FIELDS + ["remarks", "description", "attachment"]
 
 def task_list():
