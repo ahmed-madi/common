@@ -1,5 +1,5 @@
 from common.api.utils.endpoints import document_list, read_doc
-fields = ["name"]
+fields = ["name", "project_name", "priority", "status", "is_active"]
 
 def project_list():
     doctype =  "Project"
