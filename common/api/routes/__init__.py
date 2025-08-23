@@ -30,6 +30,7 @@ from common.api.routes.helpdesk.ticket_comment import ticket_comment_rules
 from common.api.routes.helpdesk.ticket import ticket_rules
 
 # HR Requests
+from common.api.routes.hr_requests import employee_requests_rules
 from common.api.routes.hr_requests.access_system import access_system_rules
 from common.api.routes.hr_requests.employee_resignation import employee_resignation_rules
 from common.api.routes.hr_requests.education_allowance import education_allowance_rules
@@ -91,6 +92,7 @@ url_rules += ticket_comment_rules
 url_rules += ticket_rules
 
 # HR Requests
+url_rules += employee_requests_rules
 url_rules += access_system_rules
 url_rules += employee_resignation_rules
 url_rules += education_allowance_rules

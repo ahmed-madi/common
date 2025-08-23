@@ -12,6 +12,7 @@
   "column_break_8bbmu",
   "effective_date",
   "status",
+  "request_date",
   "bank_details_section",
   "salary_mode",
   "bank_name",
@@ -135,12 +136,20 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Bank A/C No."
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-25 16:11:28.957880",
+ "modified": "2025-08-23 11:16:18.418448",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Salary Fixation",
@@ -181,7 +190,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct Manager",
+   "role": "Direct manager",
    "share": 1,
    "submit": 1,
    "write": 1
