@@ -61,9 +61,6 @@ def document_list(doctype: str, fields: list | str, filters):
         limit_start = cint(frappe.request.args["page"]) - 1
         if limit_start < 0:
             limit_start = 1
-    if "order_by" in frappe.request.args:
-        order_by = frappe.request.args["order_by"]
-
     limit_start = limit_start * limit_page_length
 
     try:
@@ -120,6 +117,8 @@ def employee_requests_list():
     request_date = None
     status = None
     docstatus = None
+    order_by=None
+    order=None
     response_data = frappe._dict()
     if "limit_page_length" in frappe.request.args:
         limit_page_length = cint(frappe.request.args["limit_page_length"])
@@ -166,9 +165,18 @@ def employee_requests_list():
         return build_error_response(
             status_code=400, message="Failed to Read Employee Requests", error=errors
         )
-    data_list = sorted(data_list, key=lambda obj: obj.request_date, reverse=True)[
-        :limit_page_length
-    ]
+    if "order_by" in frappe.request.args:
+        order_by = frappe.request.args["order_by"]
+    if "order" in frappe.request.args:
+        order = frappe.request.args["order"]
+    reverse=False
+    if order and isinstance(order, str) and order.upper() == "DESC":
+        reverse=True
+    if order_by and isinstance(order_by, str) and order_by.lower() in ["name", "employee", "employee_name", "status", "docstatus", "request_date", "modified", "creation", "request_type"]:
+        data_list = sorted(data_list, key=lambda obj: obj[order_by], reverse=reverse)[:limit_page_length]
+    else:
+        data_list = sorted(data_list, key=lambda obj: obj.modified, reverse=reverse)[:limit_page_length]
+
     if len(errors) == 0:
         response_data.update(
             {
@@ -244,7 +252,7 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
     )
     BASE_FIELDS.append(f"{status_field} as status")
     BASE_FIELDS.append("docstatus")
-
+    BASE_FIELDS += ["modified", "creation"]
     # Update Filters
     if status and isinstance(status, str):
         FILTERS.update(
