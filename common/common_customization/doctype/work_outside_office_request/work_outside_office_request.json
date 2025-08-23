@@ -8,6 +8,7 @@
   "employee",
   "employee_name",
   "department",
+  "request_date",
   "column_break_wiaz",
   "work_type",
   "location",
@@ -128,12 +129,20 @@
    "label": "Status",
    "options": "Open\nApproved\nRejected\nCancelled",
    "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-25 16:04:28.724494",
+ "modified": "2025-08-23 11:15:08.460355",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Work Outside Office Request",
@@ -174,7 +183,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Direct Manager",
+   "role": "Direct manager",
    "share": 1,
    "submit": 1,
    "write": 1

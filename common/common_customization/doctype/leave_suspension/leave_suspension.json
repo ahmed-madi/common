@@ -8,6 +8,7 @@
   "employee",
   "employee_name",
   "department",
+  "request_date",
   "column_break_tyec",
   "leave_application",
   "leave_type",
@@ -124,12 +125,20 @@
    "fieldname": "leave_type",
    "fieldtype": "Read Only",
    "label": "Leave Type"
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-25 15:17:34.439426",
+ "modified": "2025-08-23 11:15:48.035827",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Leave Suspension",
