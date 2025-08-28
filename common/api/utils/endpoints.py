@@ -119,6 +119,7 @@ def document_list(doctype: str, fields: list | str, force_fields=False, user_fil
         response_data.update(
             {
                 "data_list": data,
+                "doctype": doctype,
                 "page": limit_start + 1,
                 "perPage": limit_page_length,
                 "totalCount": count,
