@@ -112,7 +112,7 @@ def employee_requests_list():
     pageCount = 0
     has_success = False
     limit_page_length = 20
-    request_type = None
+    doctype = None
     employee = None
     request_date = None
     status = None
@@ -126,10 +126,10 @@ def employee_requests_list():
         limit_page_length = cint(frappe.request.args["limit"])
 
     REQUESTS_DOCTYPE_TO_SELECT = REQUESTS_DOCTYPE
-    if "request_type" in frappe.request.args:
-        request_type = frappe.request.args["request_type"]
-        if request_type in REQUESTS_DOCTYPE:
-            REQUESTS_DOCTYPE_TO_SELECT = [request_type]
+    if "doctype" in frappe.request.args:
+        doctype = frappe.request.args["doctype"]
+        if doctype in REQUESTS_DOCTYPE:
+            REQUESTS_DOCTYPE_TO_SELECT = [doctype]
     if "employee" in frappe.request.args:
         employee = frappe.request.args["employee"]
     if "request_date" in frappe.request.args:
@@ -156,7 +156,7 @@ def employee_requests_list():
             has_success = True
             response_data.update(content)
             data_list += map(
-                lambda x: x.update({"request_type": doctype}),
+                lambda x: x.update({"doctype": doctype}),
                 content.get("data_list", []),
             )
             totalCount += cint(content.get("totalCount"))
@@ -172,7 +172,7 @@ def employee_requests_list():
     reverse=False
     if order and isinstance(order, str) and order.upper() == "DESC":
         reverse=True
-    if order_by and isinstance(order_by, str) and order_by.lower() in ["name", "employee", "employee_name", "status", "docstatus", "request_date", "modified", "creation", "request_type"]:
+    if order_by and isinstance(order_by, str) and order_by.lower() in ["name", "employee", "employee_name", "status", "docstatus", "request_date", "modified", "creation", "doctype"]:
         data_list = sorted(data_list, key=lambda obj: obj[order_by], reverse=reverse)[:limit_page_length]
     else:
         data_list = sorted(data_list, key=lambda obj: obj.modified, reverse=reverse)[:limit_page_length]
