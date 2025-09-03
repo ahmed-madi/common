@@ -93,3 +93,14 @@ def delete_duplicated_or_after_error(uploaded_files):
         if not file.get("name"):
             continue
         frappe.delete_doc_if_exists("File", file.get("name"))
+
+def handle_password_test_fail(feedback: dict):
+    # Backward compatibility
+    if "feedback" in feedback:
+        feedback = feedback["feedback"]
+
+    suggestions = feedback.get("suggestions", [])
+    warning = feedback.get("warning", "")
+    if warning:
+        return " ".join([warning, *suggestions])
+    return " ".join(suggestions)
