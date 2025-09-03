@@ -38,3 +38,13 @@ def add_timesheet(name: str):
     frappe.get_doc("Task Timesheet Log", frappe.local.response.get("data", {}).get("name")).submit()
     return response
     
+
+def timesheet_list(name: str):
+    read_task(name)
+    if frappe.local.response["status"] == "failed":
+        return
+    doctype = "Task Timesheet Log"
+    fields=["name", "task", "employee", "employee_name", "status", "posting_date", "start_time", "end_time", "total_hours", "project", "project_name", "description"]
+    user_filters = {"task": name}
+    return document_list(doctype, fields=fields, force_fields=True, user_filters=user_filters, force_user_filters=True)
+    
