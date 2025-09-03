@@ -39,7 +39,17 @@ def add_timesheet(name: str):
     return response
     
 
-def timesheet_list(name: str):
+def timesheet_list():
+    doctype = "Task Timesheet Log"
+    fields=["name", "task", "employee", "employee_name", "status", "posting_date", "start_time", "end_time", "total_hours", "project", "project_name", "description"]
+    return document_list(doctype, fields=fields)
+    
+def read_timesheet(name: str):
+    doctype = "Task Timesheet Log"    
+    fields=["name", "task", "employee", "employee_name", "status", "posting_date", "start_time", "end_time", "total_hours", "project", "project_name", "description"]
+    return read_doc(doctype, name, origin_fields=fields)
+
+def timesheet_list_for_task(name: str):
     read_task(name)
     if frappe.local.response["status"] == "failed":
         return
