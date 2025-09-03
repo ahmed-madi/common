@@ -35,7 +35,7 @@ def document_list(doctype: str, fields: list | str, force_fields=False, user_fil
     limit_page_length = 20
     parent = None
 
-    if not isinstance(user_filters, dict):
+    if not isinstance(user_filters, dict) or not not isinstance(user_filters, list):
         user_filters = {}
 
     try:
