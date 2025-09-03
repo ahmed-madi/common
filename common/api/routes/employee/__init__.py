@@ -1,13 +1,15 @@
 from werkzeug.routing import Rule
-from common.api.controllers.employee import employee_info, update_employee_info, achievement_list, create_achievement, update_achievement, delete_achievement, certification_list, create_certification, delete_certification, update_certification, create_checkin
+from common.api.controllers.employee import employee_info, update_employee_info, achievement_list, create_achievement, update_achievement, delete_achievement, certification_list, create_certification, delete_certification, update_certification, create_checkin, attendance_list, check_in_out_list
 
 employee_info_rules = [
     # Employee
 	Rule("/employee/<path:employee>/", methods=["GET"], endpoint=employee_info),
 	Rule("/employee/<path:employee>/", methods=["PUT"], endpoint=update_employee_info),
 
-    # Checkin-out
+    # Check-in-out / Attendance
 	Rule("/employee/<path:employee>/checkin", methods=["POST"], endpoint=create_checkin),
+    Rule("/employee/<path:employee>/checkin", methods=["GET"], endpoint=check_in_out_list),
+    Rule("/employee/<path:employee>/attendance", methods=["GET"], endpoint=attendance_list),
 
     # Employee Achievement
     Rule("/employee/<path:employee>/achievement", methods=["GET"], endpoint=achievement_list),
