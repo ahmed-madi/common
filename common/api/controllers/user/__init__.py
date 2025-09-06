@@ -10,6 +10,7 @@ from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 from common.api.utils import get_token_from_header, get_request_form_data, handle_password_test_fail
 from common.utils.hr import get_employee_from_user
+from common.api.utils.endpoints import document_list
 
 LOGOUT_FROM_ALL = True
 
@@ -252,3 +253,12 @@ def change_user_password():
         build_success_response(status_code=200, message="Password Updated", data=data)
     except:
         build_error_response(403, "Failed to update password", frappe.get_traceback())
+
+
+def notification_list():
+    doctype = "Notification Log"
+    user_filters= {
+        "for_user": frappe.session.user,
+    }
+    fields = ["name", "subject", "for_user", "type", "email_content", "document_type", "document_name", "read", "attached_file", "attachment_link", "from_user", "link", "send_push_notification"]
+    return document_list(doctype, fields, force_fields=True, force_user_filters=True, user_filters=user_filters)
