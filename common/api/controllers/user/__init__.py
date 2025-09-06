@@ -264,10 +264,6 @@ def notification_list():
     return document_list(doctype, fields, force_fields=True, force_user_filters=True, user_filters=user_filters)
 
 def mark_as_read(docname: str):
-    print(docname)
-    print(docname)
-    print(docname)
-    print(docname)
     if frappe.flags.read_only:
         return
 
