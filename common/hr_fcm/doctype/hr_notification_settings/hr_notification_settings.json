@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "autoname": "Prompt",
+ "creation": "2025-09-03 13:47:09.016304",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "system_notifications_section",
+  "task_assignments",
+  "request_approvals",
+  "calendar_events",
+  "helpdesk_updates",
+  "performance_reviews"
+ ],
+ "fields": [
+  {
+   "default": "__user",
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "User",
+   "options": "User",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "system_notifications_section",
+   "fieldtype": "Section Break",
+   "label": "System Notifications"
+  },
+  {
+   "default": "1",
+   "fieldname": "task_assignments",
+   "fieldtype": "Check",
+   "label": "Task Assignments"
+  },
+  {
+   "default": "1",
+   "fieldname": "request_approvals",
+   "fieldtype": "Check",
+   "label": "Request Approvals"
+  },
+  {
+   "default": "1",
+   "fieldname": "calendar_events",
+   "fieldtype": "Check",
+   "label": "Calendar Events"
+  },
+  {
+   "default": "1",
+   "fieldname": "helpdesk_updates",
+   "fieldtype": "Check",
+   "label": "Helpdesk Updates"
+  },
+  {
+   "default": "1",
+   "fieldname": "performance_reviews",
+   "fieldtype": "Check",
+   "label": "Performance Reviews"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-09-06 09:53:00.607484",
+ "modified_by": "Administrator",
+ "module": "HR FCM",
+ "name": "HR Notification Settings",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "read_only": 1,
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

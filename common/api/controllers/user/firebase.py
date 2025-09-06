@@ -1,0 +1,42 @@
+import frappe
+from frappe.utils import cint
+
+from common.api.utils.endpoints import document_list, create_doc, read_doc, update_doc ,delete_doc
+from common.api.utils.response import build_success_response, build_error_response
+
+#test workflow
+@frappe.whitelist()
+def get_config():
+    try:
+        doc = frappe.get_doc("FCM Settings")
+        if cint(doc.enable) == 0:
+            return build_error_response(403, "Failed to fetch FCM configurations", "FCM Feature is not enabled")
+        
+        data = {
+            "enable": doc.enable,
+            "config": {
+                "apiKey": doc.api_key,
+                "authDomain": doc.auth_domain,
+                "projectId": doc.project_id,
+                "storageBucket": doc.storage_bucket,
+                "messagingSenderId": doc.messaging_sender_id,
+                "appId": doc.app_id,
+            },
+            "key_pair": doc.key_pair,
+        }
+        build_success_response(status_code=200, message="FCM configurations fetched", data=data)
+    except:
+        build_error_response(403, "Failed to fetch FCM configurations", frappe.get_traceback())
+
+# Subscribe and Unsubscribe API
+def subscribe():
+    doctype = "FCM Device Token"
+    return create_doc(doctype, default_data={"user": frappe.session.user})
+
+
+@frappe.whitelist(methods=["GET"])
+def unsubscribe(fcm_token: str) -> dict:
+    for dt in frappe.get_all("FCM Device Token", filters={"token": fcm_token}):
+        frappe.delete_doc("FCM Device Token", dt.name, force=True)
+    frappe.db.commit()
+    build_success_response(status_code=200, message="FCM configurations Deleted")

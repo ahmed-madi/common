@@ -58,6 +58,7 @@ from common.api.routes.project_managements.task import task_rules
 
 # User Auth/Info
 from common.api.routes.user import user_rules
+from common.api.routes.user.firebase import firebase_rules
 
 url_rules = []
 
@@ -120,3 +121,4 @@ url_rules += task_rules
 
 # User Auth/Info
 url_rules += user_rules
+url_rules += firebase_rules
