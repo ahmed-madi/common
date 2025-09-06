@@ -262,3 +262,14 @@ def notification_list():
     }
     fields = ["name", "subject", "for_user", "type", "email_content", "document_type", "document_name", "read", "attached_file", "attachment_link", "from_user", "link", "send_push_notification"]
     return document_list(doctype, fields, force_fields=True, force_user_filters=True, user_filters=user_filters)
+
+def mark_as_read(docname: str):
+    print(docname)
+    print(docname)
+    print(docname)
+    print(docname)
+    if frappe.flags.read_only:
+        return
+
+    if docname:
+        frappe.db.set_value("Notification Log", str(docname), "read", 1, update_modified=False)
