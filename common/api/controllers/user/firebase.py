@@ -1,6 +1,7 @@
 import frappe
 from frappe.utils import cint
 
+from common.api.utils import get_request_form_data
 from common.api.utils.endpoints import document_list, create_doc, read_doc, update_doc ,delete_doc
 from common.api.utils.response import build_success_response, build_error_response
 
@@ -29,14 +30,16 @@ def get_config():
         build_error_response(403, "Failed to fetch FCM configurations", frappe.get_traceback())
 
 # Subscribe and Unsubscribe API
+@frappe.whitelist(methods=["POST"])
 def subscribe():
     doctype = "FCM Device Token"
     return create_doc(doctype, default_data={"user": frappe.session.user})
 
 
-@frappe.whitelist(methods=["GET"])
-def unsubscribe(fcm_token: str) -> dict:
+@frappe.whitelist(methods=["DELETE"])
+def unsubscribe():
+    fcm_token = get_request_form_data().get("token")
     for dt in frappe.get_all("FCM Device Token", filters={"token": fcm_token}):
         frappe.delete_doc("FCM Device Token", dt.name, force=True)
     frappe.db.commit()
-    build_success_response(status_code=200, message="FCM configurations Deleted")
+    build_success_response(status_code=200, message="FCM Token Deleted", data={})
