@@ -305,13 +305,16 @@ def read_doc(
     origin_fields: list = [],
     force_fields=False,
     ignore_perms=False,
+    load_extra_docs=True,
 ):
     try:
         doc = frappe.get_doc(doctype, name)
         if not ignore_perms and not doc.has_permission("read"):
             raise frappe.PermissionError
         doc.apply_fieldlevel_read_permissions()
-        extra_data = load_extra_data(doc.doctype, doc.name)
+        extra_data = {}
+        if load_extra_docs:
+            extra_data = load_extra_data(doc.doctype, doc.name)
 
         user_fields = origin_fields
         if not force_fields:

@@ -211,7 +211,7 @@ def attendance_list(employee: str):
     )
 
 
-def get_employee_info(employee: str):
+def other_employee_info(employee: str):
     return read_doc(
         "Employee",
         employee,
@@ -232,4 +232,5 @@ def get_employee_info(employee: str):
         ],
         force_fields=True,
         ignore_perms=True,
+        load_extra_docs=False,
     )
