@@ -6,4 +6,4 @@ from frappe.tests.utils import FrappeTestCase
 
 
 class TestCompensatoryDays(FrappeTestCase):
-	pass
+    pass

@@ -70,7 +70,9 @@ class OvertimePayRequest(Document):
         if total_salary == 0:
             frappe.throw(_("No salary found for this employee"))
 
-        amount = (total_salary / 240 * 1 * self.total_hours) + (basic_salary / 240 * 0.5 * self.total_hours)
+        amount = (total_salary / 240 * 1 * self.total_hours) + (
+            basic_salary / 240 * 0.5 * self.total_hours
+        )
         self.total_salary = total_salary
         self.basic_salary = basic_salary
         self.amount = amount
@@ -93,7 +95,9 @@ class OvertimePayRequest(Document):
                 "type": "Earning",
                 "amount": self.amount,
                 "salary_component": "Overtime",  # Adjust the component as needed
-                "employee_name": frappe.get_value("Employee", self.employee, "employee_name"),
+                "employee_name": frappe.get_value(
+                    "Employee", self.employee, "employee_name"
+                ),
                 "employee": self.employee,
                 "payroll_date": self.posting_date,
             }

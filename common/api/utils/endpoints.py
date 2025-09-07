@@ -12,6 +12,8 @@ from common.api.utils.response import (
     build_success_response,
     handle_exception_response,
 )
+
+
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
         return
@@ -19,14 +21,27 @@ def load_extra_list_data(data, doctype):
         for d in data:
             images_gallery = frappe.get_all(
                 "Image Attachment",
-                filters={"parent": d["name"], "parentfield": "images_gallery", "parenttype": doctype},
-                pluck="image"
+                filters={
+                    "parent": d["name"],
+                    "parentfield": "images_gallery",
+                    "parenttype": doctype,
+                },
+                pluck="image",
             )
-            d.update({
-                "images_gallery": images_gallery,
-            })
+            d.update(
+                {
+                    "images_gallery": images_gallery,
+                }
+            )
 
-def document_list(doctype: str, fields: list | str, force_fields=False, user_filters={}, force_user_filters=False):
+
+def document_list(
+    doctype: str,
+    fields: list | str,
+    force_fields=False,
+    user_filters={},
+    force_user_filters=False,
+):
     filters = {}
     or_filters = None
     group_by = None
@@ -66,7 +81,7 @@ def document_list(doctype: str, fields: list | str, force_fields=False, user_fil
                 filters = filters
             else:
                 filters = {}
-        
+
         if force_user_filters:
             filters.update(user_filters)
         else:
@@ -185,28 +200,45 @@ def handle_files(doc):
             uploaded_files.append(file_doc_name)
     return uploaded_files
 
+
 def load_extra_data(doctype, name):
     extra_data = {}
     if doctype == "HR Ticket":
         comments = frappe.get_all(
             "HR Ticket Comment",
             filters={"hr_ticket": name},
-            fields=["name", "hr_ticket", "comment", "attachment", "parent_comment", "creation as created_at", "owner as created_by"],
+            fields=[
+                "name",
+                "hr_ticket",
+                "comment",
+                "attachment",
+                "parent_comment",
+                "creation as created_at",
+                "owner as created_by",
+            ],
         )
-        extra_data.update({
-            "comments": comments
-        })
+        extra_data.update({"comments": comments})
     elif doctype == "Employee":
-        certifications = frappe.db.sql("""
+        certifications = frappe.db.sql(
+            """
                             SELECT name, employee, employee_name, certificate_title, issuing_organization,
                                     date_of_issue, attachment, status, docstatus
                             FROM `tabEmployee Certification`
-                            WHERE employee='{}'""".format(name), as_dict=True)
-        achievements = frappe.db.sql("""
+                            WHERE employee='{}'""".format(
+                name
+            ),
+            as_dict=True,
+        )
+        achievements = frappe.db.sql(
+            """
                             SELECT name, employee, employee_name, title, date, description,
                                     attachment, status, docstatus
                             FROM `tabEmployee Achievement`
-                            WHERE employee='{}'""".format(name), as_dict=True)
+                            WHERE employee='{}'""".format(
+                name
+            ),
+            as_dict=True,
+        )
 
         last_salary_structure_assignment = {}
         last_salary_structure = {}
@@ -230,36 +262,59 @@ def load_extra_data(doctype, name):
 
         if len(assignments) > 0:
             last_salary_structure_assignment = assignments[0]
-            last_salary_structure = frappe.get_doc("Salary Structure", last_salary_structure_assignment.salary_structure)
+            last_salary_structure = frappe.get_doc(
+                "Salary Structure", last_salary_structure_assignment.salary_structure
+            )
             for slip in salary_slip:
-                if slip.salary_structure != last_salary_structure_assignment.salary_structure:
+                if (
+                    slip.salary_structure
+                    != last_salary_structure_assignment.salary_structure
+                ):
                     continue
-                last_salary_slip_based_on_last_salary_structure = frappe.get_doc("Salary Slip", slip.name)
+                last_salary_slip_based_on_last_salary_structure = frappe.get_doc(
+                    "Salary Slip", slip.name
+                )
                 break
-        custodies = frappe.db.sql("""
+        custodies = frappe.db.sql(
+            """
                             SELECT *
                             FROM `tabAsset`
-                            WHERE docstatus=1 AND custodian='{}'""".format(name), as_dict=True)
+                            WHERE docstatus=1 AND custodian='{}'""".format(
+                name
+            ),
+            as_dict=True,
+        )
 
-        extra_data.update({
-            "certifications": certifications,
-            "achievements": achievements,
-            "last_salary_structure_assignment": last_salary_structure_assignment,
-            "last_salary_structure": last_salary_structure,
-            "last_salary_slip_based_on_last_salary_structure": last_salary_slip_based_on_last_salary_structure,
-            "last_salary_slip": last_salary_slip,
-            "custodies": custodies,
-        })
+        extra_data.update(
+            {
+                "certifications": certifications,
+                "achievements": achievements,
+                "last_salary_structure_assignment": last_salary_structure_assignment,
+                "last_salary_structure": last_salary_structure,
+                "last_salary_slip_based_on_last_salary_structure": last_salary_slip_based_on_last_salary_structure,
+                "last_salary_slip": last_salary_slip,
+                "custodies": custodies,
+            }
+        )
     return extra_data
 
 
-def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=False, ignore_perms=False):
+def read_doc(
+    doctype: str,
+    name: str,
+    origin_fields: list = [],
+    force_fields=False,
+    ignore_perms=False,
+    load_extra_docs=True,
+):
     try:
         doc = frappe.get_doc(doctype, name)
         if not ignore_perms and not doc.has_permission("read"):
             raise frappe.PermissionError
         doc.apply_fieldlevel_read_permissions()
-        extra_data = load_extra_data(doc.doctype, doc.name)
+        extra_data = {}
+        if load_extra_docs:
+            extra_data = load_extra_data(doc.doctype, doc.name)
 
         user_fields = origin_fields
         if not force_fields:
@@ -275,14 +330,15 @@ def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=Fal
 
             if "*" in user_fields:
                 user_fields = []
-        if doc: doc = doc.as_dict()
+        if doc:
+            doc = doc.as_dict()
         if len(user_fields) > 0:
             result = frappe._dict()
             for field in user_fields:
                 if hasattr(doc, field):
                     result.update({field: getattr(doc, field)})
             doc = result
-        
+
         return build_success_response(200, f"{doctype} fetched", doc, extra_data)
     except Exception as exc:
         http_status_code = 500
@@ -300,11 +356,11 @@ def read_doc(doctype: str, name: str, origin_fields: list = [], force_fields=Fal
         )
 
 
-def update_doc(doctype: str, name: str, default_data={}, ignore_perms=False, keys_to_update=[]):
+def update_doc(
+    doctype: str, name: str, default_data={}, ignore_perms=False, keys_to_update=[]
+):
     uploaded_files = []
-    find_by = {
-        "name": name
-    }
+    find_by = {"name": name}
     if default_data:
         find_by.update(default_data)
     doc = None

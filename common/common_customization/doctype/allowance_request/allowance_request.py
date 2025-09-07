@@ -4,7 +4,15 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import date_diff, getdate, flt, cint, nowdate, add_months, get_link_to_form
+from frappe.utils import (
+    date_diff,
+    getdate,
+    flt,
+    cint,
+    nowdate,
+    add_months,
+    get_link_to_form,
+)
 
 
 class AllowanceRequest(Document):
@@ -20,7 +28,11 @@ class AllowanceRequest(Document):
         self.db_set("bank_entry", "")
 
     def validate_if_old_request(self):
-        allowed_requests = cint(frappe.db.get_value("Gift Request Type", self.request_type, "allowed_requests"))
+        allowed_requests = cint(
+            frappe.db.get_value(
+                "Gift Request Type", self.request_type, "allowed_requests"
+            )
+        )
         if allowed_requests == 0:
             return
         year_ago = add_months(self.posting_date, -12)
@@ -65,7 +77,10 @@ class AllowanceRequest(Document):
         if self.add_to != "Additional Salary":
             return
 
-        total_months = cint(frappe.db.get_value("Gift Request Type", self.request_type, "total_months") or 1)
+        total_months = cint(
+            frappe.db.get_value("Gift Request Type", self.request_type, "total_months")
+            or 1
+        )
 
         add_sal = frappe.new_doc("Additional Salary")
         add_sal.employee = self.employee
@@ -92,9 +107,13 @@ class AllowanceRequest(Document):
 
         for jv in get_jv_entries(self.name, "Journal Entry"):
             if jv.docstatus == 1:
-                submitted += flt(jv.debit_in_account_currency) + flt(jv.credit_in_account_currency)
+                submitted += flt(jv.debit_in_account_currency) + flt(
+                    jv.credit_in_account_currency
+                )
             if jv.docstatus == 0:
-                drafts += flt(jv.debit_in_account_currency) + flt(jv.credit_in_account_currency)
+                drafts += flt(jv.debit_in_account_currency) + flt(
+                    jv.credit_in_account_currency
+                )
 
         if (submitted + drafts) >= flt(self.gift_cost):
             return
@@ -109,21 +128,30 @@ class AllowanceRequest(Document):
         )
         if len(accounts_values) == 0:
             frappe.throw(
-                _("Please set Debit and Credit Accounts for Allowance Request in {0}").format(
-                    get_link_to_form("Accounts Settings", "Accounts Settings")
-                )
+                _(
+                    "Please set Debit and Credit Accounts for Allowance Request in {0}"
+                ).format(get_link_to_form("Accounts Settings", "Accounts Settings"))
             )
         debit_account = accounts_values[0].get("custom_debit_account")
         credit_account = accounts_values[0].get("custom_credit_account")
 
-        if not debit_account or debit_account is None or not credit_account or credit_account is None:
+        if (
+            not debit_account
+            or debit_account is None
+            or not credit_account
+            or credit_account is None
+        ):
             frappe.throw(
-                _("Please set Debit and Credit Accounts for Allowance Request in {0}").format(
-                    get_link_to_form("Accounts Settings", "Accounts Settings")
-                )
+                _(
+                    "Please set Debit and Credit Accounts for Allowance Request in {0}"
+                ).format(get_link_to_form("Accounts Settings", "Accounts Settings"))
             )
-        debit_account_type = frappe.get_cached_value("Account", debit_account, "account_type")
-        credit_account_type = frappe.get_cached_value("Account", credit_account, "account_type")
+        debit_account_type = frappe.get_cached_value(
+            "Account", debit_account, "account_type"
+        )
+        credit_account_type = frappe.get_cached_value(
+            "Account", credit_account, "account_type"
+        )
 
         company = frappe.db.get_value("Employee", self.employee, "company")
         if not company:
@@ -181,15 +209,15 @@ class AllowanceRequest(Document):
 
         if not debit_bank_account:
             frappe.throw(
-                _("Please set account for End of service Accrual in {0} in Tab Allowance Request").format(
-                    get_link_to_form("Accounts Settings", "Accounts Settings")
-                )
+                _(
+                    "Please set account for End of service Accrual in {0} in Tab Allowance Request"
+                ).format(get_link_to_form("Accounts Settings", "Accounts Settings"))
             )
         if not credit_bank_account:
             frappe.throw(
-                _("Please set account for Bank Account in {0} in Tab Allowance Request").format(
-                    get_link_to_form("Accounts Settings", "Accounts Settings")
-                )
+                _(
+                    "Please set account for Bank Account in {0} in Tab Allowance Request"
+                ).format(get_link_to_form("Accounts Settings", "Accounts Settings"))
             )
 
         jv = frappe.new_doc("Journal Entry")
@@ -240,7 +268,9 @@ def has_jv_entries(name: str):
     name = frappe.db.exists("Allowance Request", name)
     if not name:
         return {"make_jv": 0}
-    values = frappe.db.get_values("Allowance Request", name, ["add_to", "gift_cost"], as_dict=True)
+    values = frappe.db.get_values(
+        "Allowance Request", name, ["add_to", "gift_cost"], as_dict=True
+    )
     if len(values) == 0:
         return {"make_jv": 0}
     values = values[0]
@@ -254,9 +284,13 @@ def has_jv_entries(name: str):
     drafts = 0
     for jv in get_jv_entries(name, "Journal Entry"):
         if jv.docstatus == 1:
-            submitted += flt(jv.debit_in_account_currency) + flt(jv.credit_in_account_currency)
+            submitted += flt(jv.debit_in_account_currency) + flt(
+                jv.credit_in_account_currency
+            )
         if jv.docstatus == 0:
-            drafts += flt(jv.debit_in_account_currency) + flt(jv.credit_in_account_currency)
+            drafts += flt(jv.debit_in_account_currency) + flt(
+                jv.credit_in_account_currency
+            )
 
     if submitted >= gift_cost:
         return {"make_jv": 0}

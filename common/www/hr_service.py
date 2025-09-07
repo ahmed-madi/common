@@ -8,6 +8,7 @@ no_cache = 1
 SCRIPT_TAG_PATTERN = re.compile(r"\<script[^<]*\</script\>")
 CLOSING_SCRIPT_TAG_PATTERN = re.compile(r"</script\>")
 
+
 def get_context(context):
     # csrf_token = frappe.sessions.get_csrf_token()
     # frappe.db.commit()
@@ -26,9 +27,11 @@ def get_context(context):
     boot_json = CLOSING_SCRIPT_TAG_PATTERN.sub("", boot_json)
     boot_json = json.dumps(boot_json)
 
-    context.update({
-        "build_version": frappe.utils.get_build_version(),
-        "boot": boot_json,
-    })
+    context.update(
+        {
+            "build_version": frappe.utils.get_build_version(),
+            "boot": boot_json,
+        }
+    )
 
     return context

@@ -19,18 +19,29 @@ from frappe.utils import (
 class RemoteWorkRequest(Document):
     def validate(self):
         self.validate_dates()
-        self.validate_total_requests(self.name, self.from_date, self.employee, self.total_days)
+        self.validate_total_requests(
+            self.name, self.from_date, self.employee, self.total_days
+        )
 
     def before_insert(self):
-        if getdate(self.from_date) < getdate(nowdate()) and frappe.session.user != "Administrator":
+        if (
+            getdate(self.from_date) < getdate(nowdate())
+            and frappe.session.user != "Administrator"
+        ):
             frappe.throw(_("From date can't be in the past"))
 
     def validate_dates(self):
-        if self.from_date and self.to_date and date_diff(self.to_date, self.from_date) < 0:
+        if (
+            self.from_date
+            and self.to_date
+            and date_diff(self.to_date, self.from_date) < 0
+        ):
             frappe.throw(_("To date cannot be before from date"))
 
     @frappe.whitelist()
-    def validate_total_requests(self, name, from_date, employee, total_days, xclient=False):
+    def validate_total_requests(
+        self, name, from_date, employee, total_days, xclient=False
+    ):
         if flt(total_days) > 12:
             if not xclient:
                 frappe.throw(_(f"Total request days cannot exceed 12 days."))
@@ -52,12 +63,24 @@ class RemoteWorkRequest(Document):
         total = flt(total_request_days[0].sum) + 1 if total_request_days else 0
         if total + flt(total_days) > 12:
             if not xclient:
-                frappe.throw(_(f"Total request days cannot exceed 12 per year. You only have {cint(12-total)} day(s)."))
+                frappe.throw(
+                    _(
+                        f"Total request days cannot exceed 12 per year. You only have {cint(12-total)} day(s)."
+                    )
+                )
 
-            frappe.throw(_(f"Total request days cannot exceed 12 per year. You only have {cint(12-total)} day(s)."))
+            frappe.throw(
+                _(
+                    f"Total request days cannot exceed 12 per year. You only have {cint(12-total)} day(s)."
+                )
+            )
 
     def before_save(self):
-        if self.from_date and self.to_date and date_diff(self.to_date, self.from_date) + 1 > 0:
+        if (
+            self.from_date
+            and self.to_date
+            and date_diff(self.to_date, self.from_date) + 1 > 0
+        ):
             self.total_days = date_diff(self.to_date, self.from_date) + 1
         else:
             self.total_days = 0

@@ -4,5 +4,6 @@
 # import frappe
 from common.models.base_hr_document import BaseHRDocument
 
+
 class EmployeeInquiry(BaseHRDocument):
-	pass
+    pass

@@ -6,4 +6,4 @@ from frappe.tests.utils import FrappeTestCase
 
 
 class TestEndofServiceAward(FrappeTestCase):
-	pass
+    pass

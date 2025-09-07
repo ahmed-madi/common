@@ -3,13 +3,20 @@ import json
 
 import frappe
 from frappe.utils import cint, get_site_path
-from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
+from frappe.desk.doctype.notification_log.notification_log import (
+    enqueue_create_notification,
+)
 
-from frappe.email.doctype.notification.notification import Notification, get_reference_doctype, get_reference_name
+from frappe.email.doctype.notification.notification import (
+    Notification,
+    get_reference_doctype,
+    get_reference_name,
+)
 from frappe.desk.doctype.notification_log.notification_log import NotificationLog
 
 import firebase_admin
 from firebase_admin import credentials, messaging
+
 
 class CustomNotification(Notification):
     def create_system_notification(self, doc, context):
@@ -22,7 +29,7 @@ class CustomNotification(Notification):
         recipients, cc, bcc = self.get_list_of_recipients(doc, context)
 
         users = recipients + cc + bcc
-        
+
         if not users:
             return
 
@@ -38,13 +45,18 @@ class CustomNotification(Notification):
         }
         enqueue_create_notification(users, notification_doc)
 
+
 class CustomNotificationLog(NotificationLog):
     def after_insert(self):
         super().after_insert()
         file_path = frappe.db.get_single_value("FCM Settings", "service_account_file")
-        if cint(self.send_push_notification) == 1 and cint(frappe.db.get_single_value("FCM Settings", "enable")) == 1 and file_path:
+        if (
+            cint(self.send_push_notification) == 1
+            and cint(frappe.db.get_single_value("FCM Settings", "enable")) == 1
+            and file_path
+        ):
             self.send_push_notification(file_path)
-    
+
     def send_push_notification(self, file_path):
         cred_path = f"{get_site_path()}{file_path}"
         try:
@@ -52,18 +64,26 @@ class CustomNotificationLog(NotificationLog):
             firebase_admin.initialize_app(cred)
             self.send_fcm_notification()
         except FileNotFoundError:
-            frappe.log_error(title="Invalid Credentials file", message=f"Error: Credentials file not found at '{file_path}'. Please ensure the path is correct.")
+            frappe.log_error(
+                title="Invalid Credentials file",
+                message=f"Error: Credentials file not found at '{file_path}'. Please ensure the path is correct.",
+            )
             return
         except ValueError as e:
-            if str(e).startswith('The default Firebase app already exists'):
+            if str(e).startswith("The default Firebase app already exists"):
                 pass  # App already initialized
             else:
-                frappe.log_error(title="Error initializing Firebase app", message=f"{e}")
+                frappe.log_error(
+                    title="Error initializing Firebase app", message=f"{e}"
+                )
                 return
         except Exception as e:
-            frappe.log_error(title="An unexpected error occurred during Firebase app initialization", message=f"{e}")
+            frappe.log_error(
+                title="An unexpected error occurred during Firebase app initialization",
+                message=f"{e}",
+            )
             return
-    
+
     def get_valid_fcm_message(self, txt):
         CLEANER = re.compile("<.*?>")
         clean_message = re.sub(CLEANER, "", txt)
@@ -71,7 +91,9 @@ class CustomNotificationLog(NotificationLog):
 
     def send_fcm_notification(self):
         errors_tokens = []
-        for token in frappe.get_all("FCM Device Token", filters={"user": self.for_user}, fields=["token"]):
+        for token in frappe.get_all(
+            "FCM Device Token", filters={"user": self.for_user}, fields=["token"]
+        ):
             message = messaging.Message(
                 notification=messaging.Notification(
                     title=self.get_valid_fcm_message(self.subject),
@@ -93,9 +115,15 @@ class CustomNotificationLog(NotificationLog):
                 response = messaging.send(message)
             except messaging.FirebaseError as e:
                 firebase_error = f"Error code: {e.code}\nError details: {e.message}"
-                frappe.log_error(title="Firebase Messaging Error (single device)", message=f"{e}\n\n{firebase_error}")
+                frappe.log_error(
+                    title="Firebase Messaging Error (single device)",
+                    message=f"{e}\n\n{firebase_error}",
+                )
             except Exception as e:
-                frappe.log_error(title="An unexpected error occurred while sending the message (single device)", message=f"{e}")
+                frappe.log_error(
+                    title="An unexpected error occurred while sending the message (single device)",
+                    message=f"{e}",
+                )
             finally:
                 for ft in errors_tokens:
                     pass
