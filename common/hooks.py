@@ -138,6 +138,8 @@ override_doctype_class = {
 	"Leave Type": "common.overrides.leave_type.LeaveType",
 	"Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",
 	"Loan Application": "common.overrides.loan_application.LoanApplication",
+    "Notification":"common.overrides.notification.CustomNotification",
+    "Notification Log":"common.overrides.notification.CustomNotificationLog",
 }
 
 # Document Events
