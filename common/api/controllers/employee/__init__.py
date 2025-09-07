@@ -209,3 +209,6 @@ def attendance_list(employee: str):
         user_filters=filters,
         force_user_filters=True,
     )
+
+def get_employee_info(employee: str):
+    return read_doc("Employee", employee, ["name", "status", "employee_name", "image", "gender", "date_of_birth", "designation", "department", "cell_number", "linkedin_profile_url", "personal_email", "company_email", "current_address"], force_fields=True, ignore_perms=True)
