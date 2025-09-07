@@ -46,9 +46,7 @@ app_include_css = [
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-doctype_list_js = {
-    "Attendance" : "public/js/attendance_list.js"
-}
+doctype_list_js = {"Attendance": "public/js/attendance_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -122,11 +120,11 @@ doctype_list_js = {
 # Permissions evaluated in scripted ways
 
 permission_query_conditions = {
-	"Employee HR Feedback": "common.permissions.employee_hr_feedback.get_permission_query_conditions",
+    "Employee HR Feedback": "common.permissions.employee_hr_feedback.get_permission_query_conditions",
 }
 
 has_permission = {
-	"Employee HR Feedback": "common.permissions.employee_hr_feedback.has_permission",
+    "Employee HR Feedback": "common.permissions.employee_hr_feedback.has_permission",
 }
 
 # DocType Class
@@ -134,12 +132,12 @@ has_permission = {
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Leave Application": "common.overrides.leave_application.LeaveApplication",
-	"Leave Type": "common.overrides.leave_type.LeaveType",
-	"Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",
-	"Loan Application": "common.overrides.loan_application.LoanApplication",
-    "Notification":"common.overrides.notification.CustomNotification",
-    "Notification Log":"common.overrides.notification.CustomNotificationLog",
+    "Leave Application": "common.overrides.leave_application.LeaveApplication",
+    "Leave Type": "common.overrides.leave_type.LeaveType",
+    "Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",
+    "Loan Application": "common.overrides.loan_application.LoanApplication",
+    "Notification": "common.overrides.notification.CustomNotification",
+    "Notification Log": "common.overrides.notification.CustomNotificationLog",
 }
 
 # Document Events
@@ -205,9 +203,7 @@ override_doctype_class = {
 
 # Request Events
 # ----------------
-before_request = [
-    "common.api.utils.request.before_request"
-]
+before_request = ["common.api.utils.request.before_request"]
 # after_request = ["common.utils.after_request"]
 
 # Job Events
@@ -253,4 +249,6 @@ before_request = [
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-website_route_rules = [{'from_route': '/hr-services/<path:app_path>', 'to_route': 'hr_service'},]
+website_route_rules = [
+    {"from_route": "/hr-services/<path:app_path>", "to_route": "hr_service"},
+]

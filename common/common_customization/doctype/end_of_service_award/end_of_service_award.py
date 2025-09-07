@@ -6,7 +6,16 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 import math
-from frappe.utils import cint, date_diff, flt, getdate, get_link_to_form, nowdate, get_defaults, now_datetime
+from frappe.utils import (
+    cint,
+    date_diff,
+    flt,
+    getdate,
+    get_link_to_form,
+    nowdate,
+    get_defaults,
+    now_datetime,
+)
 
 from dateutil import relativedelta
 from frappe.desk.doctype.notification_log.notification_log import (
@@ -17,7 +26,9 @@ from frappe.desk.doctype.notification_log.notification_log import (
 class EndofServiceAward(Document):
     def validate(self):
         if self.end_date and self.work_start_date:
-            years, months, days = self.get_days_months_years(self.end_date, self.work_start_date)
+            years, months, days = self.get_days_months_years(
+                self.end_date, self.work_start_date
+            )
             self.years = years
             self.months = months
             self.days = days
@@ -53,16 +64,27 @@ class EndofServiceAward(Document):
             self.total_month_basic = flt(self.days_number) * flt(self.basic_day_value)
             self.housing_allowance = housing_allowance
             self.housing_day_value = housing_day_value
-            self.total_month_housing = flt(self.days_number) * flt(self.housing_day_value)
+            self.total_month_housing = flt(self.days_number) * flt(
+                self.housing_day_value
+            )
             self.transportation_allowance = transportation_allowance
             self.transportation_day_value = transportation_day_value
-            self.total_month_transportation = flt(self.days_number) * flt(self.transportation_day_value)
+            self.total_month_transportation = flt(self.days_number) * flt(
+                self.transportation_day_value
+            )
             self.other_allowance = 0  # other_allowance -temporarily set as zero-
             self.other_day_value = other_day_value
             self.total_month_other = flt(self.days_number) * flt(self.other_day_value)
 
-        if self.employee and self.work_start_date and self.end_date and not self.leave_number:
-            self.leave_number = self.get_leave_balance(self.employee, self.work_start_date, self.end_date)
+        if (
+            self.employee
+            and self.work_start_date
+            and self.end_date
+            and not self.leave_number
+        ):
+            self.leave_number = self.get_leave_balance(
+                self.employee, self.work_start_date, self.end_date
+            )
 
         self.total_month_salary = 0
         if cint(self.salary_is_already_taken) == 0:
@@ -82,7 +104,10 @@ class EndofServiceAward(Document):
         salary = flt(self.salary)
         years = cint(self.years) + cint(self.months) / 12 + cint(self.days) / 360
 
-        if self.reason == "انتهاء مدة العقد أو الاتفاق بين الطرفين على انهاء العقد أو انهاء العقد من قبل الشركة":
+        if (
+            self.reason
+            == "انتهاء مدة العقد أو الاتفاق بين الطرفين على انهاء العقد أو انهاء العقد من قبل الشركة"
+        ):
             firstPeriod = secondPeriod = 0
             if years > 5:
                 firstPeriod = 5
@@ -112,13 +137,30 @@ class EndofServiceAward(Document):
 
     def calculate_total_award(self):
         if self.reason == "انهاء العقد خلال فتره التجربه":
-            totals = flt(self.ticket_total_cost) + flt(self.total_month_salary) + flt(self.leave_total_cost) + flt(self.total_earning)
-            self.total = totals - flt(self.total_deduction) if totals >= flt(self.total_deduction) else 0
+            totals = (
+                flt(self.ticket_total_cost)
+                + flt(self.total_month_salary)
+                + flt(self.leave_total_cost)
+                + flt(self.total_earning)
+            )
+            self.total = (
+                totals - flt(self.total_deduction)
+                if totals >= flt(self.total_deduction)
+                else 0
+            )
         else:
             totals = (
-                flt(self.award) + flt(self.ticket_total_cost) + flt(self.total_month_salary) + flt(self.leave_total_cost) + flt(self.total_earning)
+                flt(self.award)
+                + flt(self.ticket_total_cost)
+                + flt(self.total_month_salary)
+                + flt(self.leave_total_cost)
+                + flt(self.total_earning)
             )
-            self.total = totals - flt(self.total_deduction) if totals >= flt(self.total_deduction) else 0
+            self.total = (
+                totals - flt(self.total_deduction)
+                if totals >= flt(self.total_deduction)
+                else 0
+            )
 
     def calculate_total_deduction(self):
         self.total_deduction = 0
@@ -216,7 +258,9 @@ class EndofServiceAward(Document):
 
     @frappe.whitelist()
     def get_days_months_years(self, end_date, work_start_date):
-        difference = relativedelta.relativedelta(getdate(end_date), getdate(work_start_date))
+        difference = relativedelta.relativedelta(
+            getdate(end_date), getdate(work_start_date)
+        )
         years = difference.years
         months = difference.months
         days = difference.days + 1
@@ -368,7 +412,9 @@ class EndofServiceAward(Document):
         deduct_add_salary = False
 
         if group_earnings_in and flt(self.total_earning) > 0:
-            account_type = frappe.get_cached_value("Account", group_earnings_in, "account_type")
+            account_type = frappe.get_cached_value(
+                "Account", group_earnings_in, "account_type"
+            )
             row = {
                 "account": group_earnings_in,
                 "debit_in_account_currency": flt(self.total_earning),
@@ -387,7 +433,9 @@ class EndofServiceAward(Document):
             paid_amt += flt(self.total_earning)
 
         if group_deductions_in and flt(self.total_deduction) > 0:
-            account_type = frappe.get_cached_value("Account", group_deductions_in, "account_type")
+            account_type = frappe.get_cached_value(
+                "Account", group_deductions_in, "account_type"
+            )
             row = {
                 "account": group_deductions_in,
                 "debit_in_account_currency": -1 * flt(self.total_deduction),
@@ -406,14 +454,18 @@ class EndofServiceAward(Document):
         if flt(self.total_month_basic, 2) != 0 and salary_is_already_taken == 0:
             if not basic_salary_component:
                 frappe.throw(
-                    _("Please set salary component for Basic Salary in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings"))
+                    _("Please set salary component for Basic Salary in {0}").format(
+                        get_link_to_form("Accounts Settings", "Accounts Settings")
+                    )
                 )
 
             account = self.get_salary_component_account(basic_salary_component, company)
             account_type = frappe.get_cached_value("Account", account, "account_type")
 
             amt = flt(self.total_month_basic)
-            per_cent = flt((flt(self.total_month_basic) * 100) / flt(self.total_month_salary))
+            per_cent = flt(
+                (flt(self.total_month_basic) * 100) / flt(self.total_month_salary)
+            )
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -439,14 +491,20 @@ class EndofServiceAward(Document):
         if flt(self.total_month_housing, 2) != 0 and salary_is_already_taken == 0:
             if not housing_allowance_component:
                 frappe.throw(
-                    _("Please set salary component for Housing Allownace in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings"))
+                    _(
+                        "Please set salary component for Housing Allownace in {0}"
+                    ).format(get_link_to_form("Accounts Settings", "Accounts Settings"))
                 )
 
-            account = self.get_salary_component_account(housing_allowance_component, company)
+            account = self.get_salary_component_account(
+                housing_allowance_component, company
+            )
             account_type = frappe.get_cached_value("Account", account, "account_type")
 
             amt = flt(self.total_month_housing)
-            per_cent = flt((flt(self.total_month_housing) * 100) / flt(self.total_month_salary))
+            per_cent = flt(
+                (flt(self.total_month_housing) * 100) / flt(self.total_month_salary)
+            )
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -468,17 +526,25 @@ class EndofServiceAward(Document):
             paid_amt += flt(amt, 2)
             deduct_add_salary = True
 
-        if flt(self.total_month_transportation, 2) != 0 and salary_is_already_taken == 0:
+        if (
+            flt(self.total_month_transportation, 2) != 0
+            and salary_is_already_taken == 0
+        ):
             if not transfer_allowance:
                 frappe.throw(
-                    _("Please set salary component for Transfer Allownace in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings"))
+                    _(
+                        "Please set salary component for Transfer Allownace in {0}"
+                    ).format(get_link_to_form("Accounts Settings", "Accounts Settings"))
                 )
 
             account = self.get_salary_component_account(transfer_allowance, company)
             account_type = frappe.get_cached_value("Account", account, "account_type")
 
             amt = flt(self.total_month_transportation)
-            per_cent = flt((flt(self.total_month_transportation) * 100) / flt(self.total_month_salary))
+            per_cent = flt(
+                (flt(self.total_month_transportation) * 100)
+                / flt(self.total_month_salary)
+            )
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -503,11 +569,19 @@ class EndofServiceAward(Document):
 
         if flt(self.total_month_other, 2) != 0 and salary_is_already_taken == 0:
             if not other_allowance_account:
-                frappe.throw(_("Please set account for Other Allowance in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings")))
-            account_type = frappe.get_cached_value("Account", other_allowance_account, "account_type")
+                frappe.throw(
+                    _("Please set account for Other Allowance in {0}").format(
+                        get_link_to_form("Accounts Settings", "Accounts Settings")
+                    )
+                )
+            account_type = frappe.get_cached_value(
+                "Account", other_allowance_account, "account_type"
+            )
 
             amt = flt(self.total_month_other)
-            per_cent = flt((flt(self.total_month_other) * 100) / flt(self.total_month_salary))
+            per_cent = flt(
+                (flt(self.total_month_other) * 100) / flt(self.total_month_salary)
+            )
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -531,8 +605,14 @@ class EndofServiceAward(Document):
 
         if flt(self.leave_total_cost, 2) != 0 or not deduct_add_salary:
             if not leave_account:
-                frappe.throw(_("Please set account for Vacation Expense in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings")))
-            account_type = frappe.get_cached_value("Account", leave_account, "account_type")
+                frappe.throw(
+                    _("Please set account for Vacation Expense in {0}").format(
+                        get_link_to_form("Accounts Settings", "Accounts Settings")
+                    )
+                )
+            account_type = frappe.get_cached_value(
+                "Account", leave_account, "account_type"
+            )
             amt = flt(self.leave_total_cost)
             # update leave costs if salary not changed
             if not deduct_add_salary:
@@ -559,10 +639,14 @@ class EndofServiceAward(Document):
         if flt(self.award, 2) != 0:
             if not end_of_service_account:
                 frappe.throw(
-                    _("Please set account for End of Service Award in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings"))
+                    _("Please set account for End of Service Award in {0}").format(
+                        get_link_to_form("Accounts Settings", "Accounts Settings")
+                    )
                 )
 
-            account_type = frappe.get_cached_value("Account", end_of_service_account, "account_type")
+            account_type = frappe.get_cached_value(
+                "Account", end_of_service_account, "account_type"
+            )
             row = {
                 "account": end_of_service_account,
                 "debit_in_account_currency": flt(self.award),
@@ -578,7 +662,11 @@ class EndofServiceAward(Document):
             )
             paid_amt += flt(self.award)
         if not accrual:
-            frappe.throw(_("Please set account for End of service Accrual in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings")))
+            frappe.throw(
+                _("Please set account for End of service Accrual in {0}").format(
+                    get_link_to_form("Accounts Settings", "Accounts Settings")
+                )
+            )
         account_type = frappe.get_cached_value("Account", accrual, "account_type")
 
         if paid_amt == 0:
@@ -622,9 +710,17 @@ class EndofServiceAward(Document):
         accrual = settings.custom_end_of_service_accrual or None
 
         if not accrual:
-            frappe.throw(_("Please set account for End of service Accrual in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings")))
+            frappe.throw(
+                _("Please set account for End of service Accrual in {0}").format(
+                    get_link_to_form("Accounts Settings", "Accounts Settings")
+                )
+            )
         if not bank_account:
-            frappe.throw(_("Please set account for Bank Account in {0}").format(get_link_to_form("Accounts Settings", "Accounts Settings")))
+            frappe.throw(
+                _("Please set account for Bank Account in {0}").format(
+                    get_link_to_form("Accounts Settings", "Accounts Settings")
+                )
+            )
         jv = frappe.new_doc("Journal Entry")
         jv.posting_date = nowdate()
         jv.voucher_type = "Bank Entry"
@@ -686,7 +782,11 @@ class EndofServiceAward(Document):
         )
 
         if not account:
-            frappe.throw(_("Please set account in Salary Component {0}").format(get_link_to_form("Salary Component", salary_component)))
+            frappe.throw(
+                _("Please set account in Salary Component {0}").format(
+                    get_link_to_form("Salary Component", salary_component)
+                )
+            )
 
         return account
 
@@ -721,9 +821,13 @@ class EndofServiceAward(Document):
                         ["payroll_cost_center", "department", "company"],
                     )
                     if not default_cost_center and department:
-                        default_cost_center = frappe.get_cached_value("Department", department, "payroll_cost_center")
+                        default_cost_center = frappe.get_cached_value(
+                            "Department", department, "payroll_cost_center"
+                        )
                     if not default_cost_center and company:
-                        default_cost_center = frappe.get_cached_value("Company", company, "cost_center")
+                        default_cost_center = frappe.get_cached_value(
+                            "Company", company, "cost_center"
+                        )
 
                     cost_centers = {default_cost_center: 100}
 
@@ -831,7 +935,9 @@ def get_award(start_date, end_date, salary, toc, reason):
                 elif years <= 5:
                     result = (1.0 / 6.0) * salary * years
                 elif years <= 10:
-                    result = ((1.0 / 3.0) * salary * 5) + ((2.0 / 3.0) * salary * (years - 5))
+                    result = ((1.0 / 3.0) * salary * 5) + (
+                        (2.0 / 3.0) * salary * (years - 5)
+                    )
                 else:
                     result = (0.5 * salary * 5) + (salary * (years - 5))
                 ret_dict["award"] = result
@@ -889,7 +995,12 @@ def end_of_service_has_bank_jv_entries(name: str, docstatus=[1]):
     return response
 
 
-def money_in_words(number: str | float | int, main_currency: str | None = None, fraction_currency: str | None = None, lang="en"):
+def money_in_words(
+    number: str | float | int,
+    main_currency: str | None = None,
+    fraction_currency: str | None = None,
+    lang="en",
+):
     """
     Returns string in words with currency and fraction currency.
     """
@@ -909,10 +1020,14 @@ def money_in_words(number: str | float | int, main_currency: str | None = None, 
     if not main_currency:
         main_currency = d.get("currency", "INR")
     if not fraction_currency:
-        fraction_currency = frappe.db.get_value("Currency", main_currency, "fraction", cache=True) or _("Cent", lang=lang)
+        fraction_currency = frappe.db.get_value(
+            "Currency", main_currency, "fraction", cache=True
+        ) or _("Cent", lang=lang)
 
     number_format = (
-        frappe.db.get_value("Currency", main_currency, "number_format", cache=True) or frappe.db.get_default("number_format") or "#,###.##"
+        frappe.db.get_value("Currency", main_currency, "number_format", cache=True)
+        or frappe.db.get_default("number_format")
+        or "#,###.##"
     )
 
     fraction_length = get_number_format_info(number_format)[2]
@@ -932,14 +1047,30 @@ def money_in_words(number: str | float | int, main_currency: str | None = None, 
 
     # 0.00
     if main == "0" and fraction in ["00", "000"]:
-        out = _(main_currency, context="Currency", lang=lang) + " " + _("Zero", lang=lang)
+        out = (
+            _(main_currency, context="Currency", lang=lang) + " " + _("Zero", lang=lang)
+        )
     # 0.XX
     elif main == "0":
-        out = in_words(fraction, in_million, lang=lang).title() + " " + fraction_currency
+        out = (
+            in_words(fraction, in_million, lang=lang).title() + " " + fraction_currency
+        )
     else:
-        out = _(main_currency, context="Currency", lang=lang) + " " + in_words(main, in_million, lang=lang).title()
+        out = (
+            _(main_currency, context="Currency", lang=lang)
+            + " "
+            + in_words(main, in_million, lang=lang).title()
+        )
         if cint(fraction):
-            out = out + " " + _("and", lang=lang) + " " + in_words(fraction, in_million, lang=lang).title() + " " + fraction_currency
+            out = (
+                out
+                + " "
+                + _("and", lang=lang)
+                + " "
+                + in_words(fraction, in_million, lang=lang).title()
+                + " "
+                + fraction_currency
+            )
 
     return out
 

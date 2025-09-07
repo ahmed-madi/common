@@ -98,7 +98,9 @@ class FestiveGreetingCardRequest(Document):
             file.save(ignore_permissions=True)
 
             if final_version:
-                self.db_set("request_festive_image", file.file_url, update_modified=False)
+                self.db_set(
+                    "request_festive_image", file.file_url, update_modified=False
+                )
                 # at some points it will be long proccess!
                 # delete all old version on_submit
                 frappe.enqueue(self.delete_all_versions, queue="long")

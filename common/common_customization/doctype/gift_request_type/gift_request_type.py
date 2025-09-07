@@ -25,7 +25,9 @@ class GiftRequestType(Document):
             "account",
         )
         if not account:
-            frappe.throw(_("Set account for Salary Component {}").format(self.salary_component))
+            frappe.throw(
+                _("Set account for Salary Component {}").format(self.salary_component)
+            )
         if self.total_months <= 0:
             self.total_months = 1
         self.total_cost = cint(self.total_months) * self.gift_cost

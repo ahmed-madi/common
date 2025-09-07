@@ -53,7 +53,9 @@ def handle_exception_response(
         title = f"failed to update {doctype}"
     else:
         title = (
-            f"failed to update {doctype}" if for_update else f"failed to create {doctype}"
+            f"failed to update {doctype}"
+            if for_update
+            else f"failed to create {doctype}"
         )
     if hasattr(exception, "http_status_code"):
         http_status_code = exception.http_status_code
@@ -84,7 +86,7 @@ def handle_exception_response(
             message = args[0].split(":")[0]
             if message == "Cannot link cancelled document":
                 message = args[0]
-            if '. It should be one of ' in message:
+            if ". It should be one of " in message:
                 # general select issue!
                 message = message.replace('"', "'")
             message = message.strip()

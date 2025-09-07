@@ -11,7 +11,10 @@ WHITELIST_PATHS = [
 
 
 def before_request():
-    if (request.path.startswith("/api/v1/") or request.path.startswith("/private/files/")) and request.path not in WHITELIST_PATHS:
+    if (
+        request.path.startswith("/api/v1/")
+        or request.path.startswith("/private/files/")
+    ) and request.path not in WHITELIST_PATHS:
         auth_header = frappe.get_request_header("Authorization", "")
         if auth_header and auth_header.startswith("Bearer "):
             jwt_token = auth_header.split(" ")[1]

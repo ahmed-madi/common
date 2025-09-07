@@ -6,4 +6,4 @@ from common.models.base_hr_document import BaseHRDocument
 
 
 class EmployeeCertification(BaseHRDocument):
-	pass
+    pass

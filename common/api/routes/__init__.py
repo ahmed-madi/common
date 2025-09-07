@@ -32,7 +32,9 @@ from common.api.routes.helpdesk.ticket import ticket_rules
 # HR Requests
 from common.api.routes.hr_requests import employee_requests_rules
 from common.api.routes.hr_requests.access_system import access_system_rules
-from common.api.routes.hr_requests.employee_resignation import employee_resignation_rules
+from common.api.routes.hr_requests.employee_resignation import (
+    employee_resignation_rules,
+)
 from common.api.routes.hr_requests.education_allowance import education_allowance_rules
 from common.api.routes.hr_requests.loan import loan_rules
 from common.api.routes.hr_requests.change_iban import change_iban_rules
@@ -40,12 +42,16 @@ from common.api.routes.hr_requests.clearance_letter import clearance_letter_rule
 from common.api.routes.hr_requests.club_request import club_request_rules
 from common.api.routes.hr_requests.document_request import document_request_rules
 from common.api.routes.hr_requests.salary_fixation import salary_fixation_rules
-from common.api.routes.hr_requests.salary_identification_letter import salary_identification_letter_rules
+from common.api.routes.hr_requests.salary_identification_letter import (
+    salary_identification_letter_rules,
+)
 from common.api.routes.hr_requests.training_request import training_request_rules
 from common.api.routes.hr_requests.visa_application import visa_application_rules
 
 # Leave Requests
-from common.api.routes.leave_requests.compensatory_vacation import compensatory_vacation_rules
+from common.api.routes.leave_requests.compensatory_vacation import (
+    compensatory_vacation_rules,
+)
 from common.api.routes.leave_requests.early_leave import early_leave_rules
 from common.api.routes.leave_requests.external_work import external_work_rules
 from common.api.routes.leave_requests.leave_cancellation import leave_cancellation_rules

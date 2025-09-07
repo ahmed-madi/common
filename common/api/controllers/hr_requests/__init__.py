@@ -117,8 +117,8 @@ def employee_requests_list():
     request_date = None
     status = None
     docstatus = None
-    order_by=None
-    order=None
+    order_by = None
+    order = None
     response_data = frappe._dict()
     if "limit_page_length" in frappe.request.args:
         limit_page_length = cint(frappe.request.args["limit_page_length"])
@@ -169,13 +169,32 @@ def employee_requests_list():
         order_by = frappe.request.args["order_by"]
     if "order" in frappe.request.args:
         order = frappe.request.args["order"]
-    reverse=False
+    reverse = False
     if order and isinstance(order, str) and order.upper() == "DESC":
-        reverse=True
-    if order_by and isinstance(order_by, str) and order_by.lower() in ["name", "employee", "employee_name", "status", "docstatus", "request_date", "modified", "creation", "doctype"]:
-        data_list = sorted(data_list, key=lambda obj: obj[order_by], reverse=reverse)[:limit_page_length]
+        reverse = True
+    if (
+        order_by
+        and isinstance(order_by, str)
+        and order_by.lower()
+        in [
+            "name",
+            "employee",
+            "employee_name",
+            "status",
+            "docstatus",
+            "request_date",
+            "modified",
+            "creation",
+            "doctype",
+        ]
+    ):
+        data_list = sorted(data_list, key=lambda obj: obj[order_by], reverse=reverse)[
+            :limit_page_length
+        ]
     else:
-        data_list = sorted(data_list, key=lambda obj: obj.modified, reverse=reverse)[:limit_page_length]
+        data_list = sorted(data_list, key=lambda obj: obj.modified, reverse=reverse)[
+            :limit_page_length
+        ]
 
     if len(errors) == 0:
         response_data.update(

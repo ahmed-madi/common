@@ -2,17 +2,26 @@ import frappe
 from frappe.utils import cint
 
 from common.api.utils import get_request_form_data
-from common.api.utils.endpoints import document_list, create_doc, read_doc, update_doc ,delete_doc
+from common.api.utils.endpoints import (
+    document_list,
+    create_doc,
+    read_doc,
+    update_doc,
+    delete_doc,
+)
 from common.api.utils.response import build_success_response, build_error_response
 
-#test workflow
+
+# test workflow
 @frappe.whitelist()
 def get_config():
     try:
         doc = frappe.get_doc("FCM Settings")
         if cint(doc.enable) == 0:
-            return build_error_response(403, "Failed to fetch FCM configurations", "FCM Feature is not enabled")
-        
+            return build_error_response(
+                403, "Failed to fetch FCM configurations", "FCM Feature is not enabled"
+            )
+
         data = {
             "enable": doc.enable,
             "config": {
@@ -25,9 +34,14 @@ def get_config():
             },
             "key_pair": doc.key_pair,
         }
-        build_success_response(status_code=200, message="FCM configurations fetched", data=data)
+        build_success_response(
+            status_code=200, message="FCM configurations fetched", data=data
+        )
     except:
-        build_error_response(403, "Failed to fetch FCM configurations", frappe.get_traceback())
+        build_error_response(
+            403, "Failed to fetch FCM configurations", frappe.get_traceback()
+        )
+
 
 # Subscribe and Unsubscribe API
 @frappe.whitelist(methods=["POST"])

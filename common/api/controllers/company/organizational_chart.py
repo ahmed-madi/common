@@ -3,6 +3,7 @@ from erpnext import get_default_company
 
 # from hrms.hr.page.organizational_chart.organizational_chart import get_connections
 
+
 def get_employee_structure(parent=None, company=None, exclude_node=None):
     filters = [["status", "=", "Active"]]
     if not company or company is None:
@@ -41,11 +42,12 @@ def get_employee_structure(parent=None, company=None, exclude_node=None):
 
     return employees
 
+
 def get_department_structure(parent=None, company=None, exclude_node=None):
     filters = [["disabled", "=", 0]]
     if not company or company is None:
         company = get_default_company()
-    
+
     if company and company != "All Companies":
         filters.append(["company", "=", company])
     if parent and company and parent != company:

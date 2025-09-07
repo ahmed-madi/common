@@ -5,6 +5,7 @@
 from frappe.utils import nowdate
 from common.models.base_hr_document import BaseHRDocument
 
+
 class VisaApplication(BaseHRDocument):
     def before_validate(self):
         if not self.request_date:

@@ -6,4 +6,4 @@ from frappe.model.document import Document
 
 
 class SalaryCertificate(Document):
-	pass
+    pass

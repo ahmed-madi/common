@@ -1,6 +1,7 @@
 import frappe
 from frappe.utils import cint, flt
 
+
 def format_data(data, doctype, keys_to_update=[]):
     if not isinstance(data, dict):
         return data
@@ -17,10 +18,13 @@ def format_data(data, doctype, keys_to_update=[]):
             v = flt(v)
         elif field.fieldtype in ["Int", "Check"]:
             v = cint(v)
-        valid_data.update({
-            f"{k}": v,
-        })
+        valid_data.update(
+            {
+                f"{k}": v,
+            }
+        )
     return valid_data
+
 
 def get_request_form_data():
     if frappe.form_dict.data is None:
@@ -93,6 +97,7 @@ def delete_duplicated_or_after_error(uploaded_files):
         if not file.get("name"):
             continue
         frappe.delete_doc_if_exists("File", file.get("name"))
+
 
 def handle_password_test_fail(feedback: dict):
     # Backward compatibility

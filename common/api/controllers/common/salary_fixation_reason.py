@@ -1,9 +1,11 @@
 from common.api.utils.endpoints import document_list, read_doc
 
+
 def salary_fixation_reason_list():
     doctype = "Fixation Reason"
     fields = ["name", "fixation_reason"]
     return document_list(doctype, fields)
+
 
 def read_salary_fixation_reason(name: str):
     doctype = "Fixation Reason"
