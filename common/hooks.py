@@ -85,7 +85,7 @@ doctype_list_js = {"Attendance": "public/js/attendance_list.js"}
 # ------------
 
 # before_install = "common.install.before_install"
-# after_install = "common.install.after_install"
+after_install = "common.install.after_install"
 
 # Uninstallation
 # ------------
