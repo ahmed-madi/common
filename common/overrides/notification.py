@@ -41,7 +41,7 @@ class CustomNotification(Notification):
             "from_user": doc.modified_by or doc.owner,
             "email_content": frappe.render_template(self.message, context),
             "attached_file": attachments and json.dumps(attachments[0]),
-            "send_push_notification": cint(self.send_push_notification),
+            "push_notification": cint(self.send_push_notification),
         }
         enqueue_create_notification(users, notification_doc)
 
@@ -51,11 +51,64 @@ class CustomNotificationLog(NotificationLog):
         super().after_insert()
         file_path = frappe.db.get_single_value("FCM Settings", "service_account_file")
         if (
-            cint(self.send_push_notification) == 1
+            cint(self.push_notification) == 1
             and cint(frappe.db.get_single_value("FCM Settings", "enable")) == 1
             and file_path
+            and self.allow_to_send_push_notification()
         ):
             self.send_push_notification(file_path)
+
+    def allow_to_send_push_notification(self):
+        if not self.document_type or self.document_type is None:
+            return False
+
+        exists = frappe.db.exists(
+            "HR Notification Settings", {"user": frappe.session.user}
+        )
+        if not exists or exists is None:
+            return False
+        doc = frappe.get_doc("HR Notification Settings", exists)
+        if doc.task_assignments == 1:
+            task_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "task_documents"},
+                pluck="document",
+            )
+            if self.document_type in task_documents:
+                return True
+        if doc.request_approvals == 1:
+            hr_requests = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "hr_requests"},
+                pluck="document",
+            )
+            if self.document_type in hr_requests:
+                return True
+        if doc.calendar_events == 1:
+            event_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "event_documents"},
+                pluck="document",
+            )
+            if self.document_type in event_documents:
+                return True
+        if doc.helpdesk_updates == 1:
+            helpdesk_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "helpdesk_documents"},
+                pluck="document",
+            )
+            if self.document_type in helpdesk_documents:
+                return True
+        if doc.performance_reviews == 1:
+            performance_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "helpdesk_documents"},
+                pluck="document",
+            )
+            if self.document_type in performance_documents:
+                return True
+        return False
 
     def send_push_notification(self, file_path):
         cred_path = f"{get_site_path()}{file_path}"

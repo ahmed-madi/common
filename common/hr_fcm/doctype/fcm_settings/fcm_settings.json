@@ -15,7 +15,14 @@
   "api_key",
   "messaging_sender_id",
   "app_id",
-  "project_id"
+  "project_id",
+  "allowed_documents_to_send_notification_section",
+  "task_documents",
+  "hr_requests",
+  "performance_documents",
+  "column_break_lfop",
+  "event_documents",
+  "helpdesk_documents"
  ],
  "fields": [
   {
@@ -87,13 +94,52 @@
    "fieldtype": "Data",
    "label": "Project Id",
    "mandatory_depends_on": "enable"
+  },
+  {
+   "fieldname": "allowed_documents_to_send_notification_section",
+   "fieldtype": "Section Break",
+   "label": "Allowed Documents to Send Notification"
+  },
+  {
+   "fieldname": "task_documents",
+   "fieldtype": "Table MultiSelect",
+   "label": "Task Documents",
+   "options": "FRM DocType"
+  },
+  {
+   "fieldname": "hr_requests",
+   "fieldtype": "Table MultiSelect",
+   "label": "HR Requests",
+   "options": "FRM DocType"
+  },
+  {
+   "fieldname": "performance_documents",
+   "fieldtype": "Table MultiSelect",
+   "label": "Performance Documents",
+   "options": "FRM DocType"
+  },
+  {
+   "fieldname": "column_break_lfop",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "event_documents",
+   "fieldtype": "Table MultiSelect",
+   "label": "Event Documents",
+   "options": "FRM DocType"
+  },
+  {
+   "fieldname": "helpdesk_documents",
+   "fieldtype": "Table MultiSelect",
+   "label": "Helpdesk Documents",
+   "options": "FRM DocType"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-09-06 16:18:34.968438",
+ "modified": "2025-09-08 13:25:13.628015",
  "modified_by": "Administrator",
  "module": "HR FCM",
  "name": "FCM Settings",

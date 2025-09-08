@@ -57,3 +57,55 @@ def unsubscribe():
         frappe.delete_doc("FCM Device Token", dt.name, force=True)
     frappe.db.commit()
     build_success_response(status_code=200, message="FCM Token Deleted", data={})
+
+
+@frappe.whitelist(methods=["POST"])
+def update_notifications_settings():
+    data = get_request_form_data()
+    exists = frappe.db.exists("HR Notification Settings", {"user": frappe.session.user})
+    if exists:
+        doc = frappe.get_doc("HR Notification Settings", exists)
+    else:
+        doc = frappe.new_doc("HR Notification Settings")
+        doc.update(
+            {
+                "user": frappe.session.user,
+                "task_assignments": 1,
+                "request_approvals": 1,
+                "calendar_events": 1,
+                "helpdesk_updates": 1,
+                "performance_reviews": 1,
+            }
+        )
+    if "task_assignments" in data:
+        doc.update(
+            {
+                "task_assignments": cint(data.get("task_assignments")),
+            }
+        )
+    if "request_approvals" in data:
+        doc.update(
+            {
+                "request_approvals": cint(data.get("request_approvals")),
+            }
+        )
+    if "calendar_events" in data:
+        doc.update(
+            {
+                "calendar_events": cint(data.get("calendar_events")),
+            }
+        )
+    if "helpdesk_updates" in data:
+        doc.update(
+            {
+                "helpdesk_updates": cint(data.get("helpdesk_updates")),
+            }
+        )
+    if "performance_reviews" in data:
+        doc.update(
+            {
+                "performance_reviews": cint(data.get("performance_reviews")),
+            }
+        )
+
+    doc.save(ignore_permissions=True)
