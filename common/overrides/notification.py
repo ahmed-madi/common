@@ -62,28 +62,50 @@ class CustomNotificationLog(NotificationLog):
         if not self.document_type or self.document_type is None:
             return False
 
-        exists = frappe.db.exists("HR Notification Settings", {"user": frappe.session.user})
+        exists = frappe.db.exists(
+            "HR Notification Settings", {"user": frappe.session.user}
+        )
         if not exists or exists is None:
             return False
         doc = frappe.get_doc("HR Notification Settings", exists)
         if doc.task_assignments == 1:
-            task_documents = frappe.get_all("FRM DocType", {"parent": "FCM Settings", "parentfield": "task_documents"}, pluck="document")
+            task_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "task_documents"},
+                pluck="document",
+            )
             if self.document_type in task_documents:
                 return True
         if doc.request_approvals == 1:
-            hr_requests = frappe.get_all("FRM DocType", {"parent": "FCM Settings", "parentfield": "hr_requests"}, pluck="document")
+            hr_requests = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "hr_requests"},
+                pluck="document",
+            )
             if self.document_type in hr_requests:
                 return True
         if doc.calendar_events == 1:
-            event_documents = frappe.get_all("FRM DocType", {"parent": "FCM Settings", "parentfield": "event_documents"}, pluck="document")
+            event_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "event_documents"},
+                pluck="document",
+            )
             if self.document_type in event_documents:
                 return True
         if doc.helpdesk_updates == 1:
-            helpdesk_documents = frappe.get_all("FRM DocType", {"parent": "FCM Settings", "parentfield": "helpdesk_documents"}, pluck="document")
+            helpdesk_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "helpdesk_documents"},
+                pluck="document",
+            )
             if self.document_type in helpdesk_documents:
                 return True
         if doc.performance_reviews == 1:
-            performance_documents = frappe.get_all("FRM DocType", {"parent": "FCM Settings", "parentfield": "helpdesk_documents"}, pluck="document")
+            performance_documents = frappe.get_all(
+                "FRM DocType",
+                {"parent": "FCM Settings", "parentfield": "helpdesk_documents"},
+                pluck="document",
+            )
             if self.document_type in performance_documents:
                 return True
         return False

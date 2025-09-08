@@ -19,7 +19,9 @@ from common.api.controllers.employee import (
 employee_info_rules = [
     # Employee
     Rule("/employee/<path:employee>/", methods=["GET"], endpoint=employee_info),
-    Rule("/employee-info/<path:employee>/", methods=["GET"], endpoint=other_employee_info),
+    Rule(
+        "/employee-info/<path:employee>/", methods=["GET"], endpoint=other_employee_info
+    ),
     Rule("/employee/<path:employee>/", methods=["PUT"], endpoint=update_employee_info),
     # Check-in-out / Attendance
     Rule(
