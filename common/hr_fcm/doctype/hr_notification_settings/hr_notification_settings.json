@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "Prompt",
+ "autoname": "field:user",
  "creation": "2025-09-03 13:47:09.016304",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -23,7 +23,8 @@
    "label": "User",
    "options": "User",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "system_notifications_section",
@@ -64,18 +65,17 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-08 12:30:19.177589",
+ "modified": "2025-09-08 13:03:14.854498",
  "modified_by": "Administrator",
  "module": "HR FCM",
  "name": "HR Notification Settings",
- "naming_rule": "Set by user",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
    "email": 1,
    "export": 1,
-   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
