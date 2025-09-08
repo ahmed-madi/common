@@ -41,7 +41,7 @@ class CustomNotification(Notification):
             "from_user": doc.modified_by or doc.owner,
             "email_content": frappe.render_template(self.message, context),
             "attached_file": attachments and json.dumps(attachments[0]),
-            "send_push_notification": cint(self.send_push_notification),
+            "push_notification": cint(self.send_push_notification),
         }
         enqueue_create_notification(users, notification_doc)
 
@@ -51,7 +51,7 @@ class CustomNotificationLog(NotificationLog):
         super().after_insert()
         file_path = frappe.db.get_single_value("FCM Settings", "service_account_file")
         if (
-            cint(self.send_push_notification) == 1
+            cint(self.push_notification) == 1
             and cint(frappe.db.get_single_value("FCM Settings", "enable")) == 1
             and file_path
         ):
