@@ -16,7 +16,7 @@ from frappe.desk.doctype.notification_log.notification_log import NotificationLo
 
 import firebase_admin
 from firebase_admin import credentials, messaging
-
+from firebase_admin.exceptions import FirebaseError
 
 class CustomNotification(Notification):
     def create_system_notification(self, doc, context):
@@ -145,37 +145,79 @@ class CustomNotificationLog(NotificationLog):
     def send_fcm_notification(self):
         errors_tokens = []
         for token in frappe.get_all(
-            "FCM Device Token", filters={"user": self.for_user}, fields=["token"]
+            "FCM Device Token", filters={"user": self.for_user}, fields=["name", "token"]
         ):
+            subject = self.subject
+            if not isinstance(subject, str):
+                subject = "{}".format(subject).strip()
+            
+            for_user = self.for_user
+            if not isinstance(for_user, str):
+                for_user = "{}".format(for_user).strip()
+            
+            type = self.type
+            if not isinstance(type, str):
+                type = "{}".format(type).strip()
+
+            email_content = self.email_content
+            if not isinstance(email_content, str):
+                email_content = "{}".format(email_content).strip()
+            
+            document_type = self.document_type
+            if not isinstance(document_type, str):
+                document_type = "{}".format(document_type).strip()
+            
+            read = self.read
+            if not isinstance(read, str):
+                read = "{}".format(read).strip()
+            
+            document_name = self.document_name
+            if not isinstance(document_name, str):
+                document_name = "{}".format(document_name).strip()
+            
+            attached_file = self.attached_file
+            if not isinstance(attached_file, str):
+                attached_file = "{}".format(attached_file).strip()
+            
+            from_user = self.from_user
+            if not isinstance(from_user, str):
+                from_user = "{}".format(from_user).strip()
+            
+            link = self.link
+            if not isinstance(link, str):
+                link = "{}".format(link)
+            
             message = messaging.Message(
                 notification=messaging.Notification(
-                    title=self.get_valid_fcm_message(self.subject),
-                    body=self.get_valid_fcm_message(self.email_content),
+                    title=self.get_valid_fcm_message(subject),
+                    body=self.get_valid_fcm_message(email_content),
                 ),
                 data={
-                    "subject": self.subject,
-                    "for_user": self.for_user,
-                    "type": self.type or "",
-                    "email_content": self.email_content,
-                    "document_type": self.document_type or "",
-                    "read": self.read or 0,
-                    "document_name": self.document_name or "",
-                    "attached_file": self.attached_file or "",
-                    "attachment_link": self.attachment_link or "",
-                    "from_user": self.from_user,
-                    "link": self.link or "",
+                    "subject": subject or "",
+                    "for_user": for_user,
+                    "type": type or "",
+                    "email_content": email_content or "",
+                    "document_type": document_type or "",
+                    "read": read or "0",
+                    "document_name": document_name or "",
+                    "attached_file": attached_file or "",
+                    # "attachment_link": self.attachment_link or "",
+                    "from_user": from_user or "",
+                    "link": link or "",
                 },
                 token=token.token,
             )
 
             try:
-                response = messaging.send(message)
-            except messaging.FirebaseError as e:
+                messaging.send(message)
+            except FirebaseError as e:
                 firebase_error = f"Error code: {e.code}\nError details: {e.message}"
                 frappe.log_error(
                     title="Firebase Messaging Error (single device)",
                     message=f"{e}\n\n{firebase_error}",
                 )
+                if e.code in ["UNREGISTERED"]:
+                    frappe.delete_doc_if_exists(token.name, force=True)
             except Exception as e:
                 frappe.log_error(
                     title="An unexpected error occurred while sending the message (single device)",
