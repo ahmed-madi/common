@@ -14,9 +14,14 @@ def unsubscribe():
     return handle_call("common.api.controllers.user.firebase.unsubscribe")
 
 
-def update_notifications_settings():
+def update_user_settings():
     return handle_call(
-        "common.api.controllers.user.firebase.update_notifications_settings"
+        "common.api.controllers.user.firebase.update_user_settings"
+    )
+
+def get_user_settings():
+    return handle_call(
+        "common.api.controllers.user.firebase.get_user_settings"
     )
 
 
@@ -25,8 +30,13 @@ firebase_rules = [
     Rule("/user/fcm-subscribe", methods=["POST"], endpoint=subscribe),
     Rule("/user/fcm-unsubscribe", methods=["DELETE"], endpoint=unsubscribe),
     Rule(
-        "/user/update-notification-settings",
+        "/user/user-settings",
+        methods=["GET"],
+        endpoint=get_user_settings,
+    ),
+    Rule(
+        "/user/user-settings",
         methods=["POST"],
-        endpoint=update_notifications_settings,
+        endpoint=update_user_settings,
     ),
 ]
