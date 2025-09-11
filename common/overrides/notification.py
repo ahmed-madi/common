@@ -211,7 +211,7 @@ class CustomNotificationLog(NotificationLog):
             try:
                 messaging.send(message)
             except FirebaseError as e:
-                firebase_error = f"Error code: {e.code}\nError details: {e.message}"
+                firebase_error = f"Error code: {e.code}\nError details: {e}"
                 frappe.log_error(
                     title="Firebase Messaging Error (single device)",
                     message=f"{e}\n\n{firebase_error}",
@@ -221,7 +221,7 @@ class CustomNotificationLog(NotificationLog):
             except Exception as e:
                 frappe.log_error(
                     title="An unexpected error occurred while sending the message (single device)",
-                    message=f"{e}",
+                    message=f"{e}\n{frappe.get_traceback()}",
                 )
             finally:
                 for ft in errors_tokens:
