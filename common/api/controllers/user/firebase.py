@@ -47,6 +47,7 @@ def get_config():
 @frappe.whitelist(methods=["POST"])
 def subscribe():
     doctype = "FCM Device Token"
+    frappe.delete_doc("FCM Device Token", {"user": frappe.session.user}, ignore_permissions=True)
     return create_doc(doctype, default_data={"user": frappe.session.user})
 
 
