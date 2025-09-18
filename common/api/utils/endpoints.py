@@ -76,14 +76,25 @@ def document_list(
                 filters = filters
             else:
                 filters = frappe.parse_json(filters)
-
+            print(filters)
             if isinstance(filters, dict):
+                filters = filters
+            elif isinstance(filters, list):
                 filters = filters
             else:
                 filters = {}
 
         if force_user_filters:
-            filters.update(user_filters)
+            if isinstance(filters, dict):
+                filters.update(user_filters)
+            elif isinstance(filters, list):
+                for k, v in user_filters.items():
+                    val = [k,]
+                    if isinstance(v, list):
+                        val += v
+                    else:
+                        val += ["=", v]
+                    filters.append(val)
         else:
             if not filters:
                 filters = user_filters
@@ -114,6 +125,10 @@ def document_list(
                     fields = _fields
             if "*" in fields:
                 fields = "*"
+        print(filters)
+        print(filters)
+        print(filters)
+        print(filters)
         limit_start = limit_start * limit_page_length
         args = frappe._dict(
             parent_doctype=parent,
