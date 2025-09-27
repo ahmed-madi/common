@@ -215,6 +215,19 @@ def handle_files(doc):
             uploaded_files.append(file_doc_name)
     return uploaded_files
 
+def load_extra_load_checkin_data(doctype, name):
+    extra_data = {}
+    if doctype != "Employee":
+        return extra_data
+    last_check_in = frappe.get_all("Employee Checkin", filters={"employee": name}, fields=["log_type", "time"], order_by="time desc")
+    if len(last_check_in):
+        last_check_in = last_check_in[0]
+    else:
+        last_check_in = None
+    extra_data.update({
+        "checkin_status": last_check_in
+    })
+    return extra_data
 
 def load_extra_data(doctype, name):
     extra_data = {}
@@ -311,6 +324,7 @@ def load_extra_data(doctype, name):
                 "custodies": custodies,
             }
         )
+        extra_data.update(load_extra_load_checkin_data(doctype, name))
     return extra_data
 
 
@@ -321,6 +335,7 @@ def read_doc(
     force_fields=False,
     ignore_perms=False,
     load_extra_docs=True,
+    load_checkin=False
 ):
     try:
         doc = frappe.get_doc(doctype, name)
@@ -330,6 +345,8 @@ def read_doc(
         extra_data = {}
         if load_extra_docs:
             extra_data = load_extra_data(doc.doctype, doc.name)
+        if load_checkin:
+            extra_data = load_extra_load_checkin_data(doc.doctype, doc.name)
 
         user_fields = origin_fields
         if not force_fields:
@@ -396,7 +413,7 @@ def update_doc(
                 }
             )
         doc.update(default_data)
-        doc.save()
+        doc.save(ignore_permissions=ignore_perms)
         delete_duplicated_or_after_error(uploaded_files)
         # check for child table doctype
         if doc.get("parenttype"):

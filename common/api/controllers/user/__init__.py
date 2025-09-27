@@ -308,9 +308,16 @@ def employee_info(employeeId=""):
             "You do not have permission to access employee details",
         )
         return
-
+    last_check_in = frappe.get_all("Employee Checkin", filters={"employee": employee.employee}, fields=["log_type", "time"], order_by="time desc")
+    if len(last_check_in):
+        last_check_in = last_check_in[0]
+    else:
+        last_check_in = None
     data = frappe._dict()
     data.update(employee.as_dict())
+    data.update({
+        "checkin_status": last_check_in
+    })
     build_success_response(
         status_code=200, message="Employee {} Details".format(employee.name), data=data
     )
