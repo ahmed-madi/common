@@ -11,7 +11,7 @@ from common.api.utils.endpoints import (
 # Employee
 def employee_info(employee: str):
     doctype = "Employee"
-    return read_doc(doctype, employee)
+    return read_doc(doctype, employee, load_checkin=True)
 
 
 def update_employee_info(employee: str):
@@ -22,7 +22,7 @@ def update_employee_info(employee: str):
         "current_address",
         "linkedin_profile_url",
     ]
-    return update_doc(doctype, employee, keys_to_update=only_for)
+    return update_doc(doctype, employee, keys_to_update=only_for, ignore_perms=True)
 
 
 # Employee Achievement
@@ -233,4 +233,5 @@ def other_employee_info(employee: str):
         force_fields=True,
         ignore_perms=True,
         load_extra_docs=False,
+        load_checkin=True,
     )

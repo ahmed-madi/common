@@ -67,7 +67,7 @@ class BaseHRDocument(Document):
             )
 
     def validate_status(self):
-        if not hasattr(super(), "status"):
+        if not hasattr(self, "status"):
             return
 
         if self.docstatus == 1 and self.status in ["Open", "Cancelled"]:
