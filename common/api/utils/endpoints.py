@@ -41,11 +41,11 @@ def document_list(
     force_fields=False,
     user_filters={},
     force_user_filters=False,
+    order_by="modified desc"
 ):
     filters = {}
     or_filters = None
     group_by = None
-    order_by = None
     limit_start = 0
     limit_page_length = 20
     parent = None
@@ -69,6 +69,8 @@ def document_list(
                 limit_start = 1
         if "order_by" in frappe.request.args:
             order_by = frappe.request.args["order_by"]
+        else:
+            order_by = order_by
 
         if "filters" in frappe.request.args:
             filters = frappe.request.args["filters"]
@@ -125,10 +127,6 @@ def document_list(
                     fields = _fields
             if "*" in fields:
                 fields = "*"
-        print(filters)
-        print(filters)
-        print(filters)
-        print(filters)
         limit_start = limit_start * limit_page_length
         args = frappe._dict(
             parent_doctype=parent,
