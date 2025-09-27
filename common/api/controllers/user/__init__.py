@@ -381,7 +381,7 @@ def notification_list():
         "attachment_link",
         "from_user",
         "link",
-        "send_push_notification",
+        "push_notification",
     ]
     return document_list(
         doctype,
