@@ -41,8 +41,6 @@ def achievement_list(employee: str):
         "date",
         "description",
         "attachment",
-        "status",
-        "docstatus",
     ]
     return document_list(
         doctype,
@@ -94,8 +92,6 @@ def certification_list(employee: str):
         "issuing_organization",
         "date_of_issue",
         "attachment",
-        "status",
-        "docstatus",
     ]
     return document_list(
         doctype,
