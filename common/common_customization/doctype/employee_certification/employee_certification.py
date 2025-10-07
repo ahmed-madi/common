@@ -2,8 +2,8 @@
 # For license information, please see license.txt
 
 # import frappe
-from common.models.base_hr_document import BaseHRDocument
+from frappe.model.document import Document
 
 
-class EmployeeCertification(BaseHRDocument):
+class EmployeeCertification(Document):
     pass
