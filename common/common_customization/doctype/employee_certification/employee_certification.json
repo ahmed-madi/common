@@ -15,7 +15,6 @@
   "issuing_organization",
   "date_of_issue",
   "attachment",
-  "status",
   "amended_from"
  ],
  "fields": [
@@ -77,21 +76,12 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "default": "Open",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "\nOpen\nApproved\nRejected\nCancelled",
-   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "is_submittable": 1,
  "links": [],
- "modified": "2025-07-05 10:06:54.821442",
+ "modified": "2025-10-07 15:40:18.749726",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Certification",
@@ -123,8 +113,6 @@
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -134,12 +122,9 @@
    "report": 1,
    "role": "HR Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -149,12 +134,9 @@
    "report": 1,
    "role": "HR User",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -164,7 +146,6 @@
    "report": 1,
    "role": "HR Specialist",
    "share": 1,
-   "submit": 1,
    "write": 1
   }
  ],
