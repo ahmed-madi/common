@@ -7,6 +7,15 @@ from common.api.utils.response import (
 )
 from common.api.utils.endpoints import document_list as base_document_list
 
+NULL_FROM_TO_DATES = [
+    "Compensatory Leave Request",
+    "Leave Application",
+    "Visa Application",
+    "Club Request",
+    "Training Request",
+    "Work From Home Request",
+    "Work Outside Office Request",
+]
 REQUESTS_DOCTYPE = [
     "Compensatory Leave Request",
     "Early Leave Application",
@@ -156,7 +165,7 @@ def employee_requests_list():
             has_success = True
             response_data.update(content)
             data_list += map(
-                lambda x: x.update({"doctype": doctype}),
+                lambda x: x.update({"doctype": doctype}) if doctype not in NULL_FROM_TO_DATES else x.update({"doctype": doctype, "from_date": None, "to_date": None}),
                 content.get("data_list", []),
             )
             totalCount += cint(content.get("totalCount"))
@@ -242,6 +251,31 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
                     "employee": employee,
                 }
             )
+    # Append from/to Dates field
+    if doctype == "Compensatory Leave Request":
+        BASE_FIELDS.append("work_from_date as from_date")
+        BASE_FIELDS.append("work_end_date as to_date")
+    elif doctype == "Leave Application":
+        BASE_FIELDS.append("from_date")
+        BASE_FIELDS.append("to_date")
+    elif doctype == "Visa Application":
+        BASE_FIELDS.append("start_date as from_date")
+        BASE_FIELDS.append("end_date as to_date")
+    elif doctype == "Club Request":
+        BASE_FIELDS.append("start_date as from_date")
+        BASE_FIELDS.append("end_date as to_date")
+    elif doctype == "Training Request":
+        BASE_FIELDS.append("start_date as from_date")
+        BASE_FIELDS.append("end_date as to_date")
+    elif doctype == "Work From Home Request":
+        BASE_FIELDS.append("from_date")
+        BASE_FIELDS.append("to_date")
+    elif doctype == "Work Outside Office Request":
+        BASE_FIELDS.append("from_date")
+        BASE_FIELDS.append("to_date")
+    # else:
+    #     BASE_FIELDS.append("NULL as from_date")
+    #     BASE_FIELDS.append("NULL as to_date")
     # Append Date field
     if doctype in ["Loan Application", "Leave Application"]:
         BASE_FIELDS.append("posting_date as request_date")
