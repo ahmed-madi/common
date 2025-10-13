@@ -4,16 +4,15 @@ from frappe.utils import getdate, cint
 from common.api.utils.response import build_success_response, build_error_response
 from common.api.utils.endpoints import document_list, read_doc
 
+fields = ["name", "employee_name", "department", "designation", "date_of_joining"]
 
 def employee_list():
     doctype = "Employee"
-    fields = ["name", "employee_name", "department", "designation", "date_of_joining"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, translate_text=True, tr_field="employee_name")
 
 
 def read_employee(name: str):
     doctype = "Employee"
-    fields = ["name", "employee_name", "department", "designation", "date_of_joining"]
     return read_doc(doctype, name, origin_fields=fields)
 
 

@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe.utils import cint
 
 from common.api.utils import (
@@ -41,7 +42,9 @@ def document_list(
     force_fields=False,
     user_filters={},
     force_user_filters=False,
-    order_by="modified desc"
+    order_by="modified desc",
+    translate_text=False,
+    tr_field=None,
 ):
     filters = {}
     or_filters = None
@@ -78,7 +81,6 @@ def document_list(
                 filters = filters
             else:
                 filters = frappe.parse_json(filters)
-            print(filters)
             if isinstance(filters, dict):
                 filters = filters
             elif isinstance(filters, list):
@@ -142,6 +144,12 @@ def document_list(
         count = len(frappe.get_list(doctype, limit_page_length=999999999))
         # evaluate frappe.get_list
         data = frappe.call(frappe.client.get_list, doctype, **args)
+        if translate_text and tr_field:
+            lang=frappe.db.get_value("User", frappe.session.user, "language")
+            for d in data:
+                d.update({
+                    f"{tr_field}": _(d[tr_field], lang=lang) if lang != "en" else d[tr_field]
+                })
         load_extra_list_data(data, doctype)
         response_data = frappe._dict()
         response_data.update(

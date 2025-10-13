@@ -1,27 +1,32 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "prompt",
+ "autoname": "field:club_name",
  "creation": "2025-05-24 10:11:44.869729",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_mluc"
+  "club_name"
  ],
  "fields": [
   {
-   "fieldname": "section_break_mluc",
-   "fieldtype": "Section Break"
+   "fieldname": "club_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Club Name",
+   "reqd": 1,
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-24 10:25:38.807458",
+ "modified": "2025-10-13 16:04:32.893254",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Club",
- "naming_rule": "Set by user",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
