@@ -13,7 +13,7 @@ from common.api.utils.response import (
     build_success_response,
     handle_exception_response,
 )
-
+from common.api.utils.translator import translate_link_fields
 
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
@@ -376,7 +376,7 @@ def read_doc(
                 if hasattr(doc, field):
                     result.update({field: getattr(doc, field)})
             doc = result
-
+        translate_link_fields(doctype, doc)
         return build_success_response(200, f"{doctype} fetched", doc, extra_data)
     except Exception as exc:
         http_status_code = 500
