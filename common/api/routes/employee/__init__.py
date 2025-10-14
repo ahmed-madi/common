@@ -14,6 +14,7 @@ from common.api.controllers.employee import (
     attendance_list,
     check_in_out_list,
     other_employee_info,
+    download_salary_slip,
 )
 
 employee_info_rules = [
@@ -76,5 +77,10 @@ employee_info_rules = [
         "/employee/<path:employee>/certification/<path:name>",
         methods=["DELETE"],
         endpoint=delete_certification,
+    ),
+    Rule(
+        "/employee/<path:employee>/download-slip/<path:name>",
+        methods=["GET"],
+        endpoint=download_salary_slip,
     ),
 ]
