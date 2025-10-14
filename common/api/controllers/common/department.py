@@ -5,7 +5,7 @@ fields = ["name", "department_name", "disabled"]
 
 def department_list():
     doctype = "Department"
-    return document_list(doctype, fields, force_fields=True)
+    return document_list(doctype, fields, force_fields=True, translate_text=True, tr_field="department_name")
 
 
 def read_department(name: str):

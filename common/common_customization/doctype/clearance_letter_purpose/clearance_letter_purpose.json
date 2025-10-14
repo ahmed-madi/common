@@ -1,27 +1,32 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "prompt",
+ "autoname": "field:purpose",
  "creation": "2025-05-24 16:16:26.745778",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_egxd"
+  "purpose"
  ],
  "fields": [
   {
-   "fieldname": "section_break_egxd",
-   "fieldtype": "Section Break"
+   "fieldname": "purpose",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Purpose",
+   "reqd": 1,
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-26 09:25:55.006557",
+ "modified": "2025-10-13 16:05:19.803667",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Clearance Letter Purpose",
- "naming_rule": "Set by user",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

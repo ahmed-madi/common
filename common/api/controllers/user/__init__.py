@@ -188,11 +188,13 @@ def user_info():
     last_salary_structure = None
     last_salary_slip_based_on_last_salary_structure = None
     last_salary_slip = None
+    salary_slip_list = []
     last_log = None
     employee_shift = None
-
+    leave_balance = None
     if employee and employee.get("name"):
         name = employee.get("name")
+        from hrms.hr.doctype.leave_application.leave_application import get_leave_details
         certifications = frappe.db.sql(
             """
                             SELECT name, employee, employee_name, certificate_title, issuing_organization,
@@ -228,6 +230,9 @@ def user_info():
         )
         if len(salary_slip) > 0:
             last_salary_slip = frappe.get_doc("Salary Slip", salary_slip[0].name)
+            for ss in salary_slip:
+                ss = frappe.get_doc("Salary Slip", ss.name).as_dict()
+                salary_slip_list.append(ss)
 
         if len(assignments) > 0:
             last_salary_structure_assignment = assignments[0]
@@ -271,6 +276,7 @@ def user_info():
         employee_shift = get_employee_shift(
             name, consider_default_shift=True, next_shift_direction="reverse"
         )
+        leave_balance = get_leave_details(employee, today())
 
     data.update(employee)
     data.update(
@@ -281,9 +287,11 @@ def user_info():
             "last_salary_structure": last_salary_structure,
             "last_salary_slip_based_on_last_salary_structure": last_salary_slip_based_on_last_salary_structure,
             "last_salary_slip": last_salary_slip,
+            "salary_slip_list": salary_slip_list,
             "custodies": custodies,
             "last_log": last_log,
             "employee_shift": employee_shift,
+            "leave_balance": leave_balance,
         }
     )
     build_success_response(status_code=200, message="User Info", data=data)

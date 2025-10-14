@@ -5,8 +5,7 @@ fields = ["name", "project_name", "priority", "status", "is_active"]
 
 def project_list():
     doctype = "Project"
-
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, translate_text=True, tr_field="project_name")
 
 
 def read_project(name: str):
