@@ -194,7 +194,7 @@ def user_info():
     leave_balance = None
     if employee and employee.get("name"):
         name = employee.get("name")
-        from hrms.hr.doctype.leave_application.leave_application import get_leave_details
+        from hrms.api import get_leave_balance_map
         certifications = frappe.db.sql(
             """
                             SELECT name, employee, employee_name, certificate_title, issuing_organization,
@@ -276,7 +276,8 @@ def user_info():
         employee_shift = get_employee_shift(
             name, consider_default_shift=True, next_shift_direction="reverse"
         )
-        leave_balance = get_leave_details(employee, today())
+
+        leave_balance = get_leave_balance_map(name)
 
     data.update(employee)
     data.update(
