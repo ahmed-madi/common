@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 from frappe.utils import cint
+from frappe.desk.form.load import get_docinfo #, getdoc, getdoctype
 
 from common.api.utils import (
     get_request_form_data,
@@ -369,6 +370,8 @@ def read_doc(
             if "*" in user_fields:
                 user_fields = []
         if doc:
+            # getdoctype(doctype, True)
+            get_docinfo(doc)
             doc = doc.as_dict()
         if len(user_fields) > 0:
             result = frappe._dict()
