@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 from frappe.utils import cint
+from frappe.desk.form.load import get_docinfo #, getdoc, getdoctype
 
 from common.api.utils import (
     get_request_form_data,
@@ -145,10 +146,9 @@ def document_list(
         # evaluate frappe.get_list
         data = frappe.call(frappe.client.get_list, doctype, **args)
         if translate_text and tr_field:
-            lang=frappe.db.get_value("User", frappe.session.user, "language")
             for d in data:
                 d.update({
-                    f"{tr_field}": _(d[tr_field], lang=lang) if lang != "en" else d[tr_field]
+                    f"{tr_field}": _(d[tr_field]),
                 })
         load_extra_list_data(data, doctype)
         response_data = frappe._dict()
@@ -369,6 +369,8 @@ def read_doc(
             if "*" in user_fields:
                 user_fields = []
         if doc:
+            # getdoctype(doctype, True)
+            get_docinfo(doc)
             doc = doc.as_dict()
         if len(user_fields) > 0:
             result = frappe._dict()
