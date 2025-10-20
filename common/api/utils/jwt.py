@@ -73,6 +73,7 @@ def check_token_and_set_user(jwt_token):
         if time_diff_in_seconds(now_datetime(), expiration_time) > 0:
             raise jwt.ExpiredSignatureError
         frappe.set_user(user_id)
+        frappe.set_user_lang(user_id, "en")
         return user_id
     except jwt.ExpiredSignatureError:
         build_error_response(

@@ -146,10 +146,9 @@ def document_list(
         # evaluate frappe.get_list
         data = frappe.call(frappe.client.get_list, doctype, **args)
         if translate_text and tr_field:
-            lang=frappe.db.get_value("User", frappe.session.user, "language")
             for d in data:
                 d.update({
-                    f"{tr_field}": _(d[tr_field], lang=lang) if lang != "en" else d[tr_field]
+                    f"{tr_field}": _(d[tr_field]),
                 })
         load_extra_list_data(data, doctype)
         response_data = frappe._dict()
