@@ -53,7 +53,7 @@ def get_token_from_header():
 
 
 def upload_file(fieldname):
-    if not fieldname in frappe.request.files:
+    if fieldname not in frappe.request.files:
         return None
     file = frappe.request.files[fieldname]
     if not file or file is None:

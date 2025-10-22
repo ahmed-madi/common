@@ -45,7 +45,7 @@ def event_list():
         force_fields=True,
         user_filters=filters,
         force_user_filters=force_filters,
-        order_by="starts_on desc"
+        order_by="starts_on desc",
     )
 
 
@@ -81,7 +81,7 @@ def employee_structure():
         company = frappe.request.args["company"]
 
     employees = build_organization_tree(parent=parent, company=company)
-    return build_success_response(200, f"Employee Structure", employees)
+    return build_success_response(200, "Employee Structure", employees)
 
 
 def department_structure():
@@ -112,7 +112,7 @@ def department_structure():
         company = frappe.request.args["company"]
 
     departments = build_organization_tree(parent=parent, company=company)
-    return build_success_response(200, f"Department Structure", departments)
+    return build_success_response(200, "Department Structure", departments)
 
 
 NEWS_LIST_FIELDS = [
@@ -134,7 +134,11 @@ def newsletter_list():
         "published": 1,
     }
     return document_list(
-        doctype, NEWS_LIST_FIELDS, force_fields=True, user_filters=filters, order_by="publish_on desc"
+        doctype,
+        NEWS_LIST_FIELDS,
+        force_fields=True,
+        user_filters=filters,
+        order_by="publish_on desc",
     )
 
 
@@ -142,42 +146,62 @@ def read_newsletter(name: str):
     doctype = "Company Newsletter"
     return read_doc(doctype, name, origin_fields=NEWS_FROM_FIELDS, force_fields=True)
 
+
 def activity_list():
     doctype = "Company Newsletter"
     filters = {
         "published": 1,
     }
-    news = frappe.get_all(doctype, filters=filters, fields=[ "name", "subject", "publish_on as date"])
+    news = frappe.get_all(
+        doctype, filters=filters, fields=["name", "subject", "publish_on as date"]
+    )
     for n in news:
-        n.update({
-            "doctype": doctype,
-        })
+        n.update(
+            {
+                "doctype": doctype,
+            }
+        )
     doctype = "Event"
     filters = {
         "published": 1,
     }
-    events = frappe.get_all(doctype, filters=filters, fields=["name",
-    "subject",
-    "starts_on as date",])
+    events = frappe.get_all(
+        doctype,
+        filters=filters,
+        fields=[
+            "name",
+            "subject",
+            "starts_on as date",
+        ],
+    )
     for n in events:
-        n.update({
-            "doctype": doctype,
-        })
+        n.update(
+            {
+                "doctype": doctype,
+            }
+        )
     doctype = "Project"
-    projects = frappe.get_list(doctype, filters={"expected_start_date": ["!=", ""]}, fields=["name",
-    "project_name as subject",
-    "expected_start_date as date",])
+    projects = frappe.get_list(
+        doctype,
+        filters={"expected_start_date": ["!=", ""]},
+        fields=[
+            "name",
+            "project_name as subject",
+            "expected_start_date as date",
+        ],
+    )
     fprojects = []
     for n in projects:
         if not n.date:
             continue
-        n.update({
-            "doctype": doctype,
-        })
+        n.update(
+            {
+                "doctype": doctype,
+            }
+        )
         fprojects.append(n)
-    
-    
+
     response_data = news + events + fprojects
     response_data.sort(key=lambda x: getdate(f"{x.date}".split(" ")[0]), reverse=True)
-    
-    return build_success_response(200, f"Company activities fetched", response_data)
+
+    return build_success_response(200, "Company activities fetched", response_data)

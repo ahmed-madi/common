@@ -7,8 +7,14 @@ from werkzeug.routing import Map, Submount
 from werkzeug.wrappers import Request, Response
 
 import frappe
-from frappe import _
 from frappe.utils.response import build_response
+
+from frappe.api.v1 import url_rules as v1_rules
+from frappe.api.v2 import url_rules as v2_rules
+
+# TODO: Extend v1_rules
+from common.api.routes import url_rules
+from frappe import api
 
 
 def handle(request: Request):
@@ -54,13 +60,6 @@ class ApiVersion(str, Enum):
     V2 = "v2"
 
 
-from frappe.api.v1 import url_rules as v1_rules
-from frappe.api.v2 import url_rules as v2_rules
-
-
-# TODO: Extend v1_rules
-from common.api.routes import url_rules
-
 v1_rules.extend(url_rules)
 # End Extend v1_rules
 
@@ -74,6 +73,5 @@ API_URL_MAP = Map(
     strict_slashes=False,  # Allows skipping trailing slashes
     merge_slashes=False,
 )
-from frappe import api
 
 api.handle = handle

@@ -7,9 +7,13 @@ fields = [
     "type",
     "statistical_component",
 ]
+
+
 def salary_component_list():
     doctype = "Salary Component"
-    return document_list(doctype, fields, translate_text=True, tr_field="salary_component")
+    return document_list(
+        doctype, fields, translate_text=True, tr_field="salary_component"
+    )
 
 
 def read_salary_component(name: str):

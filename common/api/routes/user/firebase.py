@@ -15,14 +15,11 @@ def unsubscribe():
 
 
 def update_user_settings():
-    return handle_call(
-        "common.api.controllers.user.firebase.update_user_settings"
-    )
+    return handle_call("common.api.controllers.user.firebase.update_user_settings")
+
 
 def get_user_settings():
-    return handle_call(
-        "common.api.controllers.user.firebase.get_user_settings"
-    )
+    return handle_call("common.api.controllers.user.firebase.get_user_settings")
 
 
 firebase_rules = [

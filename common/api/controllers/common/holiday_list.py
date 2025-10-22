@@ -9,9 +9,12 @@ fields = [
     "color",
 ]
 
+
 def holiday_list_list():
     doctype = "Holiday List"
-    return document_list(doctype, fields, translate_text=True, tr_field="holiday_list_name")
+    return document_list(
+        doctype, fields, translate_text=True, tr_field="holiday_list_name"
+    )
 
 
 def read_holiday_list(name: str):

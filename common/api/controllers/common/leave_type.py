@@ -14,9 +14,12 @@ fields = [
     "is_compensatory",
 ]
 
+
 def leave_type_list():
     doctype = "Leave Type"
-    return document_list(doctype, fields, translate_text=True, tr_field="leave_type_name")
+    return document_list(
+        doctype, fields, translate_text=True, tr_field="leave_type_name"
+    )
 
 
 def read_leave_type(name: str):

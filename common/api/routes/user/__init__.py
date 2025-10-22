@@ -43,11 +43,6 @@ def mark_as_read(docname):
     mark_notification_as_read(docname)
 
 
-def employee_info(employeeId):
-    frappe.form_dict.employeeId = employeeId
-    return handle_call("common.api.controllers.user.employee_info")
-
-
 user_rules = [
     Rule("/user/auth/login", methods=["POST"], endpoint=login),
     Rule("/user/auth/logout", methods=["POST"], endpoint=logout),
