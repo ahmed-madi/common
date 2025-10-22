@@ -6,6 +6,7 @@ from common.api.utils.endpoints import document_list, read_doc
 
 fields = ["name", "employee_name", "department", "designation", "date_of_joining"]
 
+
 def employee_list():
     doctype = "Employee"
     return document_list(doctype, fields, translate_text=True, tr_field="employee_name")

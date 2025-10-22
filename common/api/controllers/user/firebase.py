@@ -3,13 +3,9 @@ from frappe.utils import cint
 
 from common.api.utils import get_request_form_data
 from common.api.utils.endpoints import (
-    document_list,
     create_doc,
-    read_doc,
-    update_doc,
-    delete_doc,
 )
-from common.api.utils.response import build_success_response, build_error_response, handle_exception_response
+from common.api.utils.response import build_success_response, build_error_response
 
 
 # test workflow
@@ -37,7 +33,7 @@ def get_config():
         build_success_response(
             status_code=200, message="FCM configurations fetched", data=data
         )
-    except:
+    except:  # noqa: E722
         build_error_response(
             403, "Failed to fetch FCM configurations", frappe.get_traceback()
         )
@@ -47,7 +43,9 @@ def get_config():
 @frappe.whitelist(methods=["POST"])
 def subscribe():
     doctype = "FCM Device Token"
-    frappe.delete_doc("FCM Device Token", {"user": frappe.session.user}, ignore_permissions=True)
+    frappe.delete_doc(
+        "FCM Device Token", {"user": frappe.session.user}, ignore_permissions=True
+    )
     return create_doc(doctype, default_data={"user": frappe.session.user})
 
 
@@ -68,7 +66,9 @@ def get_user_settings():
             raise frappe.PermissionError
         user.apply_fieldlevel_read_permissions()
 
-        exists = frappe.db.exists("HR Notification Settings", {"user": frappe.session.user})
+        exists = frappe.db.exists(
+            "HR Notification Settings", {"user": frappe.session.user}
+        )
         if exists:
             doc = frappe.get_doc("HR Notification Settings", exists)
         else:
@@ -92,12 +92,11 @@ def get_user_settings():
             "calendar_events": doc.calendar_events,
             "helpdesk_updates": doc.helpdesk_updates,
             "performance_reviews": doc.performance_reviews,
-
             "language": user.language,
             "theme": user.desk_theme,
         }
 
-        return build_success_response(200, f"user settings fetched", doc, {})
+        return build_success_response(200, "user settings fetched", doc, {})
     except Exception as exc:
         http_status_code = 500
         message = exc
@@ -110,8 +109,9 @@ def get_user_settings():
             elif len(args) > 1 and isinstance(args[0], int):
                 message = args[1]
         return build_error_response(
-            http_status_code, f"failed to read user settings", message
+            http_status_code, "failed to read user settings", message
         )
+
 
 @frappe.whitelist(methods=["POST"])
 def update_user_settings():
@@ -120,7 +120,7 @@ def update_user_settings():
         doc1 = set_notification_settings(data, frappe.session.user)
         doc2 = set_user_settings(data, frappe.session.user)
         doc1.update(doc2)
-        return build_success_response(200, f"user settings updated", doc1)
+        return build_success_response(200, "user settings updated", doc1)
     except Exception as exc:
         http_status_code = 500
         message = exc
@@ -133,12 +133,18 @@ def update_user_settings():
             elif len(args) > 1 and isinstance(args[0], int):
                 message = args[1]
         return build_error_response(
-            http_status_code, f"failed to update user settings", message
+            http_status_code, "failed to update user settings", message
         )
 
 
 def set_notification_settings(data, user):
-    if "task_assignments" not in data and "request_approvals" not in data and "calendar_events" not in data and "helpdesk_updates" not in data and "performance_reviews" not in data:
+    if (
+        "task_assignments" not in data
+        and "request_approvals" not in data
+        and "calendar_events" not in data
+        and "helpdesk_updates" not in data
+        and "performance_reviews" not in data
+    ):
         return
 
     exists = frappe.db.exists("HR Notification Settings", {"user": user})
@@ -196,6 +202,7 @@ def set_notification_settings(data, user):
         "performance_reviews": doc.performance_reviews,
     }
 
+
 def set_user_settings(data, user):
     if "language" not in data and "theme" not in data:
         return
@@ -204,13 +211,17 @@ def set_user_settings(data, user):
         return
     user = frappe.get_doc("User", exists)
     if "language" in data:
-        user.update({
-            "language": data.get("language"),
-        })
+        user.update(
+            {
+                "language": data.get("language"),
+            }
+        )
     if "theme" in data:
-        user.update({
-            "desk_theme": data.get("theme"),
-        })
+        user.update(
+            {
+                "desk_theme": data.get("theme"),
+            }
+        )
     user.save(ignore_permissions=True)
     return {
         "language": user.language,

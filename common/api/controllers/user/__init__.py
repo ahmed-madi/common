@@ -1,10 +1,9 @@
 import frappe
+from frappe import _
 from frappe.auth import LoginManager, MAX_PASSWORD_SIZE
 from frappe.utils import now_datetime, cint, today
 from frappe.core.doctype.user.user import (
     test_password_strength,
-    test_password_strength,
-    _get_user_for_update_password,
     reset_user_data,
 )
 from frappe.utils.password import update_password as _update_password
@@ -64,13 +63,13 @@ def login(username: str, password: str):
         )
         data.update(tokens)
         build_success_response(status_code=200, message="Login successful", data=data)
-    except frappe.NotFound as exc:
+    except frappe.NotFound:
         build_error_response(
             status_code=409,
             message="Invalid employee account",
             error="Invalid credentials",
         )
-    except frappe.AuthenticationError as exc:
+    except frappe.AuthenticationError:
         build_error_response(
             status_code=401,
             message="Invalid username or password",
@@ -195,6 +194,7 @@ def user_info():
     if employee and employee.get("name"):
         name = employee.get("name")
         from hrms.api import get_leave_balance_map
+
         certifications = frappe.db.sql(
             """
                             SELECT name, employee, employee_name, certificate_title, issuing_organization,
@@ -317,16 +317,19 @@ def employee_info(employeeId=""):
             "You do not have permission to access employee details",
         )
         return
-    last_check_in = frappe.get_all("Employee Checkin", filters={"employee": employee.employee}, fields=["log_type", "time"], order_by="time desc")
+    last_check_in = frappe.get_all(
+        "Employee Checkin",
+        filters={"employee": employee.employee},
+        fields=["log_type", "time"],
+        order_by="time desc",
+    )
     if len(last_check_in):
         last_check_in = last_check_in[0]
     else:
         last_check_in = None
     data = frappe._dict()
     data.update(employee.as_dict())
-    data.update({
-        "checkin_status": last_check_in
-    })
+    data.update({"checkin_status": last_check_in})
     build_success_response(
         status_code=200, message="Employee {} Details".format(employee.name), data=data
     )
@@ -375,7 +378,7 @@ def change_user_password():
             "full_name": user.full_name,
         }
         build_success_response(status_code=200, message="Password Updated", data=data)
-    except:
+    except:  # noqa: E722
         build_error_response(403, "Failed to update password", frappe.get_traceback())
 
 

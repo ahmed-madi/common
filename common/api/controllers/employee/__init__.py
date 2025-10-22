@@ -232,10 +232,11 @@ def other_employee_info(employee: str):
         load_checkin=True,
     )
 
+
 def download_salary_slip(employee: str, name: str):
     read_doc("Employee", employee, ["name"], force_fields=True)
     if frappe.local.response["status"] == "failed":
         return
     from frappe.utils.print_format import download_pdf
+
     return download_pdf(doctype="Salary Slip", name=name)
-    

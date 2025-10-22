@@ -87,7 +87,7 @@ def check_token_and_set_user(jwt_token):
             "Authentication failed: Invalid access token provided",
             "Access token has expired",
         )
-    except Exception as ex:
+    except Exception:
         build_error_response(
             500,
             "Something went wrong on our end. Please try again later",

@@ -165,7 +165,13 @@ def employee_requests_list():
             has_success = True
             response_data.update(content)
             data_list += map(
-                lambda x: x.update({"doctype": doctype}) if doctype not in NULL_FROM_TO_DATES else x.update({"doctype": doctype, "from_date": None, "to_date": None}),
+                lambda x: (
+                    x.update({"doctype": doctype})
+                    if doctype not in NULL_FROM_TO_DATES
+                    else x.update(
+                        {"doctype": doctype, "from_date": None, "to_date": None}
+                    )
+                ),
                 content.get("data_list", []),
             )
             totalCount += cint(content.get("totalCount"))

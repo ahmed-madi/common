@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 from frappe.utils import cint
-from frappe.desk.form.load import get_docinfo #, getdoc, getdoctype
+from frappe.desk.form.load import get_docinfo  # , getdoc, getdoctype
 
 from common.api.utils import (
     get_request_form_data,
@@ -15,6 +15,7 @@ from common.api.utils.response import (
     handle_exception_response,
 )
 from common.api.utils.translator import translate_link_fields
+
 
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
@@ -94,7 +95,9 @@ def document_list(
                 filters.update(user_filters)
             elif isinstance(filters, list):
                 for k, v in user_filters.items():
-                    val = [k,]
+                    val = [
+                        k,
+                    ]
                     if isinstance(v, list):
                         val += v
                     else:
@@ -147,9 +150,11 @@ def document_list(
         data = frappe.call(frappe.client.get_list, doctype, **args)
         if translate_text and tr_field:
             for d in data:
-                d.update({
-                    f"{tr_field}": _(d[tr_field]),
-                })
+                d.update(
+                    {
+                        f"{tr_field}": _(d[tr_field]),
+                    }
+                )
         load_extra_list_data(data, doctype)
         response_data = frappe._dict()
         response_data.update(
@@ -221,19 +226,24 @@ def handle_files(doc):
             uploaded_files.append(file_doc_name)
     return uploaded_files
 
+
 def load_extra_load_checkin_data(doctype, name):
     extra_data = {}
     if doctype != "Employee":
         return extra_data
-    last_check_in = frappe.get_all("Employee Checkin", filters={"employee": name}, fields=["log_type", "time"], order_by="time desc")
+    last_check_in = frappe.get_all(
+        "Employee Checkin",
+        filters={"employee": name},
+        fields=["log_type", "time"],
+        order_by="time desc",
+    )
     if len(last_check_in):
         last_check_in = last_check_in[0]
     else:
         last_check_in = None
-    extra_data.update({
-        "checkin_status": last_check_in
-    })
+    extra_data.update({"checkin_status": last_check_in})
     return extra_data
+
 
 def load_extra_data(doctype, name):
     extra_data = {}
@@ -341,7 +351,7 @@ def read_doc(
     force_fields=False,
     ignore_perms=False,
     load_extra_docs=True,
-    load_checkin=False
+    load_checkin=False,
 ):
     try:
         doc = frappe.get_doc(doctype, name)

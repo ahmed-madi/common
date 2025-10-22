@@ -18,6 +18,7 @@ import firebase_admin
 from firebase_admin import credentials, messaging
 from firebase_admin.exceptions import FirebaseError
 
+
 class CustomNotification(Notification):
     def create_system_notification(self, doc, context):
         subject = self.subject
@@ -145,16 +146,18 @@ class CustomNotificationLog(NotificationLog):
     def send_fcm_notification(self):
         errors_tokens = []
         for token in frappe.get_all(
-            "FCM Device Token", filters={"user": self.for_user}, fields=["name", "token"]
+            "FCM Device Token",
+            filters={"user": self.for_user},
+            fields=["name", "token"],
         ):
             subject = self.subject
             if not isinstance(subject, str):
                 subject = "{}".format(subject).strip()
-            
+
             for_user = self.for_user
             if not isinstance(for_user, str):
                 for_user = "{}".format(for_user).strip()
-            
+
             type = self.type
             if not isinstance(type, str):
                 type = "{}".format(type).strip()
@@ -162,31 +165,31 @@ class CustomNotificationLog(NotificationLog):
             email_content = self.email_content
             if not isinstance(email_content, str):
                 email_content = "{}".format(email_content).strip()
-            
+
             document_type = self.document_type
             if not isinstance(document_type, str):
                 document_type = "{}".format(document_type).strip()
-            
+
             read = self.read
             if not isinstance(read, str):
                 read = "{}".format(read).strip()
-            
+
             document_name = self.document_name
             if not isinstance(document_name, str):
                 document_name = "{}".format(document_name).strip()
-            
+
             attached_file = self.attached_file
             if not isinstance(attached_file, str):
                 attached_file = "{}".format(attached_file).strip()
-            
+
             from_user = self.from_user
             if not isinstance(from_user, str):
                 from_user = "{}".format(from_user).strip()
-            
+
             link = self.link
             if not isinstance(link, str):
                 link = "{}".format(link)
-            
+
             message = messaging.Message(
                 notification=messaging.Notification(
                     title=self.get_valid_fcm_message(subject),
