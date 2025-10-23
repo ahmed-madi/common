@@ -33,6 +33,11 @@ task_rules = [
         methods=["DELETE"],
         endpoint=delete_task,
     ),
+    Rule(
+        "/project-managements/timesheet",
+        methods=["POST"],
+        endpoint=add_timesheet,
+    ),
     Rule("/project-managements/timesheet", methods=["GET"], endpoint=timesheet_list),
     Rule(
         "/project-managements/timesheet/<path:name>",

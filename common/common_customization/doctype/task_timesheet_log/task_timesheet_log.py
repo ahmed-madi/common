@@ -27,6 +27,14 @@ class TaskTimesheetLog(BaseHRDocument):
 
     def _get_missing_mandatory_fields(self):
         missing = super()._get_missing_mandatory_fields()
+        if self.activity_type == "Task":
+            df = self.meta.get("fields", {"fieldname": ("=", "task")})[0]
+            if self.get(df.fieldname) in (None, []) or not self.has_content(df):
+                missing.append((df.fieldname, self.get_msg(df)))
+        else:
+            df = self.meta.get("fields", {"fieldname": ("=", "description")})[0]
+            if self.get(df.fieldname) in (None, []) or not self.has_content(df):
+                missing.append((df.fieldname, self.get_msg(df)))
         if flt(self.total_hours) == 0:
             df = self.meta.get("fields", {"fieldname": ("=", "start_time")})[0]
             if self.get(df.fieldname) in (None, []) or not self.has_content(df):

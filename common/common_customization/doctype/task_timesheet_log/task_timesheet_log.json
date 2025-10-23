@@ -6,8 +6,9 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_eahh",
-  "task",
+  "activity_type",
   "employee",
+  "task",
   "employee_name",
   "status",
   "column_break_mjvd",
@@ -103,13 +104,13 @@
    "label": "Project Name"
   },
   {
+   "depends_on": "eval:doc.activity_type=='Task'",
    "fieldname": "task",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Task",
-   "options": "Task",
-   "reqd": 1
+   "options": "Task"
   },
   {
    "fieldname": "column_break_odsy",
@@ -123,7 +124,7 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.activity_type=='Meeting' || doc.activity_type=='Activity'"
   },
   {
    "default": "Open",
@@ -133,13 +134,20 @@
    "in_standard_filter": 1,
    "label": "Status",
    "options": "Open\nApproved\nRejected\nCancelled"
+  },
+  {
+   "fieldname": "activity_type",
+   "fieldtype": "Select",
+   "label": "Activity Type",
+   "options": "\nMeeting\nActivity\nTask",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-09-07 15:25:46.340688",
+ "modified": "2025-10-23 15:03:17.969387",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Task Timesheet Log",
