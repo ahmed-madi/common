@@ -141,6 +141,7 @@ override_doctype_class = {
     "Loan Application": "common.overrides.loan_application.LoanApplication",
     "Notification": "common.overrides.notification.CustomNotification",
     "Notification Log": "common.overrides.notification.CustomNotificationLog",
+    "Employee Checkin": "common.overrides.employee_checkin.EmployeeCheckin",
 }
 
 # Document Events

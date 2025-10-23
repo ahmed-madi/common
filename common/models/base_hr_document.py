@@ -87,8 +87,8 @@ class BaseHRDocument(Document):
         if hasattr(super(), "before_cancel"):
             super().before_cancel()
 
-        if hasattr(super(), "status"):
-            self.status = "Cancelled"
+        if hasattr(self, "status"):
+            self.db_set("status", "Cancelled")
 
     def get_msg(self, df):
         if df.fieldtype in table_fields:

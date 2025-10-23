@@ -21,8 +21,6 @@ class OvertimePayRequest(Document):
     def get_salary(self):
         employee = self.employee
         basic_salary = 0
-        emp = frappe.get_doc("Employee", {"name": employee})
-
         salary_slips = frappe.get_list(
             "Salary Slip",
             fields=["name", "salary_structure"],
@@ -32,8 +30,6 @@ class OvertimePayRequest(Document):
         if not salary_slips or len(salary_slips) == 0:
             frappe.throw(_("No salary found for this employee"))
         salary_slip = salary_slips[0].name
-        salary_structure = salary_slips[0].salary_structure
-
         salary_details = frappe.db.sql(
             """
 			SELECT salary_component, abbr, amount

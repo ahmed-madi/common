@@ -1,5 +1,4 @@
 import frappe
-from frappe.utils import cint
 
 
 def get_permission_query_conditions(user):

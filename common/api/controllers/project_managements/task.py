@@ -48,15 +48,14 @@ def delete_task(name: str):
 
 
 # add task to timesheet
-def add_timesheet(name: str):
-    read_task(name)
-    if frappe.local.response["status"] == "failed":
-        return
+def add_timesheet():    
     doctype = "Task Timesheet Log"
-    response = create_doc(doctype, default_data={"task": name})
-    frappe.get_doc(
-        "Task Timesheet Log", frappe.local.response.get("data", {}).get("name")
-    ).submit()
+    response = create_doc(doctype)
+    # if frappe.local.response["status"] == "failed":
+    #     return
+    # frappe.get_doc(
+    #     "Task Timesheet Log", frappe.local.response.get("data", {}).get("name")
+    # ).submit()
     return response
 
 
