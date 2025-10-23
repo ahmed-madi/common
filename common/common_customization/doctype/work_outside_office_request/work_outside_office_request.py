@@ -10,7 +10,6 @@ from frappe.utils import (
     get_year_start,
     add_months,
     add_days,
-    nowdate,
     getdate,
     formatdate,
     get_link_to_form,

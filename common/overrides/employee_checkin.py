@@ -20,5 +20,7 @@ class EmployeeCheckin(BaseEmployeeCheckin):
                 "employee": self.employee,
                 "from_date": ["<=", date],
                 "to_date": [">=", date],
+                "status": "Approved",
+                "docstatus": 1,
             },
         )

@@ -58,22 +58,22 @@ class LeavePermission(Document):
     ):
         if flt(total_hours) > 4:
             if not xclient:
-                frappe.throw(_(f"Total permission hours cannot exceed 4 hours."))
+                frappe.throw(_("Total permission hours cannot exceed 4 hours."))
                 return
-            return _(f"Total permission hours cannot exceed 4 hours.")
+            return _("Total permission hours cannot exceed 4 hours.")
         start_of_month = get_first_day(day)
         end_of_month = get_last_day(day)
 
         total_hours_list = frappe.get_list(
             "Leave Permission",
             fields=["sum(total_hours) as sum"],
-            filters={
-                "employee": employee,
-                "day": [">=", start_of_month],
-                "day": ["<=", end_of_month],
-                "name": ["!=", name],
-                "docstatus": 1,
-            },
+            filters=[
+                ["employee", "=", employee],
+                ["day", ">=", start_of_month],
+                ["day", "<=", end_of_month],
+                ["name", "!=", name],
+                ["docstatus", "=", 1],
+            ],
         )
         total = flt(total_hours_list[0].sum) if total_hours_list else 0
         if total + flt(total_hours) > 4:

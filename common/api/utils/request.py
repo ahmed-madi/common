@@ -1,5 +1,5 @@
 import frappe
-from frappe import request, _
+from frappe import request
 
 from common.api.utils.jwt import check_token_and_set_user
 from common.api.utils.response import build_error_response

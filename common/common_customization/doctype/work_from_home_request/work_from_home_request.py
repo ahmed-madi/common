@@ -21,6 +21,7 @@ class OverlapError(frappe.ValidationError):
 
 class WorkFromHomeRequest(BaseHRDocument):
     def validate(self):
+        super().validate()
         self.validate_dates()
         self.validate_leave_overlap()
         self.validate_total_requests(
@@ -198,7 +199,7 @@ class WorkFromHomeRequest(BaseHRDocument):
     def cancel_attendance(self):
         if self.docstatus == 2:
             attendance = frappe.db.sql(
-                """select name from `tabAttendance` where employee = %s\
+                """select name from `tabAttendance` where employee = %s
                 and (attendance_date between %s and %s) and docstatus < 2 and status in ('Work From Home')""",
                 (self.employee, self.from_date, self.to_date),
                 as_dict=1,

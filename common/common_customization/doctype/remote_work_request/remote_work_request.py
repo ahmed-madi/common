@@ -44,9 +44,9 @@ class RemoteWorkRequest(Document):
     ):
         if flt(total_days) > 12:
             if not xclient:
-                frappe.throw(_(f"Total request days cannot exceed 12 days."))
+                frappe.throw(_("Total request days cannot exceed 12 days."))
 
-            frappe.throw(_(f"Total request days cannot exceed 12 days."))
+            frappe.throw(_("Total request days cannot exceed 12 days."))
         start_of_year = get_year_start(from_date)
         end_of_year = add_days(add_months(start_of_year, 11), 30)
         total_request_days = frappe.get_list(

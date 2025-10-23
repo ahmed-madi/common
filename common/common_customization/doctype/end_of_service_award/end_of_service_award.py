@@ -279,8 +279,6 @@ class EndofServiceAward(Document):
     def get_leave_balance(self, employee, work_start_date, end_date):
         today = now_datetime().date()
         end = end_date
-        start = work_start_date
-        ret_dict = {}
         total_leave_balance = frappe.db.sql(
             """SELECT total_leaves_allocated, from_date, to_date,name
                 FROM `tabLeave Allocation`
@@ -290,14 +288,6 @@ class EndofServiceAward(Document):
             )
         )
         if total_leave_balance:
-            start = total_leave_balance[0][1]
-            diffDays = date_diff(end, start)
-            years = math.floor(diffDays / 360)
-            daysrem = diffDays - (years * 365)
-            months = math.floor(daysrem / 30)
-            days = math.ceil(daysrem - (months * 30))
-            ret_dict = {"days": days, "months": months, "years": years, "award": 0}
-
             leave_days = frappe.db.sql(
                 """SELECT SUM(total_leave_days)
                 FROM `tabLeave Application`

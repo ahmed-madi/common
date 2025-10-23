@@ -10,6 +10,7 @@ from frappe.utils import (
     format_date,
     get_url_to_list,
     get_link_to_form,
+    cint,
 )
 from hrms.hr.utils import get_leave_period
 from common.models.base_hr_document import BaseHRDocument
