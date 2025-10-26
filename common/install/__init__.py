@@ -1,5 +1,5 @@
-from common.install import create_permissions
+from common.install.create_permissions import create_custom_doc_perms
 
 
 def after_install():
-    create_permissions()
+    create_custom_doc_perms()
