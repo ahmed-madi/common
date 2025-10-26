@@ -150,6 +150,7 @@ def check_in_out_list(employee: str):
         "employee",
         "employee_name",
         "log_type",
+        "location_name",
         "shift",
         "time",
         "device_id",
