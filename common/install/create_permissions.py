@@ -19,12 +19,12 @@ def create_custom_doc_perms():
     for doctype in DOCTYPE_LIST:
         for role in ROLES:
             exists = frappe.db.exists(
-                "Custom Role", {"role": role, "parent": doctype, "permlevel": 0}
+                "Custom DocPerm", {"role": role, "parent": doctype, "permlevel": 0}
             )
             if exists:
-                doc_perm = frappe.get_doc("Custom Role", exists)
+                doc_perm = frappe.get_doc("Custom DocPerm", exists)
             else:
-                doc_perm = frappe.new_doc("Custom Role")
+                doc_perm = frappe.new_doc("Custom DocPerm")
                 doc_perm.update(
                     {
                         "role": role,
