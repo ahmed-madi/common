@@ -9,7 +9,6 @@ from frappe.desk.doctype.notification_log.notification_log import (
 
 from frappe.email.doctype.notification.notification import (
     Notification,
-    get_reference_name,
 )
 from frappe.desk.doctype.notification_log.notification_log import NotificationLog
 
@@ -19,6 +18,11 @@ from firebase_admin.exceptions import FirebaseError
 
 def get_reference_doctype(doc):
 	return doc.parenttype if doc.meta.istable else doc.doctype
+
+def get_reference_name(doc):
+	return doc.parent if doc.meta.istable else doc.name
+
+
 class CustomNotification(Notification):
     def create_system_notification(self, doc, context):
         subject = self.subject
