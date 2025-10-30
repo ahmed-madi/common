@@ -1,6 +1,7 @@
 import frappe
 from erpnext import get_default_company
 
+
 def get_department_structure(parent=None, company=None, exclude_node=None):
     filters = [["disabled", "=", 0]]
     if not company or company is None:
@@ -29,6 +30,7 @@ def get_department_structure(parent=None, company=None, exclude_node=None):
 
     return departments
 
+
 EMPLOYEE_FIELDS = [
     "name",
     "employee_name",
@@ -39,6 +41,7 @@ EMPLOYEE_FIELDS = [
     "status",
     "image",
 ]
+
 
 def _format_node(row):
     return {
@@ -52,6 +55,7 @@ def _format_node(row):
         "image": row.get("image"),
         "children": [],
     }
+
 
 def _detect_cycle(start, parent_map):
     seen = set()
@@ -77,6 +81,7 @@ def _detect_cycle(start, parent_map):
 
     return dfs(start)
 
+
 def _normalize_filter_value(v):
     if not v:
         return None
@@ -88,15 +93,16 @@ def _normalize_filter_value(v):
         return vals or None
     return None
 
+
 def build_employee_tree(
-    root = None,
-    include_inactive = False,
-    max_depth = 50,
+    root=None,
+    include_inactive=False,
+    max_depth=50,
     *,
-    reports_to = None,
-    department = None,
-    employee_id = None,
-    company = None,
+    reports_to=None,
+    department=None,
+    employee_id=None,
+    company=None,
 ):
     filters = {}
     if not include_inactive:
@@ -108,11 +114,17 @@ def build_employee_tree(
     company = _normalize_filter_value(company)
 
     if reports_to:
-        filters["reports_to"] = reports_to if isinstance(reports_to, str) else ("in", reports_to)
+        filters["reports_to"] = (
+            reports_to if isinstance(reports_to, str) else ("in", reports_to)
+        )
     if department:
-        filters["department"] = department if isinstance(department, str) else ("in", department)
+        filters["department"] = (
+            department if isinstance(department, str) else ("in", department)
+        )
     if employee_id:
-        filters["name"] = employee_id if isinstance(employee_id, str) else ("in", employee_id)
+        filters["name"] = (
+            employee_id if isinstance(employee_id, str) else ("in", employee_id)
+        )
     if company:
         filters["company"] = company if isinstance(company, str) else ("in", company)
 
