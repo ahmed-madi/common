@@ -62,9 +62,10 @@ def _normalize_filter_value(v: Optional[Union[str, List[str]]]) -> Optional[Unio
     return None
 
 def _split_terms(s: Optional[str | List[str]]) -> List[str]:
+    s = _normalize_filter_value(s)
     if not s:
         return []
-    if isinstance(s, list):
+    if isinstance(s, list) or isinstance(s, tuple):
         parts = s
     else:
         parts = [p for chunk in s.split(",") for p in chunk.split(" ")]
@@ -76,16 +77,6 @@ def _split_terms(s: Optional[str | List[str]]) -> List[str]:
             seen.add(t.lower())
             out.append(t)
     return out
-
-def _batched(iterable: Iterable[str], n: int = 200) -> Iterable[List[str]]:
-    batch: List[str] = []
-    for x in iterable:
-        batch.append(x)
-        if len(batch) >= n:
-            yield batch
-            batch = []
-    if batch:
-        yield batch
 
 def build_employee_tree(
     root: Optional[str] = None,
