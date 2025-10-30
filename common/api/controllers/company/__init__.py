@@ -2,8 +2,8 @@ import frappe
 from frappe.utils import cint, getdate
 
 from common.api.controllers.company.organizational_chart import (
-    get_employee_structure,
     get_department_structure,
+    build_employee_tree,
 )
 
 
@@ -55,32 +55,32 @@ def read_event(name: str):
 
 
 def employee_structure():
-    def build_organization_tree(parent=None, company=None, exclude_node=None):
-        children = get_employee_structure(
-            parent=parent, company=company, exclude_node=exclude_node
-        )
-        if len(children) == 0:
-            return []
-        for child in children:
-            child.update(
-                {
-                    "children": build_organization_tree(
-                        parent=child.get("id"),
-                        company=company,
-                        exclude_node=exclude_node,
-                    )
-                }
-            )
-        return children
-
     company = None
-    parent = None
-    if "parent" in frappe.request.args:
-        parent = frappe.request.args["parent"]
+    reports_to = None
+    employee = None
+    department = None
+    def split_csv(s):
+        if not s:
+            return None
+        vals = [x.strip() for x in s.split(",") if x.strip()]
+        return vals or None
+
+    if "reports_to" in frappe.request.args:
+        reports_to = frappe.request.args["reports_to"]
+        reports_to=split_csv(reports_to) if reports_to and "," in reports_to else reports_to,
+    if "employee" in frappe.request.args:
+        employee = frappe.request.args["employee"]
+        employee=split_csv(employee) if employee and "," in employee else employee,
+    if "department" in frappe.request.args:
+        department = frappe.request.args["department"]
+        department=split_csv(department) if department and "," in department else department,
     if "company" in frappe.request.args:
         company = frappe.request.args["company"]
+        company=split_csv(company) if company and "," in company else company,
+    max_depth = 100
+    include_inactive = False
 
-    employees = build_organization_tree(parent=parent, company=company)
+    employees = build_employee_tree(reports_to=reports_to, department=department, employee_id=employee, company=company, include_inactive=include_inactive, max_depth=max_depth)
     return build_success_response(200, "Employee Structure", employees)
 
 
