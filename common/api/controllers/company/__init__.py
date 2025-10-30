@@ -59,7 +59,7 @@ def employee_structure():
     reports_to = None
     employee = None
     department = None
-
+    search = None
     def split_csv(s):
         if not s:
             return None
@@ -92,6 +92,7 @@ def employee_structure():
         company=company,
         include_inactive=include_inactive,
         max_depth=max_depth,
+        search=search,
     )
     return build_success_response(200, "Employee Structure", employees)
 
