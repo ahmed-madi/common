@@ -2,7 +2,7 @@ import frappe
 from frappe.utils import cint, getdate
 
 from common.api.controllers.company.organizational_chart import (
-    get_department_structure,
+    build_department_tree,
     build_employee_tree,
 )
 
@@ -82,6 +82,8 @@ def employee_structure():
     if "company" in frappe.request.args:
         company = frappe.request.args["company"]
         company = (split_csv(company) if company and "," in company else company,)
+    if "search" in frappe.request.args:
+        search = frappe.request.args["search"]
     max_depth = 100
     include_inactive = False
 
@@ -98,33 +100,19 @@ def employee_structure():
 
 
 def department_structure():
-    def build_organization_tree(parent=None, company=None, exclude_node=None):
-        children = get_department_structure(
-            parent=parent, company=company, exclude_node=exclude_node
-        )
-        if len(children) == 0:
-            return []
-        for child in children:
-            child.update(
-                {
-                    "children": build_organization_tree(
-                        parent=child.get("id"),
-                        company=company,
-                        exclude_node=exclude_node,
-                    )
-                }
-            )
-        return children
-
     company = None
     parent = None
-
+    department = None
+    search = None
     if "parent" in frappe.request.args:
         parent = frappe.request.args["parent"]
+    if "department" in frappe.request.args:
+        department = frappe.request.args["department"]
     if "company" in frappe.request.args:
         company = frappe.request.args["company"]
-
-    departments = build_organization_tree(parent=parent, company=company)
+    if "search" in frappe.request.args:
+        search = frappe.request.args["search"]
+    departments = build_department_tree(parent=parent, company=company, search=search, department=department)
     return build_success_response(200, "Department Structure", departments)
 
 
