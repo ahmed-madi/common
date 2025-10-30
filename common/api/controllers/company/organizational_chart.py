@@ -56,7 +56,7 @@ def _normalize_filter_value(v: Optional[Union[str, List[str]]]) -> Optional[Unio
     if isinstance(v, str):
         s = v.strip()
         return s or None
-    if isinstance(v, list):
+    if isinstance(v, list) or isinstance(v, tuple):
         vals = [str(x).strip() for x in v if str(x).strip()]
         return vals or None
     return None
