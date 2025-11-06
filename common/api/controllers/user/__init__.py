@@ -197,8 +197,7 @@ def user_info():
 
         certifications = frappe.db.sql(
             """
-                            SELECT name, employee, employee_name, certificate_title, issuing_organization,
-                                    date_of_issue, attachment, status, docstatus
+                            SELECT name, employee, employee_name, certificate_title, issuing_organization, date_of_issue, attachment
                             FROM `tabEmployee Certification`
                             WHERE employee='{}'""".format(
                 name
@@ -207,8 +206,7 @@ def user_info():
         )
         achievements = frappe.db.sql(
             """
-                            SELECT name, employee, employee_name, title, date, description,
-                                    attachment, status, docstatus
+                            SELECT name, employee, employee_name, title, date, description, attachment
                             FROM `tabEmployee Achievement`
                             WHERE employee='{}'""".format(
                 name
