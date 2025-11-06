@@ -85,12 +85,20 @@ def get_user_settings():
             )
             doc.save(ignore_permissions=True)
             frappe.db.commit()
-        terms_and_conditions_ar = frappe.db.get_single_value(
-            "Company Policy", "terms_and_conditions_ar"
-        )
-        terms_and_conditions_en = frappe.db.get_single_value(
-            "Company Policy", "terms_and_conditions_en"
-        )
+
+        language = frappe.db.get_value("User", frappe.session.user, "language") or "en"
+        if language == "ar":
+            terms_and_conditions = frappe.db.get_single_value(
+                "Company Policy", "terms_and_conditions_ar"
+            )
+        else:
+            terms_and_conditions = frappe.db.get_single_value(
+                "Company Policy", "terms_and_conditions_en"
+            )
+        if not terms_and_conditions:
+            terms_and_conditions = frappe.db.get_single_value(
+                "Company Policy", "terms_and_conditions_ar"
+            )
         doc = {
             "user": doc.user,
             "task_assignments": doc.task_assignments,
@@ -100,8 +108,7 @@ def get_user_settings():
             "performance_reviews": doc.performance_reviews,
             "language": user.language,
             "theme": user.desk_theme,
-            "terms_and_conditions_ar": terms_and_conditions_ar,
-            "terms_and_conditions_en": terms_and_conditions_en,
+            "terms_and_conditions": terms_and_conditions,
         }
 
         return build_success_response(200, "user settings fetched", doc, {})
