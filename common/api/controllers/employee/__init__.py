@@ -26,13 +26,8 @@ def update_employee_info(employee: str):
 
 
 # Employee Achievement
-def achievement_list(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def achievement_list():
     doctype = "Employee Achievement"
-    filters = {"employee": employee}
-
     LIST_FIELDS = [
         "name",
         "employee",
@@ -46,44 +41,28 @@ def achievement_list(employee: str):
         doctype,
         LIST_FIELDS,
         force_fields=True,
-        user_filters=filters,
         force_user_filters=True,
     )
 
 
-def create_achievement(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def create_achievement():
     doctype = "Employee Achievement"
-    default_data = {"employee": employee}
-    return create_doc(doctype, default_data=default_data)
+    return create_doc(doctype)
 
 
-def update_achievement(employee: str, name: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def update_achievement(name: str):
     doctype = "Employee Achievement"
-    default_data = {"employee": employee}
-    return update_doc(doctype, name, default_data=default_data)
+    return update_doc(doctype, name)
 
 
-def delete_achievement(employee: str, name: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def delete_achievement(name: str):
     doctype = "Employee Achievement"
     return delete_doc(doctype, name)
 
 
 # Employee Certification
-def certification_list(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def certification_list():
     doctype = "Employee Certification"
-    filters = {"employee": employee}
     LIST_FIELDS = [
         "name",
         "employee",
@@ -97,54 +76,31 @@ def certification_list(employee: str):
         doctype,
         LIST_FIELDS,
         force_fields=True,
-        user_filters=filters,
         force_user_filters=True,
     )
 
-
-def create_certification(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def create_certification():
     doctype = "Employee Certification"
-    default_data = {"employee": employee}
-    return create_doc(doctype, default_data=default_data)
+    return create_doc(doctype)
 
 
-def update_certification(employee: str, name: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def update_certification(name: str):
     doctype = "Employee Certification"
-    default_data = {"employee": employee}
-    return update_doc(doctype, name, default_data=default_data)
+    return update_doc(doctype, name)
 
 
-def delete_certification(employee: str, name: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def delete_certification(name: str):
     doctype = "Employee Certification"
     return delete_doc(doctype, name)
 
-
 # Employee Checkin
-def create_checkin(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def create_checkin():
     doctype = "Employee Checkin"
-    default_data = {"employee": employee}
-    return create_doc(doctype, default_data=default_data)
+    return create_doc(doctype)
 
 
-def check_in_out_list(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def check_in_out_list():
     doctype = "Employee Checkin"
-    filters = {"employee": employee}
-
     LIST_FIELDS = [
         "name",
         "employee",
@@ -168,19 +124,13 @@ def check_in_out_list(employee: str):
         doctype,
         LIST_FIELDS,
         force_fields=True,
-        user_filters=filters,
         force_user_filters=True,
     )
 
 
 # Employee Attendance
-def attendance_list(employee: str):
-    read_doc("Employee", employee, ["name"], force_fields=True)
-    if frappe.local.response["status"] == "failed":
-        return
+def attendance_list():
     doctype = "Attendance"
-    filters = {"employee": employee}
-
     LIST_FIELDS = [
         "name",
         "employee",
@@ -203,7 +153,6 @@ def attendance_list(employee: str):
         doctype,
         LIST_FIELDS,
         force_fields=True,
-        user_filters=filters,
         force_user_filters=True,
     )
 
