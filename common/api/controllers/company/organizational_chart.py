@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, List, Optional, Set, Any, Union, Iterable
+from typing import Dict, List, Optional, Set, Any, Union
 import frappe
 
 EMPLOYEE_FIELDS = [
@@ -12,6 +12,7 @@ EMPLOYEE_FIELDS = [
     "status",
     "image",
 ]
+
 
 def _format_node(row: Dict[str, Any]) -> Dict[str, Any]:
     return {
@@ -26,7 +27,10 @@ def _format_node(row: Dict[str, Any]) -> Dict[str, Any]:
         "children": [],
     }
 
-def _detect_cycle(start: str, parent_map: Dict[str, Optional[str]]) -> Optional[List[str]]:
+
+def _detect_cycle(
+    start: str, parent_map: Dict[str, Optional[str]]
+) -> Optional[List[str]]:
     seen: Set[str] = set()
     stack: Set[str] = set()
 
@@ -50,7 +54,10 @@ def _detect_cycle(start: str, parent_map: Dict[str, Optional[str]]) -> Optional[
 
     return dfs(start)
 
-def _normalize_filter_value(v: Optional[Union[str, List[str]]]) -> Optional[Union[str, List[str]]]:
+
+def _normalize_filter_value(
+    v: Optional[Union[str, List[str]]],
+) -> Optional[Union[str, List[str]]]:
     if not v:
         return None
     if isinstance(v, str):
@@ -60,6 +67,7 @@ def _normalize_filter_value(v: Optional[Union[str, List[str]]]) -> Optional[Unio
         vals = [str(x).strip() for x in v if str(x).strip()]
         return vals or None
     return None
+
 
 def _split_terms(s: Optional[str | List[str]]) -> List[str]:
     s = _normalize_filter_value(s)
@@ -77,6 +85,7 @@ def _split_terms(s: Optional[str | List[str]]) -> List[str]:
             seen.add(t.lower())
             out.append(t)
     return out
+
 
 def build_employee_tree(
     root: Optional[str] = None,
@@ -113,34 +122,48 @@ def build_employee_tree(
     company = _normalize_filter_value(company)
 
     if reports_to:
-        base_filters["reports_to"] = reports_to if isinstance(reports_to, str) else ("in", reports_to)
+        base_filters["reports_to"] = (
+            reports_to if isinstance(reports_to, str) else ("in", reports_to)
+        )
     if department:
-        base_filters["department"] = department if isinstance(department, str) else ("in", department)
+        base_filters["department"] = (
+            department if isinstance(department, str) else ("in", department)
+        )
     if employee_id:
-        base_filters["name"] = employee_id if isinstance(employee_id, str) else ("in", employee_id)
+        base_filters["name"] = (
+            employee_id if isinstance(employee_id, str) else ("in", employee_id)
+        )
     if company:
-        base_filters["company"] = company if isinstance(company, str) else ("in", company)
+        base_filters["company"] = (
+            company if isinstance(company, str) else ("in", company)
+        )
 
     or_filters = []
     for term in _split_terms(search):
         like = f"%{term}%"
-        or_filters.extend([
-            ["employee_name", "like", like],
-            ["name", "like", like],
-            ["designation", "like", like],
-            ["department", "like", like],
-        ])
+        or_filters.extend(
+            [
+                ["employee_name", "like", like],
+                ["name", "like", like],
+                ["designation", "like", like],
+                ["department", "like", like],
+            ]
+        )
 
-    rows = frappe.get_all("Employee",
-                          fields=EMPLOYEE_FIELDS,
-                          filters=base_filters,
-                          or_filters=or_filters or None)
+    rows = frappe.get_all(
+        "Employee",
+        fields=EMPLOYEE_FIELDS,
+        filters=base_filters,
+        or_filters=or_filters or None,
+    )
 
     if not rows:
         return []
 
     by_id: Dict[str, Dict[str, Any]] = {r["name"]: _format_node(r) for r in rows}
-    parent_map: Dict[str, Optional[str]] = {r["name"]: r.get("reports_to") for r in rows}
+    parent_map: Dict[str, Optional[str]] = {
+        r["name"]: r.get("reports_to") for r in rows
+    }
 
     if include_ancestors:
         missing: Set[str] = set()
@@ -157,7 +180,9 @@ def build_employee_tree(
             if not include_inactive:
                 fetch_filters["status"] = "Active"
 
-            new_rows = frappe.get_all("Employee", fields=EMPLOYEE_FIELDS, filters=fetch_filters)
+            new_rows = frappe.get_all(
+                "Employee", fields=EMPLOYEE_FIELDS, filters=fetch_filters
+            )
             missing.clear()
             if not new_rows:
                 break
@@ -215,6 +240,7 @@ def build_employee_tree(
 
     return roots
 
+
 DEPT_FIELDS = [
     "name",
     "department_name",
@@ -224,6 +250,7 @@ DEPT_FIELDS = [
 ]
 
 EMP_COUNT_FIELD = "count(name) as cnt"
+
 
 def _fmt_dept(row: Dict[str, Any]) -> Dict[str, Any]:
     return {
@@ -237,10 +264,12 @@ def _fmt_dept(row: Dict[str, Any]) -> Dict[str, Any]:
         "children": [],
     }
 
+
 def _stable_sort(node: Dict[str, Any]) -> None:
     node["children"].sort(key=lambda n: (n["label"] or "", n["id"]))
     for c in node["children"]:
         _stable_sort(c)
+
 
 def _post_order_total(node: Dict[str, Any]) -> int:
     total = node["direct_count"]
@@ -248,6 +277,7 @@ def _post_order_total(node: Dict[str, Any]) -> int:
         total += _post_order_total(c)
     node["total_count"] = total
     return total
+
 
 def build_department_tree(
     *,
@@ -290,23 +320,23 @@ def build_department_tree(
     or_filters = []
     for term in _split_terms(search):
         like = f"%{term}%"
-        or_filters.extend([
-            ["department_name", "like", like],
-            ["name", "like", like],
-        ])
+        or_filters.extend(
+            [
+                ["department_name", "like", like],
+                ["name", "like", like],
+            ]
+        )
 
     dept_rows = frappe.get_all(
         "Department",
         fields=DEPT_FIELDS,
         filters=dept_filters,
-        or_filters=or_filters or None
+        or_filters=or_filters or None,
     )
     if not dept_rows:
         return []
 
-    all_map: Dict[str, Dict[str, Any]] = {
-        r["name"]: _fmt_dept(r) for r in dept_rows
-    }
+    all_map: Dict[str, Dict[str, Any]] = {r["name"]: _fmt_dept(r) for r in dept_rows}
 
     if include_ancestors:
         missing: Set[str] = set()
@@ -325,7 +355,9 @@ def build_department_tree(
                 else:
                     anc_filters["company"] = company
 
-            anc_rows = frappe.get_all("Department", fields=DEPT_FIELDS, filters=anc_filters)
+            anc_rows = frappe.get_all(
+                "Department", fields=DEPT_FIELDS, filters=anc_filters
+            )
             for r in anc_rows:
                 if r["name"] not in all_map:
                     all_map[r["name"]] = _fmt_dept(r)
@@ -339,13 +371,15 @@ def build_department_tree(
     if not include_inactive_employees:
         emp_filters["status"] = "Active"
     if company:
-        emp_filters["company"] = ("in", company) if isinstance(company, list) else company
+        emp_filters["company"] = (
+            ("in", company) if isinstance(company, list) else company
+        )
 
     emp_counts = frappe.get_all(
         "Employee",
         fields=["department", EMP_COUNT_FIELD],
         filters=emp_filters,
-        group_by="department"
+        group_by="department",
     )
 
     for r in emp_counts:
@@ -353,13 +387,19 @@ def build_department_tree(
         if dept_id and dept_id in all_map:
             all_map[dept_id]["direct_count"] = int(r.get("cnt") or 0)
 
-    parent_map: Dict[str, Optional[str]] = {d["id"]: d["parent"] for d in all_map.values()}
+    parent_map: Dict[str, Optional[str]] = {
+        d["id"]: d["parent"] for d in all_map.values()
+    }
     for d in all_map.values():
         p = d["parent"]
         if p and p in all_map:
             all_map[p]["children"].append(d)
 
-    roots = [d for d in all_map.values() if not parent_map.get(d["id"]) or parent_map.get(d["id"]) not in all_map]
+    roots = [
+        d
+        for d in all_map.values()
+        if not parent_map.get(d["id"]) or parent_map.get(d["id"]) not in all_map
+    ]
 
     if recursive_counts:
         for r in roots:
@@ -369,6 +409,7 @@ def build_department_tree(
             d["total_count"] = d["direct_count"]
 
     if not include_empty_departments:
+
         def prune_empty(node: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             kept = []
             for c in node["children"]:

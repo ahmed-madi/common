@@ -60,6 +60,7 @@ def employee_structure():
     employee = None
     department = None
     search = None
+
     def split_csv(s):
         if not s:
             return None
@@ -112,7 +113,9 @@ def department_structure():
         company = frappe.request.args["company"]
     if "search" in frappe.request.args:
         search = frappe.request.args["search"]
-    departments = build_department_tree(parent=parent, company=company, search=search, department=department)
+    departments = build_department_tree(
+        parent=parent, company=company, search=search, department=department
+    )
     return build_success_response(200, "Department Structure", departments)
 
 

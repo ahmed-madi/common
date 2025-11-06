@@ -25,56 +25,52 @@ employee_info_rules = [
     ),
     Rule("/employee/<path:employee>/", methods=["PUT"], endpoint=update_employee_info),
     # Check-in-out / Attendance
+    Rule("/employee/checkin", methods=["POST"], endpoint=create_checkin),
+    Rule("/employee/checkin", methods=["GET"], endpoint=check_in_out_list),
     Rule(
-        "/employee/<path:employee>/checkin", methods=["POST"], endpoint=create_checkin
-    ),
-    Rule(
-        "/employee/<path:employee>/checkin", methods=["GET"], endpoint=check_in_out_list
-    ),
-    Rule(
-        "/employee/<path:employee>/attendance",
+        "/employee/attendance",
         methods=["GET"],
         endpoint=attendance_list,
     ),
     # Employee Achievement
     Rule(
-        "/employee/<path:employee>/achievement",
+        "/employee/achievement",
         methods=["GET"],
         endpoint=achievement_list,
     ),
     Rule(
-        "/employee/<path:employee>/achievement",
+        "/employee/achievement",
         methods=["POST"],
         endpoint=create_achievement,
     ),
     Rule(
-        "/employee/<path:employee>/achievement/<path:name>",
+        "/employee/achievement/<path:name>",
         methods=["PUT"],
         endpoint=update_achievement,
     ),
     Rule(
-        "/employee/<path:employee>/achievement/<path:name>",
+        "/employee/achievement/<path:name>",
         methods=["DELETE"],
         endpoint=delete_achievement,
     ),
     # Employee Achievement
     Rule(
-        "/employee/<path:employee>/certification",
+        "/employee/certification",
         methods=["GET"],
         endpoint=certification_list,
     ),
     Rule(
-        "/employee/<path:employee>/certification",
+        "/employee/certification",
         methods=["POST"],
         endpoint=create_certification,
     ),
     Rule(
-        "/employee/<path:employee>/certification/<path:name>",
+        "/employee/certification/<path:name>",
         methods=["PUT"],
         endpoint=update_certification,
     ),
     Rule(
-        "/employee/<path:employee>/certification/<path:name>",
+        "/employee/certification/<path:name>",
         methods=["DELETE"],
         endpoint=delete_certification,
     ),
