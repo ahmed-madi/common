@@ -79,6 +79,7 @@ def certification_list():
         force_user_filters=True,
     )
 
+
 def create_certification():
     doctype = "Employee Certification"
     return create_doc(doctype)
@@ -92,6 +93,7 @@ def update_certification(name: str):
 def delete_certification(name: str):
     doctype = "Employee Certification"
     return delete_doc(doctype, name)
+
 
 # Employee Checkin
 def create_checkin():

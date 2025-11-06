@@ -25,12 +25,8 @@ employee_info_rules = [
     ),
     Rule("/employee/<path:employee>/", methods=["PUT"], endpoint=update_employee_info),
     # Check-in-out / Attendance
-    Rule(
-        "/employee/checkin", methods=["POST"], endpoint=create_checkin
-    ),
-    Rule(
-        "/employee/checkin", methods=["GET"], endpoint=check_in_out_list
-    ),
+    Rule("/employee/checkin", methods=["POST"], endpoint=create_checkin),
+    Rule("/employee/checkin", methods=["GET"], endpoint=check_in_out_list),
     Rule(
         "/employee/attendance",
         methods=["GET"],
