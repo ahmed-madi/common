@@ -1,6 +1,11 @@
 frappe.ui.form.on("Project", {
-  refresh(frm) {
+  async refresh(frm) {
+    const res = await fetch(
+      "/api/method/frappe.core.doctype.module_def.module_def.get_installed_apps"
+    );
+    const data = await res.json();
     if (frm.doc.status == "Open") {
+      if (data.message.includes("real_estate")) return;
       const dashboard = frm.dashboard.add_progress(
         "Project Progress",
         flt(frm.doc.percent_complete, 2),
@@ -8,6 +13,7 @@ frappe.ui.form.on("Project", {
       );
       customizeDashboard(frm, dashboard);
     } else {
+      if (installedApps.includes("real_estate")) return;
       frm.dashboard.add_progress(
         "Project Progress",
         0,
@@ -18,38 +24,29 @@ frappe.ui.form.on("Project", {
 });
 
 function customizeDashboard(frm, dashboard) {
-  const progressContainer = dashboard.find(".progress");
-  progressContainer.css("position", "relative");
+  const progressArea = $(".progress-area");
+  progressArea.css("position", "relative");
 
   let startDateTitle = `${flt(frm.doc.percent_complete, 2)}%`;
   if (frm.doc.expected_start_date) {
-    startDateTitle = `${__("Start Date")} ${frm.doc.expected_start_date}`;
+    startDateTitle = `${__("Start Date")}: ${frm.doc.expected_start_date}`;
   }
   const startDateToolTip = $(
-    `<div class="progress-bar" style="width:130px; background-color: transparent; margin-left: auto; position: absolute;" title="${startDateTitle}"></div>`
-  ).prependTo(progressContainer);
+    `<div style="position: absolute; top: 10px; left: 20px; font-size: 10px; font-weight:700; background: #222; color: #fff; padding: 3px 6px; border-radius: 4px">${startDateTitle}</div>`
+  );
 
-  startDateToolTip.tooltip({
-    trigger: "manual",
-    placement: "top",
-    customClass: "z-index-0",
-  });
-  startDateToolTip.tooltip("show");
-
-  let progressContainerTitle = ``;
-  if (frm.doc.expected_start_date) {
-    progressContainerTitle = `${__("End Date")} ${frm.doc.expected_end_date}`;
+  let endDateTitle = ``;
+  if (frm.doc.expected_end_date) {
+    endDateTitle = `${__("End Date")}: ${frm.doc.expected_end_date}`;
   }
   const endDateToolTip = $(
-    `<div class="progress-bar" style="width:130px; background-color: transparent; margin-left: auto; position: absolute;right: 0; left: auto;top:10px;" title="${progressContainerTitle}"></div>`
-  ).appendTo(progressContainer);
+    `<div style="position: absolute; bottom:35px; right: 10px; font-size: 10px; font-weight:700; background: #222; color: #fff; border-radius: 4px">${endDateTitle}</div>`
+  );
+  endDateTitle ? endDateToolTip.css("padding", "3px 6px") : "";
 
-  endDateToolTip.tooltip({
-    trigger: "manual",
-    placement: "bottom",
-    customClass: "z-index-0",
-  });
-  endDateToolTip.tooltip("show");
+  progressArea.append(startDateToolTip);
+  progressArea.append(endDateToolTip);
+
   if (frm.doc.custom_more_info) {
     const dashboard = frm.dashboard.add_progress(
       "Project Info",
