@@ -53,7 +53,10 @@
   "resignation_notice_days",
   "roles_restrictions_tab",
   "suggestions_and_complaints_section",
-  "suggestions_whitelist_role"
+  "suggestions_whitelist_role",
+  "terms_and_conditions_tab",
+  "terms_and_conditions_ar",
+  "terms_and_conditions_en"
  ],
  "fields": [
   {
@@ -352,13 +355,28 @@
    "fieldname": "active_event_only",
    "fieldtype": "Check",
    "label": "Show Active Event Only"
+  },
+  {
+   "fieldname": "terms_and_conditions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Terms and Conditions"
+  },
+  {
+   "fieldname": "terms_and_conditions_ar",
+   "fieldtype": "Long Text",
+   "label": "Terms and Conditions Arabic"
+  },
+  {
+   "fieldname": "terms_and_conditions_en",
+   "fieldtype": "Long Text",
+   "label": "Terms and Conditions English"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-09-07 15:24:28.184801",
+ "modified": "2025-11-06 13:49:12.263859",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
@@ -412,6 +430,7 @@
   }
  ],
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
