@@ -85,6 +85,7 @@ def upload_file(fieldname):
         }
     ).save()
     file_doc = frappe.get_doc("File", file_doc.name)
+    file_doc.is_private = True
     file_doc.save()
     return {
         "name": file_doc.name,
