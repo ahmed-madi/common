@@ -81,10 +81,11 @@ def upload_file(fieldname):
             "attached_to_field": fieldname,
             "file_name": filename,
             "file_url": file_url,
-            "is_private": 1,
             "content": content,
         }
     ).save()
+    file_doc = frappe.get_doc("File", file_doc.name)
+    file_doc.save()
     return {
         "name": file_doc.name,
         "file_url": file_doc.file_url,
