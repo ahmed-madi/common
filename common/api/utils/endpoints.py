@@ -266,7 +266,7 @@ def load_extra_data(doctype, name):
         certifications = frappe.db.sql(
             """
                             SELECT name, employee, employee_name, certificate_title, issuing_organization,
-                                    date_of_issue, attachment, status, docstatus
+                                    date_of_issue, attachment
                             FROM `tabEmployee Certification`
                             WHERE employee='{}'""".format(
                 name
@@ -276,7 +276,7 @@ def load_extra_data(doctype, name):
         achievements = frappe.db.sql(
             """
                             SELECT name, employee, employee_name, title, date, description,
-                                    attachment, status, docstatus
+                                    attachment
                             FROM `tabEmployee Achievement`
                             WHERE employee='{}'""".format(
                 name
