@@ -156,6 +156,20 @@ def build_employee_tree(
         filters=base_filters,
         or_filters=or_filters or None,
     )
+    for row in rows:
+        last_check_in = frappe.get_all(
+            "Employee Checkin",
+            filters={"employee": row.name},
+            fields=["log_type", "time"],
+            order_by="time desc",
+        )
+        if len(last_check_in):
+            last_check_in = last_check_in[0]
+        else:
+            last_check_in = None
+        row.update({
+            "last_check_status": last_check_in,
+        })
 
     if not rows:
         return []
