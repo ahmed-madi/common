@@ -8,6 +8,7 @@ from common.api.utils import (
     format_data,
     upload_file,
     delete_duplicated_or_after_error,
+    sanitize_html,
 )
 from common.api.utils.response import (
     build_error_response,
@@ -20,6 +21,15 @@ from common.api.utils.translator import translate_link_fields
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
         return
+    if doctype == "Notification Log":
+        for d in data:
+            print(d)
+            email_content = sanitize_html(d.get("email_content", ""))
+            d.update({
+                "email_content": email_content,
+            })
+            
+
     if doctype == "Company Newsletter":
         for d in data:
             images_gallery = frappe.get_all(

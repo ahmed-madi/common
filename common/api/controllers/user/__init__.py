@@ -382,9 +382,11 @@ def change_user_password():
 
 def notification_list():
     doctype = "Notification Log"
-    user_filters = {
-        "for_user": frappe.session.user,
-    }
+    user_filters = {}
+    if frappe.session.user != "Administrator":
+        user_filters = {
+            "for_user": frappe.session.user,
+        }
     fields = [
         "name",
         "subject",

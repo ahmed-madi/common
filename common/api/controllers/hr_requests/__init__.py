@@ -16,6 +16,14 @@ NULL_FROM_TO_DATES = [
     "Work From Home Request",
     "Work Outside Office Request",
 ]
+NULL_ATTACHMENT = [
+    "Compensatory Leave Request",
+    "Cancel Leave Application",
+    "Leave Suspension",
+    "Work From Home Request",
+    "Employee Resignation",
+    "System Access Request",
+]
 REQUESTS_DOCTYPE = [
     "Compensatory Leave Request",
     "Early Leave Application",
@@ -164,16 +172,20 @@ def employee_requests_list():
         else:
             has_success = True
             response_data.update(content)
-            data_list += map(
-                lambda x: (
+            dl = content.get("data_list", [])
+            for x in dl:
+                if doctype not in NULL_FROM_TO_DATES:
                     x.update({"doctype": doctype})
-                    if doctype not in NULL_FROM_TO_DATES
-                    else x.update(
+                else:
+                    x.update(
                         {"doctype": doctype, "from_date": None, "to_date": None}
                     )
-                ),
-                content.get("data_list", []),
-            )
+                if doctype in NULL_ATTACHMENT:
+                    x.update({
+                        "attachment": None,
+                    })
+            data_list += dl
+
             totalCount += cint(content.get("totalCount"))
             pageCount += cint(content.get("pageCount"))
     if not has_success:
@@ -257,7 +269,7 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
                     "employee": employee,
                 }
             )
-    # Append from/to Dates field
+    # Append from/to Dates and attachment field field
     if doctype == "Compensatory Leave Request":
         BASE_FIELDS.append("work_from_date as from_date")
         BASE_FIELDS.append("work_end_date as to_date")
@@ -267,23 +279,40 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
     elif doctype == "Visa Application":
         BASE_FIELDS.append("start_date as from_date")
         BASE_FIELDS.append("end_date as to_date")
+        BASE_FIELDS.append("attachment")
     elif doctype == "Club Request":
         BASE_FIELDS.append("start_date as from_date")
         BASE_FIELDS.append("end_date as to_date")
+        BASE_FIELDS.append("attachment")
     elif doctype == "Training Request":
         BASE_FIELDS.append("start_date as from_date")
         BASE_FIELDS.append("end_date as to_date")
+        BASE_FIELDS.append("attachment")
     elif doctype == "Work From Home Request":
         BASE_FIELDS.append("from_date")
         BASE_FIELDS.append("to_date")
     elif doctype == "Work Outside Office Request":
         BASE_FIELDS.append("from_date")
         BASE_FIELDS.append("to_date")
-    # else:
-    #     BASE_FIELDS.append("NULL as from_date")
-    #     BASE_FIELDS.append("NULL as to_date")
-    # Append Date field
+        BASE_FIELDS.append("attachment")
+    elif doctype == "Early Leave Application":
+        BASE_FIELDS.append("attachment")
+    elif doctype == "Salary Identification Letter":
+        BASE_FIELDS.append("signed_pdf_document as attachment")
+    elif doctype == "Salary Fixation":
+        BASE_FIELDS.append("attachment")
+    elif doctype == "Education Allowance Request":
+        BASE_FIELDS.append("attachment")
+    elif doctype == "Document Request":
+        BASE_FIELDS.append("attachment")
+    elif doctype == "Change IBAN Request":
+        BASE_FIELDS.append("attachment")
+    elif doctype == "Clearance Letter Request":
+        BASE_FIELDS.append("clearance_document as attachment")
+    
+
     if doctype in ["Loan Application", "Leave Application"]:
+        BASE_FIELDS.append("attachment")
         BASE_FIELDS.append("posting_date as request_date")
         if request_date and isinstance(request_date, str):
             FILTERS.update(

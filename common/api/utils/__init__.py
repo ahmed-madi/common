@@ -1,5 +1,6 @@
 import frappe
 from frappe.utils import cint, flt
+from bs4 import BeautifulSoup
 
 
 def format_data(data, doctype, keys_to_update=[]):
@@ -108,3 +109,22 @@ def handle_password_test_fail(feedback: dict):
     if warning:
         return " ".join([warning, *suggestions])
     return " ".join(suggestions)
+
+
+def sanitize_html(html_content):
+    if not html_content:
+        return None
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    for tag in soup(['script', 'iframe', 'form', 'frame', 'object', 'embed', 'style']):
+        tag.decompose()
+    for tag in soup.find_all(True):
+        if tag.name == 'a':
+            span_tag = soup.new_tag('span')
+            span_tag.string = tag.get_text()
+            tag.replace_with(span_tag)
+            continue
+
+        tag.attrs.clear()
+
+    return str(soup)
