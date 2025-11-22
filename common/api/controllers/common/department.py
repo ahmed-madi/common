@@ -1,19 +1,17 @@
 from common.api.utils.endpoints import document_list, read_doc
 
-fields = ["name", "department_name", "disabled"]
+fields = ["name", "department_name", "disabled", "is_group"]
+doctype = "Department"
 
 
 def department_list():
-    doctype = "Department"
     return document_list(
         doctype,
         fields,
-        force_fields=True,
-        translate_text=True,
-        tr_field="department_name",
+        user_filters=[["disabled", "=", 0]],
+        force_user_filters=True,
     )
 
 
 def read_department(name: str):
-    doctype = "Department"
-    return read_doc(doctype, name, origin_fields=fields, force_fields=True)
+    return read_doc(doctype, name)
