@@ -6,29 +6,25 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+fields = ["name", "employee", "leave_type", "status"]
+doctype = "Compensatory Leave Request"
+
 
 def compensatory_vacation_list():
-    doctype = "Compensatory Leave Request"
-    fields = ["name", "employee", "leave_type", "status"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_compensatory_vacation():
-    doctype = "Compensatory Leave Request"
     return create_doc(doctype)
 
 
 def read_compensatory_vacation(name: str):
-    doctype = "Compensatory Leave Request"
-    fields = ["name", "employee", "leave_type", "status"]
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_compensatory_vacation(name: str):
-    doctype = "Compensatory Leave Request"
     return update_doc(doctype, name)
 
 
 def delete_compensatory_vacation(name: str):
-    doctype = "Compensatory Leave Request"
     return delete_doc(doctype, name)

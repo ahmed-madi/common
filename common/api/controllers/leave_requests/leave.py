@@ -6,28 +6,35 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+LIST_FIELDS = [
+    "name",
+    "employee",
+    "employee_name",
+    "leave_type",
+    "from_date",
+    "to_date",
+    "total_leave_days",
+    "status",
+]
+
+doctype = "Leave Application"
+
 
 def leave_list():
-    doctype = "Leave Application"
-    fields = ["*"]
-    return document_list(doctype, fields)
+    return document_list(doctype, LIST_FIELDS, add_perms=True, add_wf=True)
 
 
 def create_leave():
-    doctype = "Leave Application"
     return create_doc(doctype)
 
 
 def read_leave(name: str):
-    doctype = "Leave Application"
-    return read_doc(doctype, name)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_leave(name: str):
-    doctype = "Leave Application"
     return update_doc(doctype, name)
 
 
 def delete_leave(name: str):
-    doctype = "Leave Application"
     return delete_doc(doctype, name)

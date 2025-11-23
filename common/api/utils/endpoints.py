@@ -67,13 +67,16 @@ def get_doc_list(
 
     wf = None
     if add_wf:
-        wf = frappe.get_list("Workflow", {"document_type": doctype, "is_active": 1})
+        wf = frappe.get_all("Workflow", {"document_type": doctype, "is_active": 1})
         if wf:
             wf = frappe.get_doc("Workflow", wf[0])
         else:
             wf = None
     if wf:
         fields.append(wf.workflow_state_field)
+    if "docstatus" not in fields:
+        fields.append("docstatus")
+
     args = frappe._dict(
         parent_doctype=parent,
         fields=fields,
@@ -141,6 +144,7 @@ def document_list(
                 message = args[1]
             elif len(args) > 0:
                 message = args[0].split(":")[0]
+        msg = _("failed to read {}").format(_(doctype))
         return build_error_response(
             http_status_code, f"failed to read {doctype}", message
         )
@@ -168,7 +172,8 @@ def create_doc(doctype: str, default_data={}):
         doc.update(default_data)
         doc.insert()
         delete_duplicated_or_after_error(uploaded_files)
-        return build_success_response(201, f"{doctype} created", doc)
+        msg = _("{} created").format(_(doctype))
+        return build_success_response(201, msg, doc)
     except Exception as exc:
         print(frappe.get_traceback())
         return handle_exception_response(
@@ -316,7 +321,7 @@ def get_doc(
         fields.append("name")
     wf = None
     if add_wf:
-        wf = frappe.get_list("Workflow", {"document_type": doctype, "is_active": 1})
+        wf = frappe.get_all("Workflow", {"document_type": doctype, "is_active": 1})
         if wf:
             wf = frappe.get_doc("Workflow", wf[0])
             if fields:
@@ -357,8 +362,9 @@ def read_doc(
                 message = args[0].split(":")[0]
             elif len(args) > 1 and isinstance(args[0], int):
                 message = args[1]
+        msg = _("failed to read {}").format(_(doctype))
         return build_error_response(
-            http_status_code, f"failed to read {doctype}", message
+            http_status_code, msg, message
         )
 
 
