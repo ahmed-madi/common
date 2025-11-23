@@ -1,15 +1,17 @@
 from common.api.utils.endpoints import document_list, read_doc
 
+fields = ["name", "fixation_reason"]
+doctype = "Fixation Reason"
+
 
 def salary_fixation_reason_list():
-    doctype = "Fixation Reason"
-    fields = ["name", "fixation_reason"]
     return document_list(
-        doctype, fields, translate_text=True, tr_field="fixation_reason"
+        doctype,
+        fields,
+        add_perms=False,
+        add_wf=False,
     )
 
 
 def read_salary_fixation_reason(name: str):
-    doctype = "Fixation Reason"
-    fields = ["name", "fixation_reason"]
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=False, add_wf=False, fields=fields)

@@ -10,8 +10,16 @@ def department_list():
         fields,
         user_filters=[["disabled", "=", 0]],
         force_user_filters=True,
+        add_perms=False,
+        add_wf=False,
     )
 
 
 def read_department(name: str):
-    return read_doc(doctype, name)
+    return read_doc(
+        doctype,
+        name,
+        add_perms=False,
+        add_wf=False,
+        fields=fields,
+    )

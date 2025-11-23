@@ -21,7 +21,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-11 13:56:34.555429",
+ "modified": "2025-11-23 15:03:49.149655",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "System Access Level",
@@ -99,7 +99,9 @@
   }
  ],
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "access_level"
 }

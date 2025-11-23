@@ -21,7 +21,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-07 15:25:05.292530",
+ "modified": "2025-11-23 15:07:59.836112",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Work Type",
@@ -86,7 +86,9 @@
   }
  ],
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "type"
 }

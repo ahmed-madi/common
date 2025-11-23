@@ -1,7 +1,5 @@
 import frappe
 from frappe import _
-from frappe.utils import cint
-from frappe.desk.form.load import get_docinfo  # , getdoc, getdoctype
 
 from common.api.utils import (
     get_request_form_data,
@@ -10,25 +8,26 @@ from common.api.utils import (
     delete_duplicated_or_after_error,
     sanitize_html,
 )
+from common.api.utils.request_data import setup_request_data
+from common.api.utils.response_data import format_response_data
+
 from common.api.utils.response import (
     build_error_response,
     build_success_response,
     handle_exception_response,
 )
-from common.api.utils.translator import translate_link_fields
-
 
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
         return
     if doctype == "Notification Log":
         for d in data:
-            print(d)
             email_content = sanitize_html(d.get("email_content", ""))
-            d.update({
-                "email_content": email_content,
-            })
-            
+            d.update(
+                {
+                    "email_content": email_content,
+                }
+            )
 
     if doctype == "Company Newsletter":
         for d in data:
@@ -48,136 +47,88 @@ def load_extra_list_data(data, doctype):
             )
 
 
+def get_doc_list(
+    doctype: str,
+    fields: list | str | None,
+    user_filters=[],
+    force_user_filters=False,
+    append_user_filters=False,
+    add_perms=True,
+    add_wf=True,
+):
+    group_by = None
+    parent = None
+    limit_start, limit_page_length, order_by, filters, or_filters = setup_request_data(
+        doctype, user_filters, force_user_filters
+    )
+    if append_user_filters:
+        filters += user_filters
+    limit_start = limit_start * limit_page_length
+
+    wf = None
+    if add_wf:
+        wf = frappe.get_list("Workflow", {"document_type": doctype, "is_active": 1})
+        if wf:
+            wf = frappe.get_doc("Workflow", wf[0])
+        else:
+            wf = None
+    if wf:
+        fields.append(wf.workflow_state_field)
+    args = frappe._dict(
+        parent_doctype=parent,
+        fields=fields,
+        filters=filters,
+        or_filters=or_filters,
+        group_by=group_by,
+        order_by=order_by,
+        limit_start=limit_start,
+        limit_page_length=limit_page_length,
+        as_list=False,
+    )
+    count = len(frappe.get_list(doctype, limit_page_length=999999999))
+    data = frappe.call(frappe.client.get_list, doctype, **args)
+
+    # load perms and workflows, translate link and select field
+    data = format_response_data(doctype, data, add_perms=add_perms, wf=wf)
+    response_data = frappe._dict()
+    response_data.update(
+        {
+            "data_list": data,
+            "doctype": {
+                "label": _(doctype),
+                "value": doctype,
+            },
+            "meta": "",
+            "page": limit_start + 1,
+            "perPage": limit_page_length,
+            "totalCount": count,
+            "pageCount": len(data),
+        }
+    )
+    return response_data
+
+
 def document_list(
     doctype: str,
     fields: list | str,
-    force_fields=False,
-    user_filters={},
+    user_filters=[],
     force_user_filters=False,
-    order_by="modified desc",
-    translate_text=False,
-    tr_field=None,
+    append_user_filters=False,
+    add_perms=True,
+    add_wf=True,
 ):
-    filters = {}
-    or_filters = None
-    group_by = None
-    limit_start = 0
-    limit_page_length = 20
-    parent = None
-
-    if not isinstance(user_filters, dict) or not not isinstance(user_filters, list):
-        user_filters = {}
-
     try:
-        if "limit_page_length" in frappe.request.args:
-            limit_page_length = cint(frappe.request.args["limit_page_length"])
-        if "limit" in frappe.request.args:
-            limit_page_length = cint(frappe.request.args["limit"])
-
-        if "limit_start" in frappe.request.args:
-            limit_start = cint(frappe.request.args["limit_start"]) - 1
-            if limit_start < 0:
-                limit_start = 1
-        if "page" in frappe.request.args:
-            limit_start = cint(frappe.request.args["page"]) - 1
-            if limit_start < 0:
-                limit_start = 1
-        if "order_by" in frappe.request.args:
-            order_by = frappe.request.args["order_by"]
-        else:
-            order_by = order_by
-
-        if "filters" in frappe.request.args:
-            filters = frappe.request.args["filters"]
-            if isinstance(filters, dict):
-                filters = filters
-            else:
-                filters = frappe.parse_json(filters)
-            if isinstance(filters, dict):
-                filters = filters
-            elif isinstance(filters, list):
-                filters = filters
-            else:
-                filters = {}
-
-        if force_user_filters:
-            if isinstance(filters, dict):
-                filters.update(user_filters)
-            elif isinstance(filters, list):
-                for k, v in user_filters.items():
-                    val = [
-                        k,
-                    ]
-                    if isinstance(v, list):
-                        val += v
-                    else:
-                        val += ["=", v]
-                    filters.append(val)
-        else:
-            if not filters:
-                filters = user_filters
-            if user_filters:
-                user_filters.update(filters)
-                filters = user_filters
-
-        if "or_filters" in frappe.request.args:
-            or_filters = frappe.request.args["or_filters"]
-            if isinstance(or_filters, list):
-                or_filters = or_filters
-            else:
-                or_filters = frappe.parse_json(or_filters)
-
-            if isinstance(or_filters, list):
-                or_filters = or_filters
-            else:
-                or_filters = None
-        if not force_fields:
-            if "fields" in frappe.request.args:
-                _fields = frappe.request.args["fields"]
-                if isinstance(_fields, list):
-                    _fields = _fields
-                else:
-                    _fields = frappe.parse_json(_fields)
-
-                if isinstance(_fields, list):
-                    fields = _fields
-            if "*" in fields:
-                fields = "*"
-        limit_start = limit_start * limit_page_length
-        args = frappe._dict(
-            parent_doctype=parent,
+        response_data = get_doc_list(
+            doctype,
             fields=fields,
-            filters=filters,
-            or_filters=or_filters,
-            group_by=group_by,
-            order_by=order_by,
-            limit_start=limit_start,
-            limit_page_length=limit_page_length,
-            as_list=False,
+            user_filters=user_filters,
+            force_user_filters=force_user_filters,
+            append_user_filters=append_user_filters,
+            add_perms=add_perms,
+            add_wf=add_wf,
         )
-        count = len(frappe.get_list(doctype, limit_page_length=999999999))
-        # evaluate frappe.get_list
-        data = frappe.call(frappe.client.get_list, doctype, **args)
-        if translate_text and tr_field:
-            for d in data:
-                d.update(
-                    {
-                        f"{tr_field}": _(d[tr_field]),
-                    }
-                )
-        load_extra_list_data(data, doctype)
-        response_data = frappe._dict()
-        response_data.update(
-            {
-                "data_list": data,
-                "doctype": doctype,
-                "page": limit_start + 1,
-                "perPage": limit_page_length,
-                "totalCount": count,
-                "pageCount": len(data),
-            }
-        )
-        return build_success_response(200, f"{doctype} fetched", response_data)
+        msg = _("{} data fetched").format(_(doctype))
+        return build_success_response(200, msg, response_data)
     except Exception as exc:
         print(frappe.get_traceback())
         http_status_code = 500
@@ -278,9 +229,7 @@ def load_extra_data(doctype, name):
                             SELECT name, employee, employee_name, certificate_title, issuing_organization,
                                     date_of_issue, attachment
                             FROM `tabEmployee Certification`
-                            WHERE employee='{}'""".format(
-                name
-            ),
+                            WHERE employee='{}'""".format(name),
             as_dict=True,
         )
         achievements = frappe.db.sql(
@@ -288,9 +237,7 @@ def load_extra_data(doctype, name):
                             SELECT name, employee, employee_name, title, date, description,
                                     attachment
                             FROM `tabEmployee Achievement`
-                            WHERE employee='{}'""".format(
-                name
-            ),
+                            WHERE employee='{}'""".format(name),
             as_dict=True,
         )
 
@@ -333,9 +280,7 @@ def load_extra_data(doctype, name):
             """
                             SELECT *
                             FROM `tabAsset`
-                            WHERE docstatus=1 AND custodian='{}'""".format(
-                name
-            ),
+                            WHERE docstatus=1 AND custodian='{}'""".format(name),
             as_dict=True,
         )
 
@@ -354,52 +299,53 @@ def load_extra_data(doctype, name):
     return extra_data
 
 
+def get_doc(
+    doctype: str,
+    name: str,
+    add_perms=True,
+    add_wf=True,
+    ignore_perms=False,
+    fields=[],
+):
+    doc = frappe.get_doc(doctype, name)
+    if not ignore_perms and not doc.has_permission("read"):
+        raise frappe.PermissionError
+    doc.apply_fieldlevel_read_permissions()
+    doc = doc.as_dict()
+    if fields and ("name" not in fields):
+        fields.append("name")
+    wf = None
+    if add_wf:
+        wf = frappe.get_list("Workflow", {"document_type": doctype, "is_active": 1})
+        if wf:
+            wf = frappe.get_doc("Workflow", wf[0])
+            if fields:
+                fields.append(wf.workflow_state_field)
+        else:
+            wf = None
+    doc = format_response_data(doctype, [doc], add_perms=add_perms, wf=wf, reqd_field=fields)[0]
+    return doc
+
+
 def read_doc(
     doctype: str,
     name: str,
-    origin_fields: list = [],
-    force_fields=False,
+    add_perms=True,
+    add_wf=True,
     ignore_perms=False,
-    load_extra_docs=True,
-    load_checkin=False,
+    fields=[],
 ):
     try:
-        doc = frappe.get_doc(doctype, name)
-        if not ignore_perms and not doc.has_permission("read"):
-            raise frappe.PermissionError
-        doc.apply_fieldlevel_read_permissions()
-        extra_data = {}
-        if load_extra_docs:
-            extra_data = load_extra_data(doc.doctype, doc.name)
-        if load_checkin:
-            extra_data = load_extra_load_checkin_data(doc.doctype, doc.name)
-
-        user_fields = origin_fields
-        if not force_fields:
-            if "fields" in frappe.request.args:
-                _fields = frappe.request.args["fields"]
-                if isinstance(_fields, list):
-                    user_fields = _fields
-                else:
-                    user_fields = frappe.parse_json(_fields)
-
-                if isinstance(_fields, list):
-                    user_fields = _fields
-
-            if "*" in user_fields:
-                user_fields = []
-        if doc:
-            # getdoctype(doctype, True)
-            get_docinfo(doc)
-            doc = doc.as_dict()
-        if len(user_fields) > 0:
-            result = frappe._dict()
-            for field in user_fields:
-                if hasattr(doc, field):
-                    result.update({field: getattr(doc, field)})
-            doc = result
-        translate_link_fields(doctype, doc)
-        return build_success_response(200, f"{doctype} fetched", doc, extra_data)
+        doc = get_doc(
+            doctype,
+            name,
+            add_perms=add_perms,
+            add_wf=add_wf,
+            ignore_perms=ignore_perms,
+            fields=fields,
+        )
+        msg = _("{} data fetched").format(_(doctype))
+        return build_success_response(200, msg, doc, {})
     except Exception as exc:
         http_status_code = 500
         message = exc
