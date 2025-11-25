@@ -6,29 +6,25 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+fields = ["name", "employee", "leave_application", "return_date"]
+doctype = "Leave Suspension"
+
 
 def leave_suspension_list():
-    doctype = "Leave Suspension"
-    fields = ["name", "employee", "leave_application", "return_date"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_leave_suspension():
-    doctype = "Leave Suspension"
     return create_doc(doctype)
 
 
 def read_leave_suspension(name: str):
-    doctype = "Leave Suspension"
-    fields = ["name", "employee", "leave_application", "return_date"]
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_leave_suspension(name: str):
-    doctype = "Leave Suspension"
     return update_doc(doctype, name)
 
 
 def delete_leave_suspension(name: str):
-    doctype = "Leave Suspension"
     return delete_doc(doctype, name)

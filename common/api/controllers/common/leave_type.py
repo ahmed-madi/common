@@ -13,15 +13,17 @@ fields = [
     "allow_over_allocation",
     "is_compensatory",
 ]
+doctype = "Leave Type"
 
 
 def leave_type_list():
-    doctype = "Leave Type"
     return document_list(
-        doctype, fields, translate_text=True, tr_field="leave_type_name"
+        doctype,
+        fields,
+        add_perms=False,
+        add_wf=False,
     )
 
 
 def read_leave_type(name: str):
-    doctype = "Leave Type"
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=False, add_wf=False, fields=fields)

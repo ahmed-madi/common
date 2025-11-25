@@ -1,13 +1,17 @@
 from common.api.utils.endpoints import document_list, read_doc
 
+fields = ["name", "type"]
+doctype = "Work Type"
+
 
 def work_type_list():
-    doctype = "Work Type"
-    fields = ["name", "type"]
-    return document_list(doctype, fields, translate_text=True, tr_field="type")
+    return document_list(
+        doctype,
+        fields,
+        add_perms=False,
+        add_wf=False,
+    )
 
 
 def read_work_type(name: str):
-    doctype = "Work Type"
-    fields = ["name", "type"]
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=False, add_wf=False, fields=fields)

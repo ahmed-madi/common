@@ -6,29 +6,25 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+fields = ["name", "employee", "exit_date", "exit_time"]
+doctype = "Early Leave Application"
+
 
 def early_leave_list():
-    doctype = "Early Leave Application"
-    fields = ["name", "employee", "exit_date", "exit_time"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_early_leave():
-    doctype = "Early Leave Application"
     return create_doc(doctype)
 
 
 def read_early_leave(name: str):
-    doctype = "Early Leave Application"
-    fields = ["name", "employee", "exit_date", "exit_time"]
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_early_leave(name: str):
-    doctype = "Early Leave Application"
     return update_doc(doctype, name)
 
 
 def delete_early_leave(name: str):
-    doctype = "Early Leave Application"
     return delete_doc(doctype, name)

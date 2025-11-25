@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from erpnext.projects.doctype.timesheet.timesheet import OverlapError
 from common.api.utils import delete_duplicated_or_after_error
 
@@ -50,13 +51,14 @@ def handle_exception_response(
     message = exception
     delete_duplicated_or_after_error(uploaded_files)
     if for_delete:
-        title = f"failed to update {doctype}"
+        title = _("failed to update {}").format(_(doctype))
     else:
         title = (
-            f"failed to update {doctype}"
+            _("failed to update {}").format(_(doctype))
             if for_update
-            else f"failed to create {doctype}"
+            else _("failed to create {}").format(_(doctype))
         )
+
     if hasattr(exception, "http_status_code"):
         http_status_code = exception.http_status_code
     # extract mandatory message
@@ -64,7 +66,7 @@ def handle_exception_response(
         errors = doc._get_missing_mandatory_fields()
         missing_fields = [er[0] for er in errors]
         return build_error_response(
-            http_status_code, title, "Required values are missing", missing_fields
+            http_status_code, title, _("Required values are missing"), missing_fields
         )
     elif isinstance(exception, frappe.LinkValidationError):
         if hasattr(exception, "args"):
@@ -74,8 +76,10 @@ def handle_exception_response(
         message = message.strip()
         return build_error_response(http_status_code, title, message)
     elif isinstance(exception, frappe.DoesNotExistError):
-        message = "Does not exist"
+        message = _("Does not exist")
         return build_error_response(http_status_code, title, message)
+    elif isinstance(exception, frappe.PermissionError):
+        message = frappe.flags.error_message
 
     # General exceptions
     if hasattr(exception, "args"):
@@ -86,6 +90,8 @@ def handle_exception_response(
             message = args[0].split(":")[0]
             if message == "Cannot link cancelled document":
                 message = args[0]
+            elif "Application period cannot be outside leave allocation period" in message:
+                message = message.split(" , ")[0]
             if ". It should be one of " in message:
                 # general select issue!
                 message = message.replace('"', "'")
