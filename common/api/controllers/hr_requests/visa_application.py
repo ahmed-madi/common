@@ -6,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-BASE_FIELDS = [
+fields = [
     "name",
     "employee",
     "request_date",
@@ -14,31 +14,24 @@ BASE_FIELDS = [
     "start_date",
     "end_date",
     "status",
-    "docstatus",
 ]
-FORM_FIELDS = BASE_FIELDS + ["remarks", "attachment"]
-
+doctype = "Visa Application"
 
 def visa_application_list():
-    doctype = "Visa Application"
-    return document_list(doctype, BASE_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_visa_application():
-    doctype = "Visa Application"
     return create_doc(doctype)
 
 
 def read_visa_application(name: str):
-    doctype = "Visa Application"
-    return read_doc(doctype, name, origin_fields=FORM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_visa_application(name: str):
-    doctype = "Visa Application"
     return update_doc(doctype, name)
 
 
 def delete_visa_application(name: str):
-    doctype = "Visa Application"
     return delete_doc(doctype, name)

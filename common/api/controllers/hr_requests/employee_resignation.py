@@ -6,38 +6,32 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = [
+fields = [
     "name",
     "request_date",
     "employee",
     "employee_name",
     "last_working_day",
     "status",
-    "docstatus",
 ]
-FROM_FIELDS = [] + LIST_FIELDS + ["reasons_for_resignation"]
+doctype = "Employee Resignation"
 
 
 def employee_resignation_list():
-    doctype = "Employee Resignation"
-    return document_list(doctype, LIST_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_employee_resignation():
-    doctype = "Employee Resignation"
     return create_doc(doctype)
 
 
 def read_employee_resignation(name: str):
-    doctype = "Employee Resignation"
-    return read_doc(doctype, name, origin_fields=FROM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_employee_resignation(name: str):
-    doctype = "Employee Resignation"
     return update_doc(doctype, name)
 
 
 def delete_employee_resignation(name: str):
-    doctype = "Employee Resignation"
     return delete_doc(doctype, name)

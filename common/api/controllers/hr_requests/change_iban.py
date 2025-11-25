@@ -6,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = [
+fields = [
     "name",
     "request_date",
     "employee",
@@ -19,31 +19,25 @@ LIST_FIELDS = [
     "iban",
     "reason",
     "status",
-    "docstatus",
 ]
-FROM_FIELDS = [] + LIST_FIELDS + ["reason", "attachment"]
+doctype = "Change IBAN Request"
 
 
 def change_iban_list():
-    doctype = "Change IBAN Request"
-    return document_list(doctype, LIST_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_change_iban():
-    doctype = "Change IBAN Request"
     return create_doc(doctype)
 
 
 def read_change_iban(name: str):
-    doctype = "Change IBAN Request"
-    return read_doc(doctype, name, origin_fields=FROM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_change_iban(name: str):
-    doctype = "Change IBAN Request"
     return update_doc(doctype, name)
 
 
 def delete_change_iban(name: str):
-    doctype = "Change IBAN Request"
     return delete_doc(doctype, name)

@@ -6,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = [
+fields = [
     "name",
     "employee",
     "employee_name",
@@ -16,36 +16,24 @@ LIST_FIELDS = [
     "end_date",
     "status",
 ]
-FORM_FIELDS = LIST_FIELDS + [
-    "training_type",
-    "training_provider",
-    "training_duration",
-    "is_paid",
-    "training_price",
-    "training_description",
-]
+doctype = "Training Request"
 
 
 def training_list():
-    doctype = "Training Request"
-    return document_list(doctype, LIST_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_training():
-    doctype = "Training Request"
     return create_doc(doctype)
 
 
 def read_training(name: str):
-    doctype = "Training Request"
-    return read_doc(doctype, name, origin_fields=FORM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_training(name: str):
-    doctype = "Training Request"
     return update_doc(doctype, name)
 
 
 def delete_training(name: str):
-    doctype = "Training Request"
     return delete_doc(doctype, name)
