@@ -6,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = [
+fields = [
     "name",
     "employee",
     "employee_name",
@@ -21,7 +21,7 @@ doctype = "Leave Application"
 
 
 def leave_list():
-    return document_list(doctype, LIST_FIELDS, add_perms=True, add_wf=True)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_leave():

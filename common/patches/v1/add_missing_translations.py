@@ -17,10 +17,14 @@ trs = [
     ["failed to create {}", "فشل عملية انشاء {}"],
     ["failed to update {}", "فشل عملية تعديل {}"],
     ["{} created", "تم انشاء {}"],
+    ["{} updated", "تم تعديل {}"],
+    ["{} deleted", "تم حذف {}"],
     [
         "Employee {0} has already applied for {1} between {2} and {3} : {4}",
         "الموظف {0} لديه طلب من نوع {1} من تاريخ {2} حتى {3} : {4}",
     ],
+    ["Compensatory Leave Request", "اجازة تعويضية"],
+    ["Early Leave Application", "طلب خروج مبكر"],
 ]
 
 

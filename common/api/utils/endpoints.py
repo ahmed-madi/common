@@ -17,6 +17,7 @@ from common.api.utils.response import (
     handle_exception_response,
 )
 
+
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
         return
@@ -150,7 +151,12 @@ def document_list(
         )
 
 
-def create_doc(doctype: str, default_data={}):
+def create_doc(
+    doctype: str,
+    default_data={},
+    add_perms=True,
+    add_wf=True,
+):
     uploaded_files = []
     doc = None
     try:
@@ -173,6 +179,7 @@ def create_doc(doctype: str, default_data={}):
         doc.insert()
         delete_duplicated_or_after_error(uploaded_files)
         msg = _("{} created").format(_(doctype))
+        doc = get_doc(doctype, doc.name, add_perms=add_perms, add_wf=add_wf)
         return build_success_response(201, msg, doc)
     except Exception as exc:
         print(frappe.get_traceback())
@@ -328,7 +335,9 @@ def get_doc(
                 fields.append(wf.workflow_state_field)
         else:
             wf = None
-    doc = format_response_data(doctype, [doc], add_perms=add_perms, wf=wf, reqd_field=fields)[0]
+    doc = format_response_data(
+        doctype, [doc], add_perms=add_perms, wf=wf, reqd_field=fields
+    )[0]
     return doc
 
 
@@ -363,13 +372,17 @@ def read_doc(
             elif len(args) > 1 and isinstance(args[0], int):
                 message = args[1]
         msg = _("failed to read {}").format(_(doctype))
-        return build_error_response(
-            http_status_code, msg, message
-        )
+        return build_error_response(http_status_code, msg, message)
 
 
 def update_doc(
-    doctype: str, name: str, default_data={}, ignore_perms=False, keys_to_update=[]
+    doctype: str,
+    name: str,
+    default_data={},
+    ignore_perms=False,
+    keys_to_update=[],
+    add_perms=True,
+    add_wf=True,
 ):
     uploaded_files = []
     find_by = {"name": name}
@@ -398,7 +411,9 @@ def update_doc(
         # check for child table doctype
         if doc.get("parenttype"):
             frappe.get_doc(doc.parenttype, doc.parent).save()
-        return build_success_response(200, f"{doctype} updated", doc)
+        msg = _("{} updated").format(_(doctype))
+        doc = get_doc(doctype, name, add_perms=add_perms, add_wf=add_wf)
+        return build_success_response(200, msg, doc)
     except Exception as exc:
         return handle_exception_response(
             doc, doctype, exc, uploaded_files=uploaded_files, for_update=True
@@ -409,7 +424,8 @@ def delete_doc(doctype: str, name: str):
     try:
         doc = frappe.delete_doc(doctype, name, ignore_missing=False)
         # frappe.response.http_status_code = 202
-        return build_success_response(202, f"{doctype} deleted", doc)
+        msg = _("{} deleted").format(_(doctype))
+        return build_success_response(202, msg, doc)
     except Exception as exc:
         return handle_exception_response(
             None, doctype, exc, uploaded_files=[], for_delete=True

@@ -6,29 +6,25 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+fields = ["employee", "from_date", "to_date", "status", "docstatus"]
+doctype = "Work From Home Request"
+
 
 def work_from_home_list():
-    doctype = "Work From Home Request"
-    fields = ["employee", "from_date", "to_date", "status", "docstatus"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_work_from_home():
-    doctype = "Work From Home Request"
     return create_doc(doctype)
 
 
 def read_work_from_home(name: str):
-    doctype = "Work From Home Request"
-    fields = ["employee", "from_date", "to_date", "status", "docstatus"]
-    return read_doc(doctype, name, origin_fields=fields)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_work_from_home(name: str):
-    doctype = "Work From Home Request"
     return update_doc(doctype, name)
 
 
 def delete_work_from_home(name: str):
-    doctype = "Work From Home Request"
     return delete_doc(doctype, name)
