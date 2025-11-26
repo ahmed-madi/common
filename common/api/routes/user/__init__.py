@@ -27,11 +27,6 @@ def change_user_password():
     return handle_call("common.api.controllers.user.change_user_password")
 
 
-def employee_info(employeeId):
-    frappe.form_dict.employeeId = employeeId
-    return handle_call("common.api.controllers.user.employee_info")
-
-
 def mark_all_as_read():
     handle_call(
         "frappe.desk.doctype.notification_log.notification_log.mark_all_as_read"
@@ -59,8 +54,5 @@ user_rules = [
         "/user/notifications/mark-all-as-read",
         methods=["PUT"],
         endpoint=mark_all_as_read,
-    ),
-    Rule(
-        "/user/employee-info/<path:employeeId>", methods=["GET"], endpoint=employee_info
     ),
 ]

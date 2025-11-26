@@ -43,7 +43,6 @@ REQUESTS_DOCTYPE = [
     "Club Request",
     "Clearance Letter Request",
     "Change IBAN Request",
-    # "Bonus Request",
     "System Access Request",
 ]
 
