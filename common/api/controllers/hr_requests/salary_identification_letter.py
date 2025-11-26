@@ -6,28 +6,34 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+fields = [
+    "name",
+    "employee",
+    "employee_name",
+    "request_date",
+    "recipient_name",
+    "preferred_language",
+    "signed_pdf_document",
+    "status",
+]
+doctype = "Salary Identification Letter"
+
 
 def salary_identification_letter_list():
-    doctype = "Salary Identification Letter"
-    fields = ["*"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_salary_identification_letter():
-    doctype = "Salary Identification Letter"
     return create_doc(doctype)
 
 
 def read_salary_identification_letter(name: str):
-    doctype = "Salary Identification Letter"
-    return read_doc(doctype, name)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_salary_identification_letter(name: str):
-    doctype = "Salary Identification Letter"
     return update_doc(doctype, name)
 
 
 def delete_salary_identification_letter(name: str):
-    doctype = "Salary Identification Letter"
     return delete_doc(doctype, name)

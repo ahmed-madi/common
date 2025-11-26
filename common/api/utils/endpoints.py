@@ -310,6 +310,21 @@ def load_extra_data(doctype, name):
         extra_data.update(load_extra_load_checkin_data(doctype, name))
     return extra_data
 
+def add_check_data(name):
+    extra_data = {}
+    last_check_in = frappe.get_all(
+        "Employee Checkin",
+        filters={"employee": name},
+        fields=["log_type", "time"],
+        order_by="time desc",
+    )
+    if len(last_check_in):
+        last_check_in = last_check_in[0]
+    else:
+        last_check_in = None
+    extra_data.update({"checkin_status": last_check_in})
+    return extra_data
+
 
 def get_doc(
     doctype: str,
@@ -319,6 +334,10 @@ def get_doc(
     ignore_perms=False,
     fields=[],
 ):
+    print(ignore_perms, doctype)
+    print(ignore_perms, doctype)
+    print(ignore_perms, doctype)
+    print(ignore_perms, doctype)
     doc = frappe.get_doc(doctype, name)
     if not ignore_perms and not doc.has_permission("read"):
         raise frappe.PermissionError
@@ -338,6 +357,8 @@ def get_doc(
     doc = format_response_data(
         doctype, [doc], add_perms=add_perms, wf=wf, reqd_field=fields
     )[0]
+    if doctype == "Employee":
+        doc.update(add_check_data(name))
     return doc
 
 
@@ -378,25 +399,30 @@ def read_doc(
 def update_doc(
     doctype: str,
     name: str,
-    default_data={},
     ignore_perms=False,
     keys_to_update=[],
     add_perms=True,
     add_wf=True,
+    only_for=[],
 ):
     uploaded_files = []
-    find_by = {"name": name}
-    if default_data:
-        find_by.update(default_data)
     doc = None
     try:
         data = get_request_form_data()
-        doc = frappe.get_doc(doctype, find_by, for_update=True)
+        doc = frappe.get_doc(doctype, {"name": name}, for_update=True)
         if not isinstance(data, bytes):
             if "flags" in data:
                 del data["flags"]
             data = format_data(data, doctype, keys_to_update=keys_to_update)
-            doc.update(data)
+            if len(only_for) > 0:
+                new_data = {}
+                for k in data:
+                    if k not in only_for:
+                        continue
+                    new_data.update({k: data[k]})
+            else:
+                new_data = data
+            doc.update(new_data)
         uploaded_files = handle_files(doc)
         for file in uploaded_files:
             fieldname = file.get("fieldname")
@@ -405,7 +431,6 @@ def update_doc(
                     f"{fieldname}": file.get("file_url"),
                 }
             )
-        doc.update(default_data)
         doc.save(ignore_permissions=ignore_perms)
         delete_duplicated_or_after_error(uploaded_files)
         # check for child table doctype

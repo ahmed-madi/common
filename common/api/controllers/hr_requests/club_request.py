@@ -6,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = [
+fields = [
     "name",
     "employee",
     "employee_name",
@@ -15,35 +15,24 @@ LIST_FIELDS = [
     "end_date",
     "status",
 ]
-FORM_FIELDS = LIST_FIELDS + [
-    "participation_role",
-    "is_paid",
-    "participation_price",
-    "remarks",
-    "attachment",
-]
+doctype = "Club Request"
 
 
 def club_list():
-    doctype = "Club Request"
-    return document_list(doctype, LIST_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_club():
-    doctype = "Club Request"
     return create_doc(doctype)
 
 
 def read_club(name: str):
-    doctype = "Club Request"
-    return read_doc(doctype, name, origin_fields=FORM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_club(name: str):
-    doctype = "Club Request"
     return update_doc(doctype, name)
 
 
 def delete_club(name: str):
-    doctype = "Club Request"
     return delete_doc(doctype, name)

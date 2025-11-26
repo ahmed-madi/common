@@ -6,28 +6,33 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
+fields = [
+    "name",
+    "employee",
+    "employee_name",
+    "request_date",
+    "document_type",
+    "document_language",
+    "status",
+]
+doctype = "Document Request"
+
 
 def document_request_list():
-    doctype = "Document Request"
-    fields = ["*"]
-    return document_list(doctype, fields)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_document_request():
-    doctype = "Document Request"
     return create_doc(doctype)
 
 
 def read_document_request(name: str):
-    doctype = "Document Request"
-    return read_doc(doctype, name)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_document_request(name: str):
-    doctype = "Document Request"
     return update_doc(doctype, name)
 
 
 def delete_document_request(name: str):
-    doctype = "Document Request"
     return delete_doc(doctype, name)
