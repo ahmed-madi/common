@@ -1,12 +1,10 @@
 from werkzeug.routing import Rule
-from common.api.controllers.company import (
-    event_list,
-    read_event,
-    employee_structure,
+from common.api.controllers.company.activity import activity_list
+from common.api.controllers.company.event import event_list, read_event
+from common.api.controllers.company.newsletter import newsletter_list, read_newsletter
+from common.api.controllers.company.organizational_chart import (
     department_structure,
-    newsletter_list,
-    read_newsletter,
-    activity_list,
+    employee_structure,
 )
 
 company_rules = [
