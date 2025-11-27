@@ -61,6 +61,7 @@ from common.api.routes.leave_requests.work_from_home import work_from_home_rules
 
 # Project Management
 from common.api.routes.project_managements.task import task_rules
+from common.api.routes.project_managements.timesheet import timesheet_rules
 
 # User Auth/Info
 from common.api.routes.user import user_rules
@@ -124,6 +125,7 @@ url_rules += work_from_home_rules
 
 # Project Management
 url_rules += task_rules
+url_rules += timesheet_rules
 
 # User Auth/Info
 url_rules += user_rules
