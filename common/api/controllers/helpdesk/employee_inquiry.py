@@ -6,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = [
+fields = [
     "name",
     "request_date",
     "employee",
@@ -15,29 +15,24 @@ LIST_FIELDS = [
     "subject",
     "docstatus",
 ]
-FROM_FIELDS = LIST_FIELDS + ["message", "attachment"]
+doctype = "Employee Inquiry"
 
 
 def request_to_management_list():
-    doctype = "Employee Inquiry"
-    return document_list(doctype, LIST_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_request_to_management():
-    doctype = "Employee Inquiry"
     return create_doc(doctype)
 
 
 def read_request_to_management(name: str):
-    doctype = "Employee Inquiry"
-    return read_doc(doctype, name, origin_fields=FROM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_request_to_management(name: str):
-    doctype = "Employee Inquiry"
     return update_doc(doctype, name)
 
 
 def delete_request_to_management(name: str):
-    doctype = "Employee Inquiry"
     return delete_doc(doctype, name)
