@@ -203,8 +203,8 @@ def get_valid_filters(
 
 def add_custom_filters(doctype):
     filters = []
-    allowed_filters = DOCTYPE_ALLOWED_CUSTOM_FILTERS.get(doctype)
-
+    allowed_filters = DOCTYPE_ALLOWED_CUSTOM_FILTERS.get(doctype, [])
+    filters += allowed_filters
     return filters
 
 
