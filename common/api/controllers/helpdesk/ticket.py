@@ -6,37 +6,25 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-BASE_FIELDS = ["name", "subject", "opening_date", "opening_time", "department"]
-FORM_FIELDS = BASE_FIELDS + [
-    "employee",
-    "priority",
-    "issue_type",
-    "phone",
-    "description",
-    "attachment",
-]
+fields = ["name", "subject", "status", "opening_date", "opening_time", "department"]
+doctype = "HR Ticket"
 
 
 def ticket_list():
-    doctype = "HR Ticket"
-    return document_list(doctype, BASE_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_ticket():
-    doctype = "HR Ticket"
     return create_doc(doctype)
 
 
 def read_ticket(name: str):
-    doctype = "HR Ticket"
-    return read_doc(doctype, name, origin_fields=FORM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_ticket(name: str):
-    doctype = "HR Ticket"
     return update_doc(doctype, name)
 
 
 def delete_ticket(name: str):
-    doctype = "HR Ticket"
     return delete_doc(doctype, name)
