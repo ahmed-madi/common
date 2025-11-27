@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from frappe.utils import getdate, format_date, date_diff
+from frappe.utils import getdate, format_date
 from hrms.hr.doctype.compensatory_leave_request.compensatory_leave_request import (
     CompensatoryLeaveRequest as BaseCompensatoryLeaveRequest,
 )

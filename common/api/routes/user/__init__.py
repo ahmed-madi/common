@@ -1,5 +1,4 @@
 from werkzeug.routing import Rule
-import frappe
 from common.api.utils.endpoints import handle_call, build_success_response
 from common.api.controllers.user import (
     notification_list,

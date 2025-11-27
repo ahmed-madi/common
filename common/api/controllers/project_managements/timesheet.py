@@ -1,4 +1,3 @@
-import frappe
 from common.api.utils.endpoints import (
     document_list,
     create_doc,
