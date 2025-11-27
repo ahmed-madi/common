@@ -1,4 +1,3 @@
-import frappe
 from common.api.utils.endpoints import (
     document_list,
     create_doc,
@@ -7,7 +6,7 @@ from common.api.utils.endpoints import (
     delete_doc,
 )
 
-LIST_FIELDS = fields = [
+fields = [
     "name",
     "subject",
     "status",
@@ -18,109 +17,24 @@ LIST_FIELDS = fields = [
     "exp_start_date",
     "exp_end_date",
 ]
-FROM_FIELDS = LIST_FIELDS + ["remarks", "description", "attachment"]
+doctype = "Task"
 
 
 def task_list():
-    doctype = "Task"
-
-    return document_list(doctype, LIST_FIELDS)
+    return document_list(doctype, fields, add_perms=True, add_wf=True)
 
 
 def create_task():
-    doctype = "Task"
     return create_doc(doctype)
 
 
 def read_task(name: str):
-    doctype = "Task"
-    return read_doc(doctype, name, origin_fields=FROM_FIELDS)
+    return read_doc(doctype, name, add_perms=True, add_wf=True)
 
 
 def update_task(name: str):
-    doctype = "Task"
     return update_doc(doctype, name)
 
 
 def delete_task(name: str):
-    doctype = "Task"
     return delete_doc(doctype, name)
-
-
-# add task to timesheet
-def add_timesheet():
-    doctype = "Task Timesheet Log"
-    response = create_doc(doctype)
-    # if frappe.local.response["status"] == "failed":
-    #     return
-    # frappe.get_doc(
-    #     "Task Timesheet Log", frappe.local.response.get("data", {}).get("name")
-    # ).submit()
-    return response
-
-
-def timesheet_list():
-    doctype = "Task Timesheet Log"
-    fields = [
-        "name",
-        "task",
-        "employee",
-        "employee_name",
-        "status",
-        "posting_date",
-        "start_time",
-        "end_time",
-        "total_hours",
-        "project",
-        "project_name",
-        "description",
-    ]
-    return document_list(doctype, fields=fields)
-
-
-def read_timesheet(name: str):
-    doctype = "Task Timesheet Log"
-    fields = [
-        "name",
-        "task",
-        "employee",
-        "employee_name",
-        "status",
-        "posting_date",
-        "start_time",
-        "end_time",
-        "total_hours",
-        "project",
-        "project_name",
-        "description",
-    ]
-    return read_doc(doctype, name, origin_fields=fields)
-
-
-def timesheet_list_for_task(name: str):
-    read_task(name)
-    if frappe.local.response["status"] == "failed":
-        return
-    doctype = "Task Timesheet Log"
-    fields = [
-        "name",
-        "task",
-        "employee",
-        "employee_name",
-        "status",
-        "posting_date",
-        "start_time",
-        "end_time",
-        "total_hours",
-        "project",
-        "project_name",
-        "description",
-    ]
-    user_filters = {"task": name}
-    return document_list(
-        doctype,
-        fields=fields,
-        force_fields=True,
-        user_filters=user_filters,
-        force_user_filters=True,
-    )

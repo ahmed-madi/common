@@ -15,9 +15,16 @@ DOCTYPE_ALLOWED_FILTERS = {
         "designation",
         "date_of_joining",
     ],
+    "Task": [
+        "name",
+        "priority",
+        "status",
+        "project",
+        "exp_start_date",
+        "exp_end_date",
+    ],
     "Fiscal Year": ["name", "year_start_date", "year_end_date"],
     "Fixation Reason": ["name", "fixation_reason"],
-
     "Project": ["name", "project_name", "priority", "status", "is_active"],
     "Holiday List": [
         "name",
@@ -81,12 +88,16 @@ def _get_valid_fields(doctype, meta):
 
 
 # For listview get request only
-def setup_request_data(doctype, user_filters=[], force_user_filters=False,):
+def setup_request_data(
+    doctype,
+    user_filters=[],
+    force_user_filters=False,
+):
     page = 0
     page_length = 20
     order_by = "modified desc"
     filters = []
-    
+
     allowed_filters = DOCTYPE_ALLOWED_FILTERS.get(doctype, ["name"])
     if "page" in frappe.request.args:
         page = cint(frappe.request.args["page"]) - 1
@@ -111,14 +122,21 @@ def setup_request_data(doctype, user_filters=[], force_user_filters=False,):
                 order_by = f"{field_name} {order_type}"
 
     meta = frappe.get_meta(doctype)
-    filters += get_valid_filters(doctype, meta, user_filters=user_filters, force_user_filters=force_user_filters)
+    filters += get_valid_filters(
+        doctype, meta, user_filters=user_filters, force_user_filters=force_user_filters
+    )
     filters += add_custom_filters(doctype)
     or_filters = add_search_params(doctype, meta)
 
     return page, page_length, order_by, filters, or_filters
 
 
-def get_valid_filters(doctype, meta, user_filters=[], force_user_filters=False,):
+def get_valid_filters(
+    doctype,
+    meta,
+    user_filters=[],
+    force_user_filters=False,
+):
     user_filters_keys = [f[0] for f in user_filters]
     allowed_filters = DOCTYPE_ALLOWED_FILTERS.get(doctype, ["name"])
     filters = []
@@ -189,10 +207,13 @@ def add_custom_filters(doctype):
 
     return filters
 
+
 def add_search_params(doctype, meta):
     filters = []
     search_fields = ["name"]
-    search_fields += list(map(lambda x: x.strip(), (meta.search_fields or "").split(",")))
+    search_fields += list(
+        map(lambda x: x.strip(), (meta.search_fields or "").split(","))
+    )
     search_fields = set(search_fields)
 
     if "q" in frappe.request.args:

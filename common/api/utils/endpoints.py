@@ -176,7 +176,7 @@ def create_doc(
                 }
             )
         doc.update(default_data)
-        doc.insert()
+        doc.save()
         delete_duplicated_or_after_error(uploaded_files)
         msg = _("{} created").format(_(doctype))
         doc = get_doc(doctype, doc.name, add_perms=add_perms, add_wf=add_wf)
@@ -309,6 +309,7 @@ def load_extra_data(doctype, name):
         )
         extra_data.update(load_extra_load_checkin_data(doctype, name))
     return extra_data
+
 
 def add_check_data(name):
     extra_data = {}
