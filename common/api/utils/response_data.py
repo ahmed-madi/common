@@ -1,11 +1,15 @@
 import frappe
 from frappe import _
+from frappe.utils import cint
 
 EXTRA_DATA_MAPPER = {
     # DOCTYPE : [["cdt", "cdt_field"]]
 }
 
-def format_response_data(doctype, data, wf=None, add_perms=False, reqd_field=None):
+
+def format_response_data(
+    doctype, data, wf=None, add_perms=False, reqd_field=None, add_wf=False
+):
     meta = frappe.get_meta(doctype)
     links, selects = get_link_fields(meta)
     title_field = meta.title_field
@@ -49,16 +53,21 @@ def format_response_data(doctype, data, wf=None, add_perms=False, reqd_field=Non
                     f"{k}": value,
                 }
             )
-        if not add_perms and not add_perms:
+        if not add_perms and not add_wf:
             meta_data.update({"permissions": None, "workflow": []})
             r1.update({"meta_data": meta_data})
             result.append(r1)
             continue
 
         # add permissions
+        doc = None
+        permissions = None
         if add_perms:
             doc = frappe.get_doc(doctype, row["name"])
-            meta_data.update({"permissions": frappe.permissions.get_doc_permissions(doc)})
+            permissions = frappe.permissions.get_doc_permissions(doc)
+            meta_data.update(
+                {"permissions": permissions}
+            )
         if wf:
             actions = []
             state_field = wf.workflow_state_field
@@ -68,17 +77,118 @@ def format_response_data(doctype, data, wf=None, add_perms=False, reqd_field=Non
                     continue
                 actions.append(
                     {
-                        "action": _(tr.action),
+                        "action": {
+                            "label": _(tr.action),
+                            "value": tr.action,
+                        },
                         "next_state": {
                             "label": _(tr.next_state),
                             "value": tr.next_state,
                         },
                     }
                 )
-            workflow.update({
-                "state_field": state_field,
-                "actions": actions,
-            })
+            workflow.update(
+                {
+                    "state_field": state_field,
+                    "actions": actions,
+                }
+            )
+        elif wf is None and add_wf:
+            actions = []
+            if doc is None:
+                doc = frappe.get_doc(doctype, row["name"])
+            if permissions is None:
+                permissions = frappe.permissions.get_doc_permissions(doc)
+
+            if hasattr(doc, "status") and cint(meta.is_submittable) == 1:
+                state_field = "status"
+                if doc.status == "Open" and doc.docstatus == 0 and cint(permissions.get("submit")) == 1:
+                    actions.append(
+                        {
+                            "action": {
+                                "label": _("Approve"),
+                                "value": "Approve",
+                            },
+                            "next_state": {
+                                "label": _("Approved"),
+                                "value": "Approved",
+                            },
+                        }
+                    )
+                    actions.append(
+                        {
+                            "action": {
+                                "label": _("Reject"),
+                                "value": "Reject",
+                            },
+                            "next_state": {
+                                "label": _("Rejected"),
+                                "value": "Rejected",
+                            },
+                        }
+                    )
+                    workflow = {
+                        "state_field": state_field,
+                        "actions": actions,
+                    }
+                elif doc.docstatus == 1 and cint(permissions.get("cancel")) == 1:
+                    actions.append(
+                        {
+                            "action": {
+                                "label": _("Cancel"),
+                                "value": "Cancel",
+                            },
+                            "next_state": {
+                                "label": _("Canceled"),
+                                "value": "Canceled",
+                            },
+                        }
+                    )
+                    workflow = {
+                        "state_field": state_field,
+                        "actions": actions,
+                    }
+            elif cint(meta.is_submittable) == 1:
+                state_field = "docstatus"
+                if doc.docstatus == 0 and  cint(permissions.get("submit")) == 1:
+                    actions.append(
+                        {
+                            "action": {
+                                "label": _("Submit"),
+                                "value": "Submit",
+                            },
+                            "next_state": {
+                                "label": _("Submitted"),
+                                "value": 1,
+                            },
+                        }
+                    )
+                    workflow = {
+                        "state_field": state_field,
+                        "actions": actions,
+                    }
+                elif doc.docstatus == 1 and  cint(permissions.get("cancel")) == 1:
+                    actions.append(
+                        {
+                            "action": {
+                                "label": _("Cancel"),
+                                "value": "Cancel",
+                            },
+                            "next_state": {
+                                "label": _("Canceled"),
+                                "value": 2,
+                            },
+                        }
+                    )
+                    workflow = {
+                        "state_field": state_field,
+                        "actions": actions,
+                    }
+        if not workflow:
+            workflow = {
+                "state_field": None,
+                "actions": [],
+            }
         meta_data.update({"workflow": workflow})
         r1.update({"meta_data": meta_data})
         result.append(r1)
