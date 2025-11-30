@@ -93,7 +93,7 @@ def get_doc_list(
     data = frappe.call(frappe.client.get_list, doctype, **args)
 
     # load perms and workflows, translate link and select field
-    data = format_response_data(doctype, data, add_perms=add_perms, wf=wf)
+    data = format_response_data(doctype, data, add_perms=add_perms, wf=wf, add_wf=add_wf)
     response_data = frappe._dict()
     response_data.update(
         {
