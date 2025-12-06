@@ -106,7 +106,7 @@ class EndofServiceAward(Document):
 
         if (
             self.reason
-            == "انتهاء مدة العقد أو الاتفاق بين الطرفين على انهاء العقد أو انهاء العقد من قبل الشركة"
+            == "Expiration the contract, agreement between the parties to terminate the contract, or termination the contract by the company"
         ):
             firstPeriod = secondPeriod = 0
             if years > 5:
@@ -116,7 +116,7 @@ class EndofServiceAward(Document):
                 firstPeriod = years
             result = firstPeriod * salary * 0.5 + secondPeriod * salary
             self.award = round(result * 100) / 100
-        elif self.reason == "استقالة الموظف قبل انتهاء مدة العقد":
+        elif self.reason == "Employee resignation before the end of the contract period":
             result = 0
             if years < 2:
                 result = 0
@@ -136,7 +136,7 @@ class EndofServiceAward(Document):
             self.award = round(result * 100) / 100
 
     def calculate_total_award(self):
-        if self.reason == "انهاء العقد خلال فتره التجربه":
+        if self.reason == "End of the contract during the probation period":
             totals = (
                 flt(self.ticket_total_cost)
                 + flt(self.total_month_salary)

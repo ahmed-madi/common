@@ -62,9 +62,9 @@
   },
   {
    "fetch_from": "employee.date_of_joining",
-   "fieldname": "joning_date",
+   "fieldname": "joining_date",
    "fieldtype": "Read Only",
-   "label": "Joning Date"
+   "label": "Joining Date"
   },
   {
    "default": "Today",
@@ -145,7 +145,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 16:21:37.626708",
+ "modified": "2025-12-06 12:21:37.626708",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Allowance Request",

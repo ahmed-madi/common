@@ -70,12 +70,12 @@
   {
    "fieldname": "start_time",
    "fieldtype": "Time",
-   "label": "Start Time "
+   "label": "Start Time"
   },
   {
    "fieldname": "end_time",
    "fieldtype": "Time",
-   "label": "End Time "
+   "label": "End Time"
   },
   {
    "fieldname": "total_hours",
@@ -145,7 +145,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-26 16:57:29.354656",
+ "modified": "2025-12-06 11:41:13.354656",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Task Timesheet Log",
