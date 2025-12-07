@@ -1,25 +1,12 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-fields = ["name", "department_name", "disabled", "is_group"]
-doctype = "Department"
-
-
-def department_list():
-    return document_list(
-        doctype,
-        fields,
-        user_filters=[["disabled", "=", 0]],
-        force_user_filters=True,
-        add_perms=False,
-        add_wf=False,
-    )
-
-
-def read_department(name: str):
-    return read_doc(
-        doctype,
-        name,
-        add_perms=False,
-        add_wf=False,
-        fields=fields,
-    )
+class DepartmentResource(BaseResource):
+    doctype = "Department"
+    fields = ["name", "department_name", "disabled", "is_group"]
+    
+    list_user_filters = [["disabled", "=", 0]]
+    list_force_user_filters = True
+    
+    # Legacy function exports for backward compatibility if needed, 
+    # but for route file refactor we will use the class directly.
+    # We don't need to export functions anymore.

@@ -31,3 +31,4 @@ def before_request():
                 "Authentication failed: Access token is no longer valid",
                 "The provided access token is invalid",
             )
+            return  # CRITICAL FIX: Stop processing unauthenticated requests

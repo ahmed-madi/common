@@ -4,7 +4,6 @@ Extract field labels from Frappe DocType JSON files and generate Arabic translat
 """
 
 import json
-import os
 import re
 from pathlib import Path
 from typing import Dict, Set
@@ -227,7 +226,7 @@ def process_json_files(all_translations: Dict[str, str]):
         processed_count += 1
     
     print(f"\n{'='*60}")
-    print(f"DocType processing complete!") 
+    print("DocType processing complete!") 
     print(f"Processed {processed_count} files with field labels")
     print(f"{'='*60}")
 
@@ -267,7 +266,7 @@ def process_workspace_files(all_translations: Dict[str, str]):
         processed_count += 1
     
     print(f"\n{'='*60}")
-    print(f"Workspace processing complete!")
+    print("Workspace processing complete!")
     print(f"Processed {processed_count} workspace files")
     print(f"{'='*60}")
 
@@ -310,7 +309,7 @@ def process_python_files(all_translations: Dict[str, str]):
             all_translations[text] = arabic_translation
             print(f"  {text} → {arabic_translation}")
     
-    print(f"Python strings processing complete!")
+    print("Python strings processing complete!")
 
 
 
@@ -345,7 +344,7 @@ if __name__ == '__main__':
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(sorted_translations, f, ensure_ascii=False, indent=2)
     
-    print(f"✅ Translation generation complete!")
+    print("✅ Translation generation complete!")
     print(f"Total unique translations: {len(sorted_translations)}")
     print(f"Output file: {output_path.relative_to(BASE_DIR)}")
 

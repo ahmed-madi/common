@@ -1,16 +1,9 @@
-from common.api.utils.endpoints import (
-    document_list,
-    create_doc,
-)
+from common.api.utils.resource import BaseResource
 
-
-def create_checkin():
+class EmployeeCheckinResource(BaseResource):
     doctype = "Employee Checkin"
-    return create_doc(doctype)
-
-
-def check_in_out_list():
-    doctype = "Employee Checkin"
+    url_prefix = "/employee"
+    resource_name = "checkin"
     fields = [
         "name",
         "employee",
@@ -30,11 +23,13 @@ def check_in_out_list():
         "shift_actual_start",
         "shift_actual_end",
     ]
-    return document_list(doctype, fields, add_perms=False, add_wf=False)
+    add_perms = False
+    add_wf = False
 
-
-def attendance_list():
+class AttendanceResource(BaseResource):
     doctype = "Attendance"
+    url_prefix = "/employee"
+    resource_name = "attendance"
     fields = [
         "name",
         "employee",
@@ -53,4 +48,5 @@ def attendance_list():
         "early_exit",
         "docstatus",
     ]
-    return document_list(doctype, fields, add_perms=False, add_wf=False)
+    add_perms = False
+    add_wf = False

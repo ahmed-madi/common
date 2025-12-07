@@ -89,7 +89,8 @@ def get_doc_list(
         limit_page_length=limit_page_length,
         as_list=False,
     )
-    count = len(frappe.get_list(doctype, limit_page_length=999999999))
+    # Use efficient count query instead of fetching all records
+    count = frappe.db.count(doctype, filters=filters)
     data = frappe.call(frappe.client.get_list, doctype, **args)
 
     # load perms and workflows, translate link and select field
@@ -335,10 +336,6 @@ def get_doc(
     ignore_perms=False,
     fields=[],
 ):
-    print(ignore_perms, doctype)
-    print(ignore_perms, doctype)
-    print(ignore_perms, doctype)
-    print(ignore_perms, doctype)
     doc = frappe.get_doc(doctype, name)
     if not ignore_perms and not doc.has_permission("read"):
         raise frappe.PermissionError

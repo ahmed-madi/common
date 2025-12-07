@@ -1,30 +1,17 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-
-fields = [
-    "name",
-    "subject",
-    "publish_on",
-    "cover_image",
-    "published",
-    "cover_image",
-    "intro_description",
-    "list_image",
-]
-doctype = "Company Newsletter"
-
-
-def newsletter_list():
-    filters = [["published", "=", "1"]]
-    return document_list(
-        doctype,
-        fields,
-        user_filters=filters,
-        force_user_filters=True,
-        add_perms=False,
-        add_wf=False,
-    )
-
-
-def read_newsletter(name: str):
-    return read_doc(doctype, name, add_perms=False, add_wf=False)
+class CompanyNewsletterResource(BaseResource):
+    doctype = "Company Newsletter"
+    url_prefix = "/company"
+    resource_name = "newsletter"
+    fields = [
+        "name",
+        "subject",
+        "publish_on",
+        "cover_image",
+        "published",
+        "intro_description",
+        "list_image",
+    ]
+    list_user_filters = [["published", "=", "1"]]
+    list_force_user_filters = True
