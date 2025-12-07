@@ -85,8 +85,7 @@ def format_response_data(
         meta_data.update({"workflow": workflow})
         r1.update({"meta_data": meta_data})
         result.append(r1)
-        if doc.name == "HR-LAP-2025-00014":
-            print(meta_data)
+
     return result
 
 
