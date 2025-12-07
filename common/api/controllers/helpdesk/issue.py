@@ -1,13 +1,13 @@
-from common.api.utils.endpoints import document_list
+from common.api.utils.resource import BaseResource
 
-
-def issue_type_list():
+class HRIssueTypeResource(BaseResource):
     doctype = "HR Issue Type"
+    url_prefix = "/helpdesk"
+    resource_name = "issue-type"
     fields = ["name"]
-    return document_list(doctype, fields, add_perms=False, add_wf=False)
 
-
-def issue_priority_list():
+class HRIssuePriorityResource(BaseResource):
     doctype = "HR Issue Priority"
+    url_prefix = "/helpdesk"
+    resource_name = "issue-priority"
     fields = ["name"]
-    return document_list(doctype, fields, add_perms=False, add_wf=False)

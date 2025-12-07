@@ -7,6 +7,7 @@ from werkzeug.routing import Map, Submount
 from werkzeug.wrappers import Request, Response
 
 import frappe
+from frappe.utils import data
 from frappe.utils.response import build_response
 
 from frappe.api.v1 import url_rules as v1_rules
@@ -75,3 +76,21 @@ API_URL_MAP = Map(
 )
 
 api.handle = handle
+
+
+def get_link_to_form(doctype: str, name: str, label: str | None = None) -> str:
+	if not label:
+		label = name
+	if frappe.flags.get("api_call", False):
+		return label
+	return f"""<a href="{data.get_url_to_form(doctype, name)}">{label}</a>"""
+
+
+data.get_link_to_form = get_link_to_form
+
+def bold(text):
+	if frappe.flags.get("api_call", False):
+		return text
+	return f"<strong>{text}</strong>"
+
+frappe.bold = bold

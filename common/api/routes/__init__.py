@@ -14,6 +14,7 @@ from common.api.routes.common.salary_component import salary_component_rules
 from common.api.routes.common.salary_fixation_reason import salary_fixation_reason_rules
 from common.api.routes.common.system_access_level import system_access_level_rules
 from common.api.routes.common.work_type import work_type_rules
+from common.api.routes.common.workflow import workflow_rules
 
 # Company
 from common.api.routes.company import company_rules
@@ -85,6 +86,7 @@ url_rules += salary_component_rules
 url_rules += salary_fixation_reason_rules
 url_rules += system_access_level_rules
 url_rules += work_type_rules
+url_rules += workflow_rules
 
 # Company
 url_rules += company_rules

@@ -399,7 +399,7 @@ frappe.ui.form.on("End of Service Award", {
     } else {
       if (
         frm.doc.reason ==
-        "انتهاء مدة العقد أو الاتفاق بين الطرفين على انهاء العقد أو انهاء العقد من قبل الشركة"
+        "Expiration the contract, agreement between the parties to terminate the contract, or termination the contract by the company"
       ) {
         // frm.set_value('award', "");
         var firstPeriod,
@@ -417,7 +417,7 @@ frappe.ui.form.on("End of Service Award", {
       } else {
         if (frm.doc.reason == "") {
           frm.set_value("award", 0);
-        } else if (frm.doc.reason == "استقالة الموظف قبل انتهاء مدة العقد") {
+        } else if (frm.doc.reason == "Employee resignation before the end of the contract period") {
           if (years < 2) {
             result = 0;
           } else if (years <= 5) {
@@ -528,7 +528,7 @@ frappe.ui.form.on("End of Service Award", {
     frm.trigger("calculate_total_award");
   },
   calculate_total_award(frm) {
-    if (frm.doc.reason === "انهاء العقد خلال فتره التجربه") {
+    if (frm.doc.reason === "End of the contract during the probation period") {
       const totals =
         flt(frm.doc.ticket_total_cost) +
         (frm.doc.salary_is_already_taken == 1
