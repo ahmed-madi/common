@@ -221,7 +221,7 @@ def custom_document_list(doctype, fields, filters): # Local rewrite of document_
 
 class UnifiedRequestResource(BaseResource):
     doctype = "Employee Request"  # Virtual aggregate doctype
-    url_prefix = "/"
+    url_prefix = ""
     resource_name = "employee-requests"
     
     @classmethod
@@ -355,7 +355,7 @@ class UnifiedRequestResource(BaseResource):
 
 class UnifiedRequestStatusResource(BaseResource):
     doctype = "Workflow State"  # Uses Workflow State doctype
-    url_prefix = "/"
+    url_prefix = ""
     resource_name = "employee-requests-status"
     
     @classmethod
