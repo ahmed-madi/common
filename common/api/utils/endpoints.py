@@ -317,7 +317,7 @@ def add_check_data(name):
     last_check_in = frappe.get_all(
         "Employee Checkin",
         filters={"employee": name},
-        fields=["log_type", "time"],
+        fields=["log_type", "time", "device_id"],
         order_by="time desc",
     )
     if len(last_check_in):
@@ -353,8 +353,12 @@ def get_doc(
         else:
             wf = None
     doc = format_response_data(
-        doctype, [doc], add_perms=add_perms, wf=wf, reqd_field=fields
+        doctype, [doc], add_perms=add_perms, wf=wf, add_wf=add_wf, reqd_field=fields
     )[0]
+    print(doctype)
+    print(doctype)
+    print(doctype)
+    print(doctype)
     if doctype == "Employee":
         doc.update(add_check_data(name))
     return doc
