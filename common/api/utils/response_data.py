@@ -1,6 +1,10 @@
+
 import frappe
 from frappe import _
+from frappe.utils import get_system_timezone
 from common.api.utils.workflow_handlers import WorkflowActionManager
+from common.utils import format_user_time
+from common.utils.hr import get_last_checkin_status
 
 EXTRA_DATA_MAPPER = {
     # DOCTYPE : [["cdt", "cdt_field"]]
@@ -8,16 +12,7 @@ EXTRA_DATA_MAPPER = {
 
 def add_check_data(name):
     extra_data = {}
-    last_check_in = frappe.get_all(
-        "Employee Checkin",
-        filters={"employee": name},
-        fields=["log_type", "time", "device_id"],
-        order_by="time desc",
-    )
-    if len(last_check_in):
-        last_check_in = last_check_in[0]
-    else:
-        last_check_in = None
+    last_check_in = get_last_checkin_status(name)
     extra_data.update({"checkin_status": last_check_in})
     return extra_data
 
@@ -26,9 +21,13 @@ def format_response_data(
     doctype, data, wf=None, add_perms=False, reqd_field=None, add_wf=False
 ):
     meta = frappe.get_meta(doctype)
-    links, selects = get_link_fields(meta)
+    links, selects, start_time = get_field_maps(meta)
     title_field = meta.title_field
     roles = frappe.get_roles()
+    
+    user_tz = frappe.db.get_value("User", frappe.session.user, "time_zone") or get_system_timezone()
+    system_timezone = get_system_timezone()
+
     result = []
     for row in data:
         if doctype == "Employee":
@@ -68,6 +67,13 @@ def format_response_data(
                     "label": _(value),
                     "value": value,
                 }
+            elif k in start_time:
+                if value:
+                    try:
+                        # Datetime field
+                        value = format_user_time(value, user_tz, system_timezone)
+                    except Exception:
+                        pass # Keep original if conversion fails
             r1.update(
                 {
                     f"{k}": value,
@@ -112,9 +118,11 @@ def format_response_data(
     return result
 
 
-def get_link_fields(meta):
+def get_field_maps(meta):
     links = {}
     selects = {}
+    datetimes = {}
+    
     for l_field in meta.get_link_fields():
         links.update(
             {
@@ -135,5 +143,9 @@ def get_link_fields(meta):
                 },
             }
         )
+    
+    for field in meta.fields:
+        if field.fieldtype in ["Datetime"]:
+            datetimes[field.fieldname] = field.fieldtype
 
-    return links, selects
+    return links, selects, datetimes

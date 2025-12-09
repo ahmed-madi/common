@@ -1,10 +1,12 @@
+from werkzeug.routing import Rule
+
 import frappe
 from frappe import _
+from hrms.hr.doctype.shift_assignment.shift_assignment import get_employee_shift
+
 from common.api.utils.resource import BaseResource
 from common.api.utils.decorators import safe_api
-from common.utils.hr import get_employee_from_user
-from hrms.hr.doctype.shift_assignment.shift_assignment import get_employee_shift
-from werkzeug.routing import Rule
+from common.utils.hr import get_employee_from_user, get_last_checkin_status
 
 class UserDashboardResource(BaseResource):
     doctype = "User" # Virtual aggregate
@@ -28,14 +30,13 @@ class UserDashboardResource(BaseResource):
                 }
             )
             certifications = achievements = custodies = []
-            last_salary_structure_assignment = None
-            last_salary_structure = None
-            last_salary_slip_based_on_last_salary_structure = None
-            last_salary_slip = None
+            last_salary_structure_assignment = {}
+            last_salary_structure = {}
+            last_salary_slip_based_on_last_salary_structure = {}
+            last_salary_slip = {}
             salary_slip_list = []
-            last_log = None
-            employee_shift = None
-            leave_balance = None
+            employee_shift = {}
+            leave_balance = {}
 
             if employee and employee.get("name"):
                 name = employee.get("name")
@@ -103,21 +104,7 @@ class UserDashboardResource(BaseResource):
                     ),
                     as_dict=True,
                 )
-                last_logs = frappe.get_all(
-                    "Employee Checkin",
-                    filters={"employee": name},
-                    fields=[
-                        "name",
-                        "employee",
-                        "employee_name",
-                        "log_type",
-                        "time",
-                        "device_id",
-                    ],
-                    order_by="time desc",
-                )
-                if last_logs:
-                    last_log = last_logs[0]
+                checkin_status = get_last_checkin_status(name)
                 employee_shift = get_employee_shift(
                     name, consider_default_shift=True, next_shift_direction="reverse"
                 )
@@ -135,7 +122,7 @@ class UserDashboardResource(BaseResource):
                     "last_salary_slip": last_salary_slip,
                     "salary_slip_list": salary_slip_list,
                     "custodies": custodies,
-                    "last_log": last_log,
+                    "checkin_status": checkin_status,
                     "employee_shift": employee_shift,
                     "leave_balance": leave_balance,
                 }
