@@ -1,6 +1,5 @@
 import frappe
 from frappe import _
-
 from common.api.utils import (
     get_request_form_data,
     format_data,
@@ -16,7 +15,7 @@ from common.api.utils.response import (
     build_success_response,
     handle_exception_response,
 )
-
+from common.utils.hr import get_last_checkin_status
 
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
@@ -205,17 +204,8 @@ def load_extra_load_checkin_data(doctype, name):
     extra_data = {}
     if doctype != "Employee":
         return extra_data
-    last_check_in = frappe.get_all(
-        "Employee Checkin",
-        filters={"employee": name},
-        fields=["log_type", "time"],
-        order_by="time desc",
-    )
-    if len(last_check_in):
-        last_check_in = last_check_in[0]
-    else:
-        last_check_in = None
-    extra_data.update({"checkin_status": last_check_in})
+    checkin_status = get_last_checkin_status(name)
+    extra_data.update({"checkin_status": checkin_status})
     return extra_data
 
 
@@ -314,17 +304,8 @@ def load_extra_data(doctype, name):
 
 def add_check_data(name):
     extra_data = {}
-    last_check_in = frappe.get_all(
-        "Employee Checkin",
-        filters={"employee": name},
-        fields=["log_type", "time"],
-        order_by="time desc",
-    )
-    if len(last_check_in):
-        last_check_in = last_check_in[0]
-    else:
-        last_check_in = None
-    extra_data.update({"checkin_status": last_check_in})
+    checkin_status = get_last_checkin_status(name)
+    extra_data.update({"checkin_status": checkin_status})
     return extra_data
 
 
@@ -353,8 +334,12 @@ def get_doc(
         else:
             wf = None
     doc = format_response_data(
-        doctype, [doc], add_perms=add_perms, wf=wf, reqd_field=fields
+        doctype, [doc], add_perms=add_perms, wf=wf, add_wf=add_wf, reqd_field=fields
     )[0]
+    print(doctype)
+    print(doctype)
+    print(doctype)
+    print(doctype)
     if doctype == "Employee":
         doc.update(add_check_data(name))
     return doc

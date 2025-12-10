@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Dict, List, Optional, Set, Any, Union
 import frappe
+from common.utils.hr import get_last_checkin_status
 
 EMPLOYEE_FIELDS = [
     "name",
@@ -157,18 +158,9 @@ def build_employee_tree(
         or_filters=or_filters or None,
     )
     for row in rows:
-        last_check_in = frappe.get_all(
-            "Employee Checkin",
-            filters={"employee": row.name},
-            fields=["log_type", "time"],
-            order_by="time desc",
-        )
-        if len(last_check_in):
-            last_check_in = last_check_in[0]
-        else:
-            last_check_in = None
+        checkin_status = get_last_checkin_status(row.name)
         row.update({
-            "last_check_status": last_check_in,
+            "checkin_status": checkin_status,
         })
 
     if not rows:

@@ -8,7 +8,21 @@ class MyEmployeeResource(BaseResource):
     doctype = "Employee"
     url_prefix = ""
     resource_name = "employee"
-    
+    fields = [
+        "name",
+        "status",
+        "employee_name",
+        "image",
+        "gender",
+        "date_of_birth",
+        "designation",
+        "department",
+        "cell_number",
+        "linkedin_profile_url",
+        "personal_email",
+        "company_email",
+        "current_address",
+    ]
     @classmethod
     def retrieve(cls):
         @safe_api
@@ -19,7 +33,7 @@ class MyEmployeeResource(BaseResource):
                 add_perms=False,
                 add_wf=False,
                 ignore_perms=False,
-                fields=[],
+                fields=cls.fields,
             )
             msg = _("{} data fetched").format(_(cls.doctype))
             return doc, msg
