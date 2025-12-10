@@ -15,7 +15,6 @@ from frappe.api.v2 import url_rules as v2_rules
 
 # TODO: Extend v1_rules
 from common.api.routes import url_rules
-from frappe import api
 
 
 def handle(request: Request):
@@ -75,7 +74,7 @@ API_URL_MAP = Map(
     merge_slashes=False,
 )
 
-api.handle = handle
+frappe.api.handle = handle
 
 
 def get_link_to_form(doctype: str, name: str, label: str | None = None) -> str:

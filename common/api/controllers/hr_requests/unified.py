@@ -41,6 +41,7 @@ REQUESTS_DOCTYPE = [
     "Clearance Letter Request",
     "Change IBAN Request",
     "System Access Request",
+    "Employee Expense Request",
 ]
 
 REQUESTS_DOCTYPE_FIELDS = {
@@ -48,6 +49,9 @@ REQUESTS_DOCTYPE_FIELDS = {
         "name",
         "applicant as employee",
         "applicant_name as employee_name",
+    ],
+    "Employee Expense Request": [
+        "name", "request_type", "expenses_type", "creation as from_date"
     ]
 }
 DOC_STATUS = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
@@ -127,7 +131,7 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
                     "posting_date": request_date,
                 }
             )
-    else:
+    elif doctype != "Employee Expense Request":
         BASE_FIELDS.append("request_date")
         if request_date and isinstance(request_date, str):
             FILTERS.update(
