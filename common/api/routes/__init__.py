@@ -36,6 +36,7 @@ from common.api.routes.hr_requests.access_system import access_system_rules
 from common.api.routes.hr_requests.employee_resignation import (
     employee_resignation_rules,
 )
+from common.api.routes.hr_requests.expenses_request import expenses_request_rules
 from common.api.routes.hr_requests.education_allowance import education_allowance_rules
 from common.api.routes.hr_requests.loan import loan_rules
 from common.api.routes.hr_requests.change_iban import change_iban_rules
@@ -105,6 +106,7 @@ url_rules += ticket_rules
 url_rules += employee_requests_rules
 url_rules += access_system_rules
 url_rules += employee_resignation_rules
+url_rules += expenses_request_rules
 url_rules += education_allowance_rules
 url_rules += loan_rules
 url_rules += change_iban_rules
