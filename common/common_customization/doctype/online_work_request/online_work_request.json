@@ -1,7 +1,7 @@
 {
  "actions": [],
- "autoname": "OWR-.####.",
  "allow_rename": 1,
+ "autoname": "OWR-.####.",
  "creation": "2025-03-13 14:46:05.166783",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -145,7 +145,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-13 14:46:05.166783",
+ "modified": "2025-11-11 16:39:46.711025",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Online Work Request",

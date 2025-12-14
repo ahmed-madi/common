@@ -48,7 +48,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
-   "options": "HR-SL-SFX-.####",
+   "options": "HR-SL-BNS-.####",
    "reqd": 1
   },
   {
@@ -95,7 +95,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-26 13:14:13.721754",
+ "modified": "2025-11-11 16:44:57.932672",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Bonus Request",
@@ -157,7 +157,6 @@
    "write": 1
   }
  ],
- "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

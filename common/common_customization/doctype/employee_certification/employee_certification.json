@@ -14,8 +14,7 @@
   "certificate_title",
   "issuing_organization",
   "date_of_issue",
-  "attachment",
-  "amended_from"
+  "attachment"
  ],
  "fields": [
   {
@@ -66,22 +65,11 @@
    "fieldname": "employee_name",
    "fieldtype": "Read Only",
    "label": "Employee Name"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Employee Certification",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
   }
  ],
- "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-07 15:40:18.749726",
+ "modified": "2025-11-11 16:47:06.387939",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Certification",
@@ -149,7 +137,6 @@
    "write": 1
   }
  ],
- "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
