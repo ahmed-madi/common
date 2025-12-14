@@ -19,6 +19,10 @@ def before_request():
         if auth_header and auth_header.startswith("Bearer "):
             jwt_token = auth_header.split(" ")[1]
             user_d = check_token_and_set_user(jwt_token)
+            if request.path.startswith("/api/v1/"):
+                frappe.flags["api_call"] = True
+            else:
+                frappe.flags["api_call"] = False
             if not user_d:
                 return
         else:
@@ -27,3 +31,4 @@ def before_request():
                 "Authentication failed: Access token is no longer valid",
                 "The provided access token is invalid",
             )
+            return  # CRITICAL FIX: Stop processing unauthenticated requests

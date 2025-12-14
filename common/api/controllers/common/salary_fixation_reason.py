@@ -1,15 +1,6 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-
-def salary_fixation_reason_list():
+class SalaryFixationReasonResource(BaseResource):
     doctype = "Fixation Reason"
+    resource_name = "salary-fixation-reason"
     fields = ["name", "fixation_reason"]
-    return document_list(
-        doctype, fields, translate_text=True, tr_field="fixation_reason"
-    )
-
-
-def read_salary_fixation_reason(name: str):
-    doctype = "Fixation Reason"
-    fields = ["name", "fixation_reason"]
-    return read_doc(doctype, name, origin_fields=fields)

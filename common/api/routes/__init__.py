@@ -14,6 +14,7 @@ from common.api.routes.common.salary_component import salary_component_rules
 from common.api.routes.common.salary_fixation_reason import salary_fixation_reason_rules
 from common.api.routes.common.system_access_level import system_access_level_rules
 from common.api.routes.common.work_type import work_type_rules
+from common.api.routes.common.workflow import workflow_rules
 
 # Company
 from common.api.routes.company import company_rules
@@ -35,6 +36,7 @@ from common.api.routes.hr_requests.access_system import access_system_rules
 from common.api.routes.hr_requests.employee_resignation import (
     employee_resignation_rules,
 )
+from common.api.routes.hr_requests.expenses_request import expenses_request_rules
 from common.api.routes.hr_requests.education_allowance import education_allowance_rules
 from common.api.routes.hr_requests.loan import loan_rules
 from common.api.routes.hr_requests.change_iban import change_iban_rules
@@ -61,6 +63,7 @@ from common.api.routes.leave_requests.work_from_home import work_from_home_rules
 
 # Project Management
 from common.api.routes.project_managements.task import task_rules
+from common.api.routes.project_managements.timesheet import timesheet_rules
 
 # User Auth/Info
 from common.api.routes.user import user_rules
@@ -84,6 +87,7 @@ url_rules += salary_component_rules
 url_rules += salary_fixation_reason_rules
 url_rules += system_access_level_rules
 url_rules += work_type_rules
+url_rules += workflow_rules
 
 # Company
 url_rules += company_rules
@@ -102,6 +106,7 @@ url_rules += ticket_rules
 url_rules += employee_requests_rules
 url_rules += access_system_rules
 url_rules += employee_resignation_rules
+url_rules += expenses_request_rules
 url_rules += education_allowance_rules
 url_rules += loan_rules
 url_rules += change_iban_rules
@@ -124,6 +129,7 @@ url_rules += work_from_home_rules
 
 # Project Management
 url_rules += task_rules
+url_rules += timesheet_rules
 
 # User Auth/Info
 url_rules += user_rules

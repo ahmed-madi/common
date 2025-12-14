@@ -1,34 +1,9 @@
-from common.api.utils.endpoints import (
-    document_list,
-    create_doc,
-    read_doc,
-    update_doc,
-    delete_doc,
-)
+from common.api.utils.resource import BaseResource
 
-
-def early_leave_list():
+class EarlyLeaveResource(BaseResource):
     doctype = "Early Leave Application"
+    url_prefix = "/leave-requests"
+    resource_name = "early-leave"
     fields = ["name", "employee", "exit_date", "exit_time"]
-    return document_list(doctype, fields)
-
-
-def create_early_leave():
-    doctype = "Early Leave Application"
-    return create_doc(doctype)
-
-
-def read_early_leave(name: str):
-    doctype = "Early Leave Application"
-    fields = ["name", "employee", "exit_date", "exit_time"]
-    return read_doc(doctype, name, origin_fields=fields)
-
-
-def update_early_leave(name: str):
-    doctype = "Early Leave Application"
-    return update_doc(doctype, name)
-
-
-def delete_early_leave(name: str):
-    doctype = "Early Leave Application"
-    return delete_doc(doctype, name)
+    add_perms = True
+    add_wf = True

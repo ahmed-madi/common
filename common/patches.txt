@@ -5,3 +5,5 @@
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
 common.patches.create_salary_fixation_reasons
+common.patches.v1.add_all_translations
+common.patches.v1.update_jwt_configs

@@ -1,4 +1,5 @@
-from frappe.utils import get_time, getdate
+from pytz import UnknownTimeZoneError, timezone
+from frappe.utils import get_time, getdate, get_datetime, format_datetime
 
 
 def get_combine_datetime(posting_date, posting_time):
@@ -14,3 +15,18 @@ def get_combine_datetime(posting_date, posting_time):
         posting_time = (datetime.datetime.min + posting_time).time()
 
     return datetime.datetime.combine(posting_date, posting_time)
+
+def format_user_time(value, user_tz, system_tz):
+    if not value or user_tz == system_tz:
+        return value
+    try:
+        user_tz = timezone(user_tz)
+        system_tz = timezone(system_tz)
+        dt = get_datetime(value)
+        if not dt:
+            return value
+        dt = system_tz.localize(dt)
+        dt = dt.astimezone(user_tz)
+        return format_datetime(dt)
+    except UnknownTimeZoneError:
+        return value

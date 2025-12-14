@@ -1,46 +1,23 @@
 from werkzeug.routing import Rule
-import frappe
-from common.api.utils.endpoints import handle_call, build_success_response
-from common.api.controllers.user import (
-    notification_list,
-    mark_as_read as mark_notification_as_read,
-)
+from common.api.utils.endpoints import handle_call
+from common.api.controllers.user.notification import NotificationResource
+from common.api.controllers.user.dashboard import UserDashboardResource
 
 
 def login():
-    return handle_call("common.api.controllers.user.login")
+    return handle_call("common.api.controllers.user.auth.login")
 
 
 def logout():
-    return handle_call("common.api.controllers.user.logout")
+    return handle_call("common.api.controllers.user.auth.logout")
 
 
 def refresh_token():
-    return handle_call("common.api.controllers.user.refresh_token")
-
-
-def user_info():
-    return handle_call("common.api.controllers.user.user_info")
+    return handle_call("common.api.controllers.user.auth.refresh_token")
 
 
 def change_user_password():
-    return handle_call("common.api.controllers.user.change_user_password")
-
-
-def employee_info(employeeId):
-    frappe.form_dict.employeeId = employeeId
-    return handle_call("common.api.controllers.user.employee_info")
-
-
-def mark_all_as_read():
-    handle_call(
-        "frappe.desk.doctype.notification_log.notification_log.mark_all_as_read"
-    )
-    return build_success_response(200, "All Notification marked as Read", data={})
-
-
-def mark_as_read(docname):
-    mark_notification_as_read(docname)
+    return handle_call("common.api.controllers.user.auth.change_user_password")
 
 
 user_rules = [
@@ -48,19 +25,7 @@ user_rules = [
     Rule("/user/auth/logout", methods=["POST"], endpoint=logout),
     Rule("/user/auth/refresh-token", methods=["POST"], endpoint=refresh_token),
     Rule("/user/change-password", methods=["PUT"], endpoint=change_user_password),
-    Rule("/user/info", methods=["GET"], endpoint=user_info),
-    Rule("/user/notifications", methods=["GET"], endpoint=notification_list),
-    Rule(
-        "/user/notifications/mark-as-read/<path:docname>",
-        methods=["PUT"],
-        endpoint=mark_as_read,
-    ),
-    Rule(
-        "/user/notifications/mark-all-as-read",
-        methods=["PUT"],
-        endpoint=mark_all_as_read,
-    ),
-    Rule(
-        "/user/employee-info/<path:employeeId>", methods=["GET"], endpoint=employee_info
-    ),
 ]
+
+user_rules += NotificationResource.get_routes()
+user_rules += UserDashboardResource.get_routes()

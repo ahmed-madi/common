@@ -1,16 +1,6 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-
-fields = ["name", "purpose"]
-
-
-def clearance_purpose_list():
+class ClearancePurposeResource(BaseResource):
     doctype = "Clearance Letter Purpose"
-    return document_list(
-        doctype, fields, force_fields=True, translate_text=True, tr_field="purpose"
-    )
-
-
-def read_clearance_purpose(name: str):
-    doctype = "Clearance Letter Purpose"
-    return read_doc(doctype, name, origin_fields=fields, force_fields=True)
+    resource_name = "clearance-purpose"
+    fields = ["name", "purpose"]

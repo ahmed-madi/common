@@ -1,13 +1,8 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-fields = ["name", "language_name", "enabled"]
-
-
-def language_list():
+class LanguageResource(BaseResource):
     doctype = "Language"
-    return document_list(doctype, fields, translate_text=True, tr_field="language_name")
-
-
-def read_language(name: str):
-    doctype = "Language"
-    return read_doc(doctype, name, origin_fields=fields)
+    fields = ["name", "language_name", "language_code", "flag", "based_on"]
+    
+    list_user_filters = [["enabled", "=", 1]]
+    list_force_user_filters = True

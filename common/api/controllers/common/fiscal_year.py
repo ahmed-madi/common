@@ -1,13 +1,8 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-BASE_FIELDS = ["name", "disabled", "year_start_date", "year_end_date"]
-
-
-def fiscal_year_list():
+class FiscalYearResource(BaseResource):
     doctype = "Fiscal Year"
-    return document_list(doctype, BASE_FIELDS)
-
-
-def read_fiscal_year(name: str):
-    doctype = "Fiscal Year"
-    return read_doc(doctype, name, origin_fields=BASE_FIELDS)
+    fields = ["name", "year_start_date", "year_end_date"]
+    
+    list_user_filters = [["disabled", "=", 0]]
+    list_force_user_filters = True

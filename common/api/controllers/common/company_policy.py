@@ -1,7 +1,4 @@
-from common.api.utils.endpoints import read_doc
+from common.api.utils.resource import SingletonResource
 
-
-def read_company_policy():
+class CompanyPolicyResource(SingletonResource):
     doctype = "Company Policy"
-    fields = ["*"]
-    return read_doc(doctype, doctype, origin_fields=fields)

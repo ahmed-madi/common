@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from frappe.utils import getdate, format_date, date_diff
+from frappe.utils import getdate, format_date
 from hrms.hr.doctype.compensatory_leave_request.compensatory_leave_request import (
     CompensatoryLeaveRequest as BaseCompensatoryLeaveRequest,
 )
@@ -45,15 +45,15 @@ class CompensatoryLeaveRequest(BaseCompensatoryLeaveRequest):
                 )
             )
 
-        if (
-            len(attendance_records)
-            < date_diff(self.work_end_date, self.work_from_date) + 1
-        ):
-            frappe.throw(
-                _(
-                    "You are not present all day(s) between compensatory leave request days"
-                )
-            )
+        # if (
+        #     len(attendance_records)
+        #     < date_diff(self.work_end_date, self.work_from_date) + 1
+        # ):
+        #     frappe.throw(
+        #         _(
+        #             "You are not present all day(s) between compensatory leave request days"
+        #         )
+        #     )
 
     def on_submit(self):
         if self.status in ["Open", "Cancelled"]:

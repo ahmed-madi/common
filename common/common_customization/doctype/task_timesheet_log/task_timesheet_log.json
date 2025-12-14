@@ -40,8 +40,6 @@
    "search_index": 1
   },
   {
-   "fetch_from": "task.assigned_to",
-   "fetch_if_empty": 1,
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -72,12 +70,12 @@
   {
    "fieldname": "start_time",
    "fieldtype": "Time",
-   "label": "Start Time "
+   "label": "Start Time"
   },
   {
    "fieldname": "end_time",
    "fieldtype": "Time",
-   "label": "End Time "
+   "label": "End Time"
   },
   {
    "fieldname": "total_hours",
@@ -147,7 +145,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-23 15:03:17.969387",
+ "modified": "2025-12-06 11:41:13.354656",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Task Timesheet Log",

@@ -1,13 +1,5 @@
-from common.api.utils.endpoints import document_list, read_doc
+from common.api.utils.resource import BaseResource
 
-fields = ["name", "project_name", "priority", "status", "is_active"]
-
-
-def project_list():
+class ProjectResource(BaseResource):
     doctype = "Project"
-    return document_list(doctype, fields, translate_text=True, tr_field="project_name")
-
-
-def read_project(name: str):
-    doctype = "Project"
-    return read_doc(doctype, name, origin_fields=fields)
+    fields = ["name", "project_name", "priority", "status", "is_active"]

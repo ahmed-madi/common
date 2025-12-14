@@ -1,0 +1,3 @@
+from common.api.controllers.hr_requests.expenses_request import EmployeeExpenseRequestResource
+
+expenses_request_rules = EmployeeExpenseRequestResource.get_routes()

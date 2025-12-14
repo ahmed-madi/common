@@ -1,33 +1,9 @@
-from common.api.utils.endpoints import (
-    document_list,
-    create_doc,
-    read_doc,
-    update_doc,
-    delete_doc,
-)
+from common.api.utils.resource import BaseResource
 
-
-def document_request_list():
+class DocumentRequestResource(BaseResource):
     doctype = "Document Request"
-    fields = ["*"]
-    return document_list(doctype, fields)
-
-
-def create_document_request():
-    doctype = "Document Request"
-    return create_doc(doctype)
-
-
-def read_document_request(name: str):
-    doctype = "Document Request"
-    return read_doc(doctype, name)
-
-
-def update_document_request(name: str):
-    doctype = "Document Request"
-    return update_doc(doctype, name)
-
-
-def delete_document_request(name: str):
-    doctype = "Document Request"
-    return delete_doc(doctype, name)
+    url_prefix = "/hr-requests"
+    resource_name = "document-request"
+    fields = ["name", "employee", "employee_name", "request_date", "document_type", "document_language", "status"]
+    add_perms = True
+    add_wf = True

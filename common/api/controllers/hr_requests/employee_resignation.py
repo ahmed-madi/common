@@ -1,43 +1,9 @@
-from common.api.utils.endpoints import (
-    document_list,
-    create_doc,
-    read_doc,
-    update_doc,
-    delete_doc,
-)
+from common.api.utils.resource import BaseResource
 
-LIST_FIELDS = [
-    "name",
-    "request_date",
-    "employee",
-    "employee_name",
-    "last_working_day",
-    "status",
-    "docstatus",
-]
-FROM_FIELDS = [] + LIST_FIELDS + ["reasons_for_resignation"]
-
-
-def employee_resignation_list():
+class EmployeeResignationResource(BaseResource):
     doctype = "Employee Resignation"
-    return document_list(doctype, LIST_FIELDS)
-
-
-def create_employee_resignation():
-    doctype = "Employee Resignation"
-    return create_doc(doctype)
-
-
-def read_employee_resignation(name: str):
-    doctype = "Employee Resignation"
-    return read_doc(doctype, name, origin_fields=FROM_FIELDS)
-
-
-def update_employee_resignation(name: str):
-    doctype = "Employee Resignation"
-    return update_doc(doctype, name)
-
-
-def delete_employee_resignation(name: str):
-    doctype = "Employee Resignation"
-    return delete_doc(doctype, name)
+    url_prefix = "/hr-requests"
+    resource_name = "employee-resignation"
+    fields = ["name", "request_date", "employee", "employee_name", "last_working_day", "status"]
+    add_perms = True
+    add_wf = True

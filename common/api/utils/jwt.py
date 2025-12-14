@@ -4,10 +4,21 @@ import frappe
 from frappe.utils import time_diff_in_seconds, now_datetime, add_to_date
 from common.api.utils.response import build_error_response
 
-JWT_SECRET_KEY = "your-very-secret-key"
-JWT_ALGORITHM = "HS256"
-JWT_EXP_DELTA_SECONDS = 3600  # Token expires in 1 hour
-JWT_REFRESH_EXP_DELTA_SECONDS = 3600 * 24 * 7  # Token expires in 7 days
+# Load JWT configuration from Frappe site config for security
+# Add to site_config.json: "jwt_secret_key": "your-secure-random-key"
+JWT_SECRET_KEY = frappe.conf.get("jwt_secret_key")
+if not JWT_SECRET_KEY:
+    # Generate a secure random key if not configured
+    # WARNING: This will change on each restart. Set in site_config.json for production!
+    JWT_SECRET_KEY = frappe.generate_hash(length=32)
+    frappe.log_error(
+        "JWT secret key not configured in site_config.json. Using temporary key.",
+        "JWT Configuration Warning"
+    )
+
+JWT_ALGORITHM = frappe.conf.get("jwt_algorithm", "HS256")
+JWT_EXP_DELTA_SECONDS = frappe.conf.get("jwt_expiry_seconds", 3600)  # 1 hour default
+JWT_REFRESH_EXP_DELTA_SECONDS = frappe.conf.get("jwt_refresh_expiry_seconds", 3600 * 24 * 7)  # 7 days default
 
 
 def generate_access_token(user_id, now, exp):

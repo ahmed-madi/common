@@ -1,7 +1,5 @@
-from werkzeug.routing import Rule
-from common.api.controllers.helpdesk.issue import issue_priority_list, issue_type_list
+from common.api.controllers.helpdesk.issue import HRIssueTypeResource, HRIssuePriorityResource
 
-ticket_issue_rules = [
-    Rule("/helpdesk/issue-type", methods=["GET"], endpoint=issue_type_list),
-    Rule("/helpdesk/issue-priority", methods=["GET"], endpoint=issue_priority_list),
-]
+ticket_issue_rules = []
+ticket_issue_rules += HRIssueTypeResource.get_routes()
+ticket_issue_rules += HRIssuePriorityResource.get_routes()
