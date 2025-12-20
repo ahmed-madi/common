@@ -129,7 +129,9 @@ def get_request_config(doctype):
     return REQUEST_CONFIG.get(doctype, {})
 
 
-def get_valid_request_fields(doctype, employee, request_date, status, docstatus):
+def get_valid_request_fields(
+    doctype, employee, request_date, status, docstatus, from_date=None, to_date=None
+):
     config = get_request_config(doctype)
 
     base_fields = config.get(
@@ -178,7 +180,18 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
         employee_field = config.get("employee_filter_field", "employee")
         filters[employee_field] = employee
 
-    if request_date and isinstance(request_date, str):
+    if from_date or to_date:
+        if date_field:
+            if from_date and to_date:
+                filters[date_field] = [
+                    "between",
+                    [f"{from_date} 00:00:00", f"{to_date} 23:59:59"],
+                ]
+            elif from_date:
+                filters[date_field] = [">=", f"{from_date} 00:00:00"]
+            elif to_date:
+                filters[date_field] = ["<=", f"{to_date} 23:59:59"]
+    elif request_date and isinstance(request_date, str):
         if date_field:
             if len(request_date) == 10:
                 filters[date_field] = [
@@ -273,6 +286,8 @@ class UnifiedRequestResource(BaseResource):
 
             employee = args.get("employee")
             request_date = args.get("request_date") or args.get("date")
+            from_date = args.get("from_date")
+            to_date = args.get("to_date")
             status = args.get("status")
             docstatus = args.get("docstatus")
             limit = cint(args.get("limit_page_length", args.get("limit", 20)))
@@ -286,7 +301,13 @@ class UnifiedRequestResource(BaseResource):
 
             for doctype in doctypes:
                 fields, filters = get_valid_request_fields(
-                    doctype, employee, request_date, status, docstatus
+                    doctype,
+                    employee,
+                    request_date,
+                    status,
+                    docstatus,
+                    from_date,
+                    to_date,
                 )
 
                 is_valid, code, result = custom_document_list(doctype, fields, filters)
