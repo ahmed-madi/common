@@ -1,5 +1,6 @@
 from common.api.utils.resource import BaseResource
 
+
 class CompanyNewsletterResource(BaseResource):
     doctype = "Company Newsletter"
     url_prefix = "/company"

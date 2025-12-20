@@ -1,5 +1,6 @@
 from common.api.utils.resource import BaseResource
 
+
 class EmployeeHRFeedbackResource(BaseResource):
     doctype = "Employee HR Feedback"
     url_prefix = "/helpdesk"

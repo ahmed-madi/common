@@ -1,5 +1,6 @@
 from common.api.utils.resource import BaseResource
 
+
 class TaskTimesheetLogResource(BaseResource):
     doctype = "Task Timesheet Log"
     url_prefix = "/project-managements"
@@ -9,7 +10,6 @@ class TaskTimesheetLogResource(BaseResource):
         "task",
         "employee",
         "employee_name",
-        "status",
         "posting_date",
         "start_time",
         "end_time",
@@ -17,6 +17,7 @@ class TaskTimesheetLogResource(BaseResource):
         "project",
         "project_name",
         "description",
+        "status",
     ]
     add_perms = True
     add_wf = True

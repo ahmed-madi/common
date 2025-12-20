@@ -1,5 +1,6 @@
 from common.api.utils.resource import BaseResource
 
+
 class EmployeeInquiryResource(BaseResource):
     doctype = "Employee Inquiry"
     url_prefix = "/helpdesk"
@@ -11,7 +12,6 @@ class EmployeeInquiryResource(BaseResource):
         "employee_name",
         "management_area",
         "subject",
-        "docstatus",
     ]
     add_perms = True
     add_wf = True

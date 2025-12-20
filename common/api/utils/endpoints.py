@@ -345,10 +345,6 @@ def get_doc(
     doc = format_response_data(
         doctype, [doc], add_perms=add_perms, wf=wf, add_wf=add_wf, reqd_field=fields
     )[0]
-    print(doctype)
-    print(doctype)
-    print(doctype)
-    print(doctype)
     if doctype == "Employee":
         doc.update(add_check_data(name))
     return doc

@@ -24,6 +24,9 @@ FILTER_OPERATORS = {
 
 
 DOCTYPE_ALLOWED_FILTERS = {
+    "HR Issue Type": ["name"],
+    "FAQ": ["name", "question", "answer"],
+    "HR Issue Priority": ["name"],
     "Clearance Letter Purpose": ["name", "purpose"],
     "Club": ["name", "club_name"],
     "Department": ["name", "department_name", "is_group"],
@@ -37,8 +40,10 @@ DOCTYPE_ALLOWED_FILTERS = {
     ],
     "Task": [
         "name",
-        "priority",
+        "subject",
         "status",
+        "priority",
+        "assigned_to",
         "project",
         "exp_start_date",
         "exp_end_date",
@@ -69,9 +74,207 @@ DOCTYPE_ALLOWED_FILTERS = {
     ],
     "System Access Level": ["name", "access_level"],
     "Work Type": ["name", "type"],
-    "Employee Checkin": ["name", "log_type", "time"],
+    "Employee Checkin": ["name", "employee", "log_type", "time"],
+    "Compensatory Leave Request": [
+        "name",
+        "employee",
+        "request_date",
+        "work_from_date",
+        "work_end_date",
+        "leave_type",
+        "status",
+    ],
+    "Early Leave Application": [
+        "name",
+        "employee",
+        "request_date",
+        "exit_date",
+        "exit_time",
+        "status",
+    ],
+    "Work Outside Office Request": [
+        "name",
+        "employee",
+        "request_date",
+        "work_type",
+        "from_date",
+        "to_date",
+        "status",
+    ],
+    "Cancel Leave Application": [
+        "name",
+        "employee",
+        "request_date",
+        "leave_application",
+        "status",
+    ],
+    "Leave Suspension": [
+        "name",
+        "employee",
+        "request_date",
+        "leave_application",
+        "return_date",
+        "status",
+    ],
+    "Leave Application": [
+        "name",
+        "employee",
+        "posting_date",
+        "leave_type",
+        "from_date",
+        "to_date",
+        "total_leave_days",
+        "status",
+    ],
+    "Work From Home Request": [
+        "name",
+        "employee",
+        "request_date",
+        "from_date",
+        "to_date",
+        "status",
+    ],
+    "System Access Request": [
+        "name",
+        "employee",
+        "request_date",
+        "system_access_level",
+        "status",
+    ],
+    "Change IBAN Request": [
+        "name",
+        "request_date",
+        "employee",
+        "status",
+    ],
+    "Clearance Letter Request": [
+        "name",
+        "employee",
+        "request_date",
+        "letter_purpose",
+        "preferred_language",
+        "clearance_document",
+        "status",
+    ],
+    "Club Request": [
+        "name",
+        "employee",
+        "request_date",
+        "club_name",
+        "start_date",
+        "end_date",
+        "status",
+    ],
+    "Document Request": [
+        "name",
+        "employee",
+        "request_date",
+        "document_language",
+        "status",
+    ],
+    "Education Allowance Request": [
+        "name",
+        "employee",
+        "request_date",
+        "relation",
+        "status",
+    ],
+    "Employee Resignation": [
+        "name",
+        "employee",
+        "request_date",
+        "last_working_day",
+        "status",
+    ],
+    "Employee Expense Request": [
+        "name",
+        "request_type",
+        "expenses_type",
+        "creation",
+        "employee",
+    ],
+    "Loan Application": [
+        "name",
+        "applicant_type",
+        "applicant",
+        "posting_date",
+        "loan_product",
+        "status",
+    ],
+    "Salary Fixation": [
+        "name",
+        "request_date",
+        "effective_date",
+        "employee",
+        "fixation_reason",
+        "status",
+    ],
+    "Salary Identification Letter": [
+        "name",
+        "employee",
+        "request_date",
+        "preferred_language",
+        "status",
+    ],
+    "Training Request": [
+        "name",
+        "employee",
+        "request_date",
+        "start_date",
+        "end_date",
+        "is_paid",
+        "status",
+    ],
+    "Visa Application": [
+        "name",
+        "employee",
+        "request_date",
+        "visa_type",
+        "start_date",
+        "end_date",
+        "status",
+    ],
+    "Task Timesheet Log": ["name", "task", "posting_date", "project", "status"],
+    "Employee Inquiry": [
+        "name",
+        "request_date",
+        "employee",
+        "management_area",
+    ],
+    "Employee HR Feedback": [
+        "name",
+        "employee",
+        "department",
+        "request_date",
+        "feedback_type",
+        "docstatus",
+    ],
+    "Event": [
+        "name",
+        "event_category",
+        "event_type",
+        "starts_on",
+        "ends_on",
+        "status",
+    ],
+    "Company Newsletter": [
+        "name",
+        "publish_on",
+    ],
+    "Employee Achievement": ["name", "employee", "date"],
+    "Employee Certification": ["name", "employee", "date_of_issue"],
 }
-DOCTYPE_ALLOWED_CUSTOM_FILTERS = {}
+DOCTYPE_ALLOWED_CUSTOM_FILTERS = {
+    "Task": ["f_date", "t_date"],
+    "Task Timesheet Log": ["f_date", "t_date"],
+    "Employee HR Feedback": ["f_date", "t_date"],
+    "Employee Inquiry": ["f_date", "t_date"],
+    "Event": ["f_date", "t_date"],
+    "Company Newsletter": ["f_date", "t_date"],
+    "Employee Achievement": ["f_date", "t_date"],
+    "Employee Checkin": ["f_date", "t_date"],
+    "Employee Certification": ["f_date", "t_date"],
+}
 DATA_FIELDS = [
     "Autocomplete",
     "Data",
@@ -343,6 +546,7 @@ def get_valid_filters(
             continue
 
         value = cstr(frappe.request.args[request_key])
+
         if value is None or not value:
             continue
 
@@ -376,10 +580,15 @@ def get_valid_filters(
                     if (
                         len(value) == 10
                         and operator == "="
-                        and doctype == "Employee Checkin"
+                        and doctype
+                        in ["Employee Checkin", "Company Newsletter", "Event"]
                     ):
-                        filters.append([filter_key, ">=", f"{value} 00:00:00"])
-                        filters.append([filter_key, "<=", f"{value} 23:59:59"])
+                        filters.append(
+                            [filter_key, ">=", get_datetime(f"{value} 00:00:00")]
+                        )
+                        filters.append(
+                            [filter_key, "<=", get_datetime(f"{value} 23:59:59")]
+                        )
                     else:
                         value = get_datetime(value)
                         # Use 'like' for default operator, otherwise use specified operator
@@ -444,8 +653,62 @@ def add_custom_filters(doctype):
         list: List of custom filters
     """
     filters = []
-    allowed_filters = DOCTYPE_ALLOWED_CUSTOM_FILTERS.get(doctype, [])
-    filters += allowed_filters
+
+    f_date = cstr(frappe.request.args.get("f_date"))
+    t_date = cstr(frappe.request.args.get("t_date"))
+
+    if not (f_date or t_date):
+        return filters
+
+    meta = frappe.get_meta(doctype)
+    target_field = None
+    is_datetime = False
+    if doctype == "Task":
+        target_field = "exp_start_date"
+    elif doctype == "Company Newsletter":
+        target_field = "publish_on"
+        is_datetime = True
+    elif doctype == "Event":
+        target_field = "starts_on"
+        is_datetime = True
+    elif doctype == "Employee Checkin":
+        target_field = "time"
+        is_datetime = True
+    elif doctype == "Employee Achievement":
+        target_field = "date"
+    elif doctype == "Employee Certification":
+        target_field = "date_of_issue"
+    elif meta.has_field("request_date"):
+        target_field = "request_date"
+    elif meta.has_field("posting_date"):
+        target_field = "posting_date"
+    if target_field:
+        if f_date:
+            try:
+                filters.append(
+                    [
+                        target_field,
+                        ">=",
+                        getdate(f_date) + " 00:00:00"
+                        if is_datetime
+                        else getdate(f_date),
+                    ]
+                )
+            except Exception:
+                pass
+        if t_date:
+            try:
+                filters.append(
+                    [
+                        target_field,
+                        "<=",
+                        getdate(t_date) + " 23:59:59"
+                        if is_datetime
+                        else getdate(t_date),
+                    ]
+                )
+            except Exception:
+                pass
     return filters
 
 
