@@ -4,6 +4,7 @@ from common.api.routes.common.club import club_rules
 from common.api.routes.common.company_policy import company_policy_rules
 from common.api.routes.common.department import department_rules
 from common.api.routes.common.employee import employee_rules
+from common.api.routes.common.faq import faq_rules
 from common.api.routes.common.fiscal_year import fiscal_year_rules
 from common.api.routes.common.holiday_list import holiday_list_rules
 from common.api.routes.common.language import language_rules
@@ -29,6 +30,7 @@ from common.api.routes.helpdesk.employee_feedback import employee_feedback_rules
 from common.api.routes.helpdesk.employee_inquiry import request_to_management_rules
 from common.api.routes.helpdesk.ticket_comment import ticket_comment_rules
 from common.api.routes.helpdesk.ticket import ticket_rules
+from common.api.routes.helpdesk.department_contact import department_contact_rules
 
 # HR Requests
 from common.api.routes.hr_requests import employee_requests_rules
@@ -77,6 +79,7 @@ url_rules += club_rules
 url_rules += company_policy_rules
 url_rules += department_rules
 url_rules += employee_rules
+url_rules += faq_rules
 url_rules += fiscal_year_rules
 url_rules += holiday_list_rules
 url_rules += language_rules
@@ -101,6 +104,7 @@ url_rules += employee_feedback_rules
 url_rules += request_to_management_rules
 url_rules += ticket_comment_rules
 url_rules += ticket_rules
+url_rules += department_contact_rules
 
 # HR Requests
 url_rules += employee_requests_rules

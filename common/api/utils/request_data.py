@@ -12,23 +12,28 @@ DEFAULT_PAGE_LENGTH = 20  # Default records per page
 # Filter operators for advanced filtering
 # Usage: ?field_name_gte=value (greater than or equal)
 FILTER_OPERATORS = {
-    "eq": "=",      # Equal (default)
-    "ne": "!=",     # Not equal
-    "gt": ">",      # Greater than
-    "gte": ">=",    # Greater than or equal
-    "lt": "<",      # Less than
-    "lte": "<=",    # Less than or equal
-    "like": "like", # Like pattern
-    "in": "in",     # In list
+    "eq": "=",  # Equal (default)
+    "ne": "!=",  # Not equal
+    "gt": ">",  # Greater than
+    "gte": ">=",  # Greater than or equal
+    "lt": "<",  # Less than
+    "lte": "<=",  # Less than or equal
+    "like": "like",  # Like pattern
+    "in": "in",  # In list
 }
 
 
 DOCTYPE_ALLOWED_FILTERS = {
+    "HR Issue Type": ["name"],
+    "Department Contact": ["name", "request_date", "department", "from_employee"],
+    "FAQ": ["name", "question", "answer"],
+    "HR Issue Priority": ["name"],
     "Clearance Letter Purpose": ["name", "purpose"],
     "Club": ["name", "club_name"],
     "Department": ["name", "department_name", "is_group"],
     "Employee": [
         "name",
+        "status",
         "employee_name",
         "department",
         "designation",
@@ -36,8 +41,10 @@ DOCTYPE_ALLOWED_FILTERS = {
     ],
     "Task": [
         "name",
-        "priority",
+        "subject",
         "status",
+        "priority",
+        "assigned_to",
         "project",
         "exp_start_date",
         "exp_end_date",
@@ -68,8 +75,208 @@ DOCTYPE_ALLOWED_FILTERS = {
     ],
     "System Access Level": ["name", "access_level"],
     "Work Type": ["name", "type"],
+    "Employee Checkin": ["name", "employee", "log_type", "time"],
+    "Compensatory Leave Request": [
+        "name",
+        "employee",
+        "request_date",
+        "work_from_date",
+        "work_end_date",
+        "leave_type",
+        "status",
+    ],
+    "Early Leave Application": [
+        "name",
+        "employee",
+        "request_date",
+        "exit_date",
+        "exit_time",
+        "status",
+    ],
+    "Work Outside Office Request": [
+        "name",
+        "employee",
+        "request_date",
+        "work_type",
+        "from_date",
+        "to_date",
+        "status",
+    ],
+    "Cancel Leave Application": [
+        "name",
+        "employee",
+        "request_date",
+        "leave_application",
+        "status",
+    ],
+    "Leave Suspension": [
+        "name",
+        "employee",
+        "request_date",
+        "leave_application",
+        "return_date",
+        "status",
+    ],
+    "Leave Application": [
+        "name",
+        "employee",
+        "posting_date",
+        "leave_type",
+        "from_date",
+        "to_date",
+        "total_leave_days",
+        "status",
+    ],
+    "Work From Home Request": [
+        "name",
+        "employee",
+        "request_date",
+        "from_date",
+        "to_date",
+        "status",
+    ],
+    "System Access Request": [
+        "name",
+        "employee",
+        "request_date",
+        "system_access_level",
+        "status",
+    ],
+    "Change IBAN Request": [
+        "name",
+        "request_date",
+        "employee",
+        "status",
+    ],
+    "Clearance Letter Request": [
+        "name",
+        "employee",
+        "request_date",
+        "letter_purpose",
+        "preferred_language",
+        "clearance_document",
+        "status",
+    ],
+    "Club Request": [
+        "name",
+        "employee",
+        "request_date",
+        "club_name",
+        "start_date",
+        "end_date",
+        "status",
+    ],
+    "Document Request": [
+        "name",
+        "employee",
+        "request_date",
+        "document_language",
+        "status",
+    ],
+    "Education Allowance Request": [
+        "name",
+        "employee",
+        "request_date",
+        "relation",
+        "status",
+    ],
+    "Employee Resignation": [
+        "name",
+        "employee",
+        "request_date",
+        "last_working_day",
+        "status",
+    ],
+    "Employee Expense Request": [
+        "name",
+        "request_type",
+        "expenses_type",
+        "creation",
+        "employee",
+    ],
+    "Loan Application": [
+        "name",
+        "applicant_type",
+        "applicant",
+        "posting_date",
+        "loan_product",
+        "status",
+    ],
+    "Salary Fixation": [
+        "name",
+        "request_date",
+        "effective_date",
+        "employee",
+        "fixation_reason",
+        "status",
+    ],
+    "Salary Identification Letter": [
+        "name",
+        "employee",
+        "request_date",
+        "preferred_language",
+        "status",
+    ],
+    "Training Request": [
+        "name",
+        "employee",
+        "request_date",
+        "start_date",
+        "end_date",
+        "is_paid",
+        "status",
+    ],
+    "Visa Application": [
+        "name",
+        "employee",
+        "request_date",
+        "visa_type",
+        "start_date",
+        "end_date",
+        "status",
+    ],
+    "Task Timesheet Log": ["name", "task", "posting_date", "project", "status"],
+    "Employee Inquiry": [
+        "name",
+        "request_date",
+        "employee",
+        "management_area",
+    ],
+    "Employee HR Feedback": [
+        "name",
+        "employee",
+        "department",
+        "request_date",
+        "feedback_type",
+        "docstatus",
+    ],
+    "Event": [
+        "name",
+        "event_category",
+        "event_type",
+        "starts_on",
+        "ends_on",
+        "status",
+    ],
+    "Company Newsletter": [
+        "name",
+        "publish_on",
+    ],
+    "Employee Achievement": ["name", "employee", "date"],
+    "Employee Certification": ["name", "employee", "date_of_issue"],
 }
-DOCTYPE_ALLOWED_CUSTOM_FILTERS = {}
+DOCTYPE_ALLOWED_CUSTOM_FILTERS = {
+    "Task": ["f_date", "t_date"],
+    "Task Timesheet Log": ["f_date", "t_date"],
+    "Employee HR Feedback": ["f_date", "t_date"],
+    "Employee Inquiry": ["f_date", "t_date"],
+    "Event": ["f_date", "t_date"],
+    "Company Newsletter": ["f_date", "t_date"],
+    "Employee Achievement": ["f_date", "t_date"],
+    "Employee Checkin": ["f_date", "t_date"],
+    "Employee Certification": ["f_date", "t_date"],
+    "Department Contact": ["f_date", "t_date"],
+}
 DATA_FIELDS = [
     "Autocomplete",
     "Data",
@@ -105,13 +312,13 @@ DEFAULT_COLUMNS = [
 def parse_filter_with_operator(filter_key):
     """
     Parse filter key to extract field name and operator
-    
+
     Args:
         filter_key: Filter key from request (e.g., "from_date_gte")
-    
+
     Returns:
         tuple: (field_name, operator) e.g., ("from_date", ">=")
-        
+
     Examples:
         >>> parse_filter_with_operator("from_date_gte")
         ("from_date", ">=")
@@ -123,9 +330,9 @@ def parse_filter_with_operator(filter_key):
     # Check for operator suffix
     for op_suffix, op_symbol in FILTER_OPERATORS.items():
         if filter_key.endswith(f"_{op_suffix}"):
-            actual_field = filter_key[:-len(f"_{op_suffix}")]
+            actual_field = filter_key[: -len(f"_{op_suffix}")]
             return actual_field, op_symbol
-    
+
     # Default to equality
     return filter_key, "="
 
@@ -133,14 +340,14 @@ def parse_filter_with_operator(filter_key):
 def parse_order_by(order_by_str, allowed_filters):
     """
     Parse order_by string supporting multiple fields
-    
+
     Args:
         order_by_str: Order by string from request (e.g., "department asc, name desc")
         allowed_filters: List of allowed filter fields
-    
+
     Returns:
         str: Validated SQL ORDER BY clause
-        
+
     Examples:
         >>> parse_order_by("name asc", ["name", "status"])
         "name asc"
@@ -151,25 +358,25 @@ def parse_order_by(order_by_str, allowed_filters):
     """
     if not order_by_str:
         return "modified desc"
-    
+
     order_parts = []
     for part in order_by_str.split(","):
         part = part.strip().split()
         if len(part) != 2:
             continue
-        
+
         field_name, order_type = part
-        
+
         # Validate order type
         if order_type.lower() not in ["desc", "asc"]:
             continue
-        
+
         # Validate field name is in allowed filters or DEFAULT_COLUMNS
         if field_name not in allowed_filters and field_name not in DEFAULT_COLUMNS:
             continue
-        
+
         order_parts.append(f"{field_name} {order_type}")
-    
+
     return ", ".join(order_parts) if order_parts else "modified desc"
 
 
@@ -190,7 +397,7 @@ def get_allowed_filters(doctype):
     except Exception:
         # Fail silently and fall back to hardcoded defaults
         pass
-    
+
     # Fall back to hardcoded
     return DOCTYPE_ALLOWED_FILTERS.get(doctype, ["name"])
 
@@ -208,15 +415,15 @@ def setup_request_data(
 ) -> tuple:
     """
     Setup and validate request data for list queries
-    
+
     Processes request parameters to build validated filters, pagination, and sorting
     for database queries. Supports advanced filtering with operators and multiple sort fields.
-    
+
     Args:
         doctype: The DocType to query
         user_filters: Additional filters to apply (list of [field, operator, value])
         force_user_filters: If True, user_filters override request filters for same fields
-    
+
     Returns:
         tuple: (page, page_length, order_by, filters, or_filters)
             - page (int): Page number (0-indexed)
@@ -224,7 +431,7 @@ def setup_request_data(
             - order_by (str): SQL ORDER BY clause
             - filters (list): List of AND filters [[field, operator, value], ...]
             - or_filters (list): List of OR filters for search [[field, "like", value], ...]
-    
+
     Request Parameters:
         - page (int): Page number (1-indexed, max 10000)
         - limit (int): Records per page (max 1000, default 20)
@@ -235,20 +442,20 @@ def setup_request_data(
         - {field_name}_{operator} (any): Filter with operator
             Operators: _eq, _ne, _gt, _gte, _lt, _lte, _like, _in
             Examples: from_date_gte=2025-01-01, status_ne=Cancelled
-    
+
     Examples:
         >>> # Simple pagination
         >>> GET /api/v1/employee/list?page=2&limit=50
-        
+
         >>> # Date range filter
         >>> GET /api/v1/leave/list?from_date_gte=2025-01-01&to_date_lte=2025-12-31
-        
+
         >>> # Multiple sort fields
         >>> GET /api/v1/employee/list?order_by=department asc, name desc
-        
+
         >>> # Search with filters
         >>> GET /api/v1/employee/list?q=john&department=Sales
-    
+
     Raises:
         frappe.ValidationError: If page or limit exceeds maximum allowed values
     """
@@ -258,7 +465,7 @@ def setup_request_data(
     filters = []
 
     allowed_filters = get_allowed_filters(doctype)
-    
+
     # Validate and sanitize page number
     if "page" in frappe.request.args:
         page = cint(frappe.request.args["page"]) - 1
@@ -266,9 +473,11 @@ def setup_request_data(
             page = 0
         elif page > MAX_PAGE_NUMBER:
             frappe.throw(
-                _("Page number too large. Maximum allowed is {0}").format(MAX_PAGE_NUMBER)
+                _("Page number too large. Maximum allowed is {0}").format(
+                    MAX_PAGE_NUMBER
+                )
             )
-    
+
     # Validate and sanitize page length
     if "limit" in frappe.request.args:
         page_length = cint(frappe.request.args["limit"])
@@ -276,16 +485,16 @@ def setup_request_data(
             page_length = DEFAULT_PAGE_LENGTH
         elif page_length > MAX_PAGE_LENGTH:
             frappe.throw(
-                _("Page length too large. Maximum allowed is {0}").format(MAX_PAGE_LENGTH)
+                _("Page length too large. Maximum allowed is {0}").format(
+                    MAX_PAGE_LENGTH
+                )
             )
-    
-    
+
     # Validate and sanitize order_by to prevent SQL injection
     # Now supports multiple sort fields: "department asc, name desc"
     if "order_by" in frappe.request.args:
         order_by = parse_order_by(
-            cstr(frappe.request.args["order_by"]),
-            allowed_filters
+            cstr(frappe.request.args["order_by"]), allowed_filters
         )
 
     meta = frappe.get_meta(doctype)
@@ -306,39 +515,40 @@ def get_valid_filters(
 ):
     """
     Get valid filters from request parameters
-    
+
     Args:
         doctype: DocType name
         meta: DocType meta object
         user_filters: List of user-defined filters
         force_user_filters: If True, skip request filters that conflict with user_filters
-    
+
     Returns:
         list: List of filter tuples [field, operator, value]
     """
     user_filters_keys = [f[0] for f in user_filters]
     allowed_filters = get_allowed_filters(doctype)
     filters = []
-    
+
     # Cache field metadata to avoid repeated meta.get_field() calls
     # This improves performance from O(n*m) to O(n) where n=filters, m=fields
     field_cache = {f.fieldname: f for f in meta.fields}
-    
+
     # Process all request args to find filters with operators
     # Example: from_date_gte=2025-01-01 becomes ("from_date", ">=", "2025-01-01")
     for request_key in frappe.request.args:
         # Parse filter key to get actual field name and operator
         filter_key, operator = parse_filter_with_operator(request_key)
-        
+
         # Skip if not in allowed filters
         if filter_key not in allowed_filters and filter_key not in DEFAULT_COLUMNS:
             continue
-        
+
         # Skip if conflicts with user_filters
         if filter_key in user_filters_keys and force_user_filters:
             continue
-        
+
         value = cstr(frappe.request.args[request_key])
+
         if value is None or not value:
             continue
 
@@ -348,10 +558,10 @@ def get_valid_filters(
             if not field:
                 frappe.log_error(
                     f"Field '{filter_key}' not found in {doctype} meta",
-                    "Request Data Validation"
+                    "Request Data Validation",
                 )
                 continue
-            
+
             field_type = field.fieldtype
             if field_type in DATA_FIELDS:
                 if len(value) > 0:
@@ -363,20 +573,35 @@ def get_valid_filters(
                 except ParserError as e:
                     frappe.log_error(
                         f"Invalid date value '{value}' for filter '{filter_key}' in {doctype}: {str(e)}",
-                        "Filter Validation Error"
+                        "Filter Validation Error",
                     )
             elif field_type == "Datetime":
                 try:
-                    value = get_datetime(value)
-                    # Use 'like' for default operator, otherwise use specified operator
-                    if operator == "=":
-                        filters.append([filter_key, "like", f"%{value}%"])
+                    # If it's a date string (YYYY-MM-DD) and operator is '=', treat as full day range
+                    # This only applies to "Employee Checkin" as per requirements
+                    if (
+                        len(value) == 10
+                        and operator == "="
+                        and doctype
+                        in ["Employee Checkin", "Company Newsletter", "Event"]
+                    ):
+                        filters.append(
+                            [filter_key, ">=", get_datetime(f"{value} 00:00:00")]
+                        )
+                        filters.append(
+                            [filter_key, "<=", get_datetime(f"{value} 23:59:59")]
+                        )
                     else:
-                        filters.append([filter_key, operator, value])
+                        value = get_datetime(value)
+                        # Use 'like' for default operator, otherwise use specified operator
+                        if operator == "=":
+                            filters.append([filter_key, "like", f"%{value}%"])
+                        else:
+                            filters.append([filter_key, operator, value])
                 except ParserError as e:
                     frappe.log_error(
                         f"Invalid datetime value '{value}' for filter '{filter_key}' in {doctype}: {str(e)}",
-                        "Filter Validation Error"
+                        "Filter Validation Error",
                     )
             elif field_type == "Time":
                 try:
@@ -385,7 +610,7 @@ def get_valid_filters(
                 except ParserError as e:
                     frappe.log_error(
                         f"Invalid time value '{value}' for filter '{filter_key}' in {doctype}: {str(e)}",
-                        "Filter Validation Error"
+                        "Filter Validation Error",
                     )
             elif field_type == "Int":
                 value = cint(value)
@@ -409,7 +634,7 @@ def get_valid_filters(
                 except ParserError as e:
                     frappe.log_error(
                         f"Invalid datetime value '{value}' for filter '{filter_key}' in {doctype}: {str(e)}",
-                        "Filter Validation Error"
+                        "Filter Validation Error",
                     )
             elif filter_key == "docstatus":
                 value = cint(value)
@@ -422,37 +647,91 @@ def get_valid_filters(
 def add_custom_filters(doctype):
     """
     Get custom filters defined in DOCTYPE_ALLOWED_CUSTOM_FILTERS
-    
+
     Args:
         doctype: DocType name
-        
+
     Returns:
         list: List of custom filters
     """
     filters = []
-    allowed_filters = DOCTYPE_ALLOWED_CUSTOM_FILTERS.get(doctype, [])
-    filters += allowed_filters
+
+    f_date = cstr(frappe.request.args.get("f_date"))
+    t_date = cstr(frappe.request.args.get("t_date"))
+
+    if not (f_date or t_date):
+        return filters
+
+    meta = frappe.get_meta(doctype)
+    target_field = None
+    is_datetime = False
+    if doctype == "Task":
+        target_field = "exp_start_date"
+    elif doctype == "Company Newsletter":
+        target_field = "publish_on"
+        is_datetime = True
+    elif doctype == "Event":
+        target_field = "starts_on"
+        is_datetime = True
+    elif doctype == "Employee Checkin":
+        target_field = "time"
+        is_datetime = True
+    elif doctype == "Employee Achievement":
+        target_field = "date"
+    elif doctype == "Employee Certification":
+        target_field = "date_of_issue"
+    elif meta.has_field("request_date"):
+        target_field = "request_date"
+    elif meta.has_field("posting_date"):
+        target_field = "posting_date"
+    if target_field:
+        if f_date:
+            try:
+                filters.append(
+                    [
+                        target_field,
+                        ">=",
+                        getdate(f_date) + " 00:00:00"
+                        if is_datetime
+                        else getdate(f_date),
+                    ]
+                )
+            except Exception:
+                pass
+        if t_date:
+            try:
+                filters.append(
+                    [
+                        target_field,
+                        "<=",
+                        getdate(t_date) + " 23:59:59"
+                        if is_datetime
+                        else getdate(t_date),
+                    ]
+                )
+            except Exception:
+                pass
     return filters
 
 
 def add_search_params(doctype, meta):
     """
     Add search filters from 'q' parameter
-    
+
     Args:
         doctype: DocType name
         meta: DocType meta object
-    
+
     Returns:
         list: List of OR filters for search
     """
     filters = []
     search_fields = ["name"]
-    
+
     # Optimized: Use list comprehension instead of map + lambda
     if meta.search_fields:
         search_fields += [f.strip() for f in meta.search_fields.split(",") if f.strip()]
-    
+
     search_fields = set(search_fields)
 
     if "q" in frappe.request.args:

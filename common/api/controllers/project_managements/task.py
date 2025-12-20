@@ -1,5 +1,6 @@
 from common.api.utils.resource import BaseResource
 
+
 class TaskResource(BaseResource):
     doctype = "Task"
     url_prefix = "/project-managements"
@@ -9,7 +10,7 @@ class TaskResource(BaseResource):
         "subject",
         "status",
         "priority",
-        "assigned_to",
+        "assigned_to",  # employee
         "employee_name",
         "project",
         "exp_start_date",

@@ -8,8 +8,9 @@ from common.api.utils.resource import BaseResource
 from common.api.utils.decorators import safe_api
 from common.utils.hr import get_employee_from_user, get_last_checkin_status
 
+
 class UserDashboardResource(BaseResource):
-    doctype = "User" # Virtual aggregate
+    doctype = "User"
     url_prefix = "/user"
     resource_name = "info"
 
@@ -47,18 +48,14 @@ class UserDashboardResource(BaseResource):
                     """
                                     SELECT name, employee, employee_name, certificate_title, issuing_organization, date_of_issue, attachment
                                     FROM `tabEmployee Certification`
-                                    WHERE employee='{}'""".format(
-                        name
-                    ),
+                                    WHERE employee='{}'""".format(name),
                     as_dict=True,
                 )
                 achievements = frappe.db.sql(
                     """
                                     SELECT name, employee, employee_name, title, date, description, attachment
                                     FROM `tabEmployee Achievement`
-                                    WHERE employee='{}'""".format(
-                        name
-                    ),
+                                    WHERE employee='{}'""".format(name),
                     as_dict=True,
                 )
 
@@ -75,7 +72,9 @@ class UserDashboardResource(BaseResource):
                     order_by="start_date",
                 )
                 if len(salary_slip) > 0:
-                    last_salary_slip = frappe.get_doc("Salary Slip", salary_slip[0].name)
+                    last_salary_slip = frappe.get_doc(
+                        "Salary Slip", salary_slip[0].name
+                    )
                     for ss in salary_slip:
                         ss = frappe.get_doc("Salary Slip", ss.name).as_dict()
                         salary_slip_list.append(ss)
@@ -83,7 +82,8 @@ class UserDashboardResource(BaseResource):
                 if len(assignments) > 0:
                     last_salary_structure_assignment = assignments[0]
                     last_salary_structure = frappe.get_doc(
-                        "Salary Structure", last_salary_structure_assignment.salary_structure
+                        "Salary Structure",
+                        last_salary_structure_assignment.salary_structure,
                     )
                     for slip in salary_slip:
                         if (
@@ -91,8 +91,8 @@ class UserDashboardResource(BaseResource):
                             != last_salary_structure_assignment.salary_structure
                         ):
                             continue
-                        last_salary_slip_based_on_last_salary_structure = frappe.get_doc(
-                            "Salary Slip", slip.name
+                        last_salary_slip_based_on_last_salary_structure = (
+                            frappe.get_doc("Salary Slip", slip.name)
                         )
                         break
                 custodies = frappe.db.sql(
@@ -128,7 +128,7 @@ class UserDashboardResource(BaseResource):
                 }
             )
             return data, _("User Info")
-        
+
         _get.__name__ = "user_info"
         return _get
 

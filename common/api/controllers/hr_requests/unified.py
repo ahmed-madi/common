@@ -1,4 +1,3 @@
-
 import frappe
 from frappe import cint
 from common.api.utils.resource import BaseResource
@@ -15,20 +14,37 @@ REQUEST_CONFIG = {
         "null_attachment": True,
     },
     "Leave Application": {
-        "extra_fields": ["from_date", "to_date", "attachment", "posting_date as request_date"],
+        "extra_fields": [
+            "from_date",
+            "to_date",
+            "attachment",
+            "posting_date as request_date",
+        ],
         "null_dates": True,
-        "date_filter_field": "posting_date"
+        "date_filter_field": "posting_date",
     },
     "Visa Application": {
-        "extra_fields": ["start_date as from_date", "end_date as to_date", "attachment"],
+        "extra_fields": [
+            "start_date as from_date",
+            "end_date as to_date",
+            "attachment",
+        ],
         "null_dates": True,
     },
     "Club Request": {
-        "extra_fields": ["start_date as from_date", "end_date as to_date", "attachment"],
+        "extra_fields": [
+            "start_date as from_date",
+            "end_date as to_date",
+            "attachment",
+        ],
         "null_dates": True,
     },
     "Training Request": {
-        "extra_fields": ["start_date as from_date", "end_date as to_date", "attachment"],
+        "extra_fields": [
+            "start_date as from_date",
+            "end_date as to_date",
+            "attachment",
+        ],
         "null_dates": True,
     },
     "Work From Home Request": {
@@ -74,22 +90,29 @@ REQUEST_CONFIG = {
         "extra_fields": ["clearance_document as attachment"],
     },
     "Loan Application": {
-        "custom_base_fields": ["name", "applicant as employee", "applicant_name as employee_name"],
+        "custom_base_fields": [
+            "name",
+            "applicant as employee",
+            "applicant_name as employee_name",
+        ],
         "extra_fields": ["attachment", "posting_date as request_date"],
         "filters": {"applicant_type": "Employee"},
         "date_filter_field": "posting_date",
-        "employee_filter_field": "applicant"
+        "employee_filter_field": "applicant",
     },
     "Employee Expense Request": {
-        "custom_base_fields": ["name", "request_type", "expenses_type", "creation as from_date"],
-        "date_filter_field": None # explicit None to skip default request_date handling if any
-    }
+        "custom_base_fields": [
+            "name",
+            "request_type",
+            "expenses_type",
+            "creation as from_date",
+        ],
+    },
 }
 
-# Default list of all doctypes to query
-REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys()) 
-# Ensure we include any that might have been implicit but are in the CONFIG keys. 
-# Original list had 20 items. 
+REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())
+# Ensure we include any that might have been implicit but are in the CONFIG keys.
+# Original list had 20 items.
 # Let's ensure the list matches the original exactly for safety, then extend/use keys.
 # Original list:
 #     "Compensatory Leave Request", "Early Leave Application", "Work Outside Office Request",
@@ -101,57 +124,83 @@ REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())
 
 DOC_STATUS = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
 
+
 def get_request_config(doctype):
     return REQUEST_CONFIG.get(doctype, {})
 
-def get_valid_request_fields(doctype, employee, request_date, status, docstatus):
+
+def get_valid_request_fields(
+    doctype, employee, request_date, status, docstatus, from_date=None, to_date=None
+):
     config = get_request_config(doctype)
-    
-    # Base fields
-    base_fields = config.get("custom_base_fields", ["name", "employee", "employee_name"])[:]
-    
-    # Extra fields
+
+    base_fields = config.get(
+        "custom_base_fields", ["name", "employee", "employee_name"]
+    )[:]
+
     base_fields.extend(config.get("extra_fields", []))
-    
-    # Standard request_date if not handled by custom config or excluded
-    if "date_filter_field" not in config and "request_date" not in [f.split(" as ")[-1] for f in base_fields]:
-         # logic matches: if doctype != "Employee Expense Request" -> append request_date
-         # Expense request has explicit config above.
-         # The original code added "request_date" for everyone except expense request and those handling it manually (Loan/Leave)
-         # Loan/Leave added "posting_date as request_date".
-         # So we need to ensure we don't double add.
-         pass 
+
+    if "date_filter_field" not in config and "request_date" not in [
+        f.split(" as ")[-1] for f in base_fields
+    ]:
+        # logic matches: if doctype != "Employee Expense Request" -> append request_date
+        # Expense request has explicit config above.
+        # The original code added "request_date" for everyone except expense request and those handling it manually (Loan/Leave)
+        # Loan/Leave added "posting_date as request_date".
+        # So we need to ensure we don't double add.
+        pass
 
     # Simpler logic based on original analysis:
     # Loan/Leave: added posting_date as request_date.
     # Employee Expense: added creation as from_date, NO request_date.
     # All others: added request_date.
-    
+
     # In my config:
     # Loan/Leave have "posting_date as request_date" in extra_fields.
     # Employee Expense has no request_date in extra_fields.
     # Others: need "request_date".
-    
-    has_request_date = any("request_date" in f for f in base_fields)
-    if not has_request_date and doctype != "Employee Expense Request":
-         base_fields.append("request_date")
 
-    # Filters
+    has_request_date = any("request_date" in f for f in base_fields)
+    date_field = config.get("date_filter_field", "request_date")
+
+    if not has_request_date:
+        if frappe.get_meta(doctype).has_field("request_date"):
+            base_fields.append("request_date")
+        else:
+            base_fields.append("creation as request_date")
+            if date_field == "request_date":
+                date_field = "creation"
+
     filters = config.get("filters", {}).copy()
-    
+
     if docstatus and isinstance(docstatus, str) and docstatus in DOC_STATUS:
         filters["docstatus"] = DOC_STATUS[docstatus]
-        
+
     if employee and isinstance(employee, str):
         employee_field = config.get("employee_filter_field", "employee")
         filters[employee_field] = employee
 
-    if request_date and isinstance(request_date, str):
-        date_field = config.get("date_filter_field", "request_date")
+    if from_date or to_date:
         if date_field:
-             filters[date_field] = request_date
+            if from_date and to_date:
+                filters[date_field] = [
+                    "between",
+                    [f"{from_date} 00:00:00", f"{to_date} 23:59:59"],
+                ]
+            elif from_date:
+                filters[date_field] = [">=", f"{from_date} 00:00:00"]
+            elif to_date:
+                filters[date_field] = ["<=", f"{to_date} 23:59:59"]
+    elif request_date and isinstance(request_date, str):
+        if date_field:
+            if len(request_date) == 10:
+                filters[date_field] = [
+                    "between",
+                    [f"{request_date} 00:00:00", f"{request_date} 23:59:59"],
+                ]
+            else:
+                filters[date_field] = request_date
 
-    # Status Field
     status_field = (
         frappe.db.get_value(
             "Workflow",
@@ -163,10 +212,10 @@ def get_valid_request_fields(doctype, employee, request_date, status, docstatus)
     base_fields.append(f"{status_field} as status")
     base_fields.append("docstatus")
     base_fields.extend(["modified", "creation"])
-    
+
     if status and isinstance(status, str):
         filters[status_field] = status
-        
+
     return base_fields, filters
 
 
@@ -179,7 +228,7 @@ def custom_document_list(doctype, fields, filters):
     page = cint(args.get("limit_start", args.get("page", 1)))
     if page < 1:
         page = 1
-    
+
     limit_start = (page - 1) * limit_page_length
 
     try:
@@ -190,24 +239,28 @@ def custom_document_list(doctype, fields, filters):
             limit_start=limit_start,
             limit_page_length=limit_page_length,
             order_by=None,
-            ignore_permissions=False
+            ignore_permissions=False,
         )
-        
+
         # Count is expensive, maybe optimize? Keeping original logic for now.
         # Original used get_list limit=999999999 which is very bad for perf.
         # But we must preserve behavior unless asked to fix perf.
         # Actually, `frappe.db.count` is better.
-        # count = frappe.db.count(doctype, filters=filters) 
+        # count = frappe.db.count(doctype, filters=filters)
         # But original logic used permissions-aware get_list len.
         count = len(frappe.get_list(doctype, filters=filters, limit_page_length=999999))
 
-        return True, 200, {
-            "data_list": data,
-            "page": page,
-            "perPage": limit_page_length,
-            "totalCount": count,
-            "pageCount": len(data),
-        }
+        return (
+            True,
+            200,
+            {
+                "data_list": data,
+                "page": page,
+                "perPage": limit_page_length,
+                "totalCount": count,
+                "pageCount": len(data),
+            },
+        )
     except Exception as e:
         return False, getattr(e, "http_status_code", 500), str(e)
 
@@ -216,106 +269,162 @@ class UnifiedRequestResource(BaseResource):
     doctype = "Employee Request"
     url_prefix = ""
     resource_name = "employee-requests"
-    
+    add_perms = True
+    add_wf = True
+
     @classmethod
     def list(cls):
         @safe_api
         def _list():
             args = frappe.request.args
-            
-            # 1. Parse Parameters
-            doctypes = [args.get("doctype")] if args.get("doctype") in REQUEST_CONFIG else list(REQUEST_CONFIG.keys())
-            
+
+            doctypes = (
+                [args.get("doctype")]
+                if args.get("doctype") in REQUEST_CONFIG
+                else list(REQUEST_CONFIG.keys())
+            )
+
             employee = args.get("employee")
-            request_date = args.get("request_date")
+            request_date = args.get("request_date") or args.get("date")
+            from_date = args.get("from_date")
+            to_date = args.get("to_date")
             status = args.get("status")
             docstatus = args.get("docstatus")
             limit = cint(args.get("limit_page_length", args.get("limit", 20)))
-            
+
             response_data = frappe._dict()
             all_data = []
             errors = []
             total_count = 0
             page_count = 0
             has_success = False
-            
-            # 2. Fetch Data
+
             for doctype in doctypes:
-                fields, filters = get_valid_request_fields(doctype, employee, request_date, status, docstatus)
-                
+                fields, filters = get_valid_request_fields(
+                    doctype,
+                    employee,
+                    request_date,
+                    status,
+                    docstatus,
+                    from_date,
+                    to_date,
+                )
+
                 is_valid, code, result = custom_document_list(doctype, fields, filters)
-                
+
                 if not is_valid:
-                    errors.append({"http_status_code": code, "error": f"failed to read {doctype}", "message": result})
+                    errors.append(
+                        {
+                            "http_status_code": code,
+                            "error": f"failed to read {doctype}",
+                            "message": result,
+                        }
+                    )
                     continue
 
                 has_success = True
-                
-                # Merge logic
+
                 config = get_request_config(doctype)
                 rows = result.get("data_list", [])
-                
-                # Post-process rows
+
                 for row in rows:
                     row["doctype"] = doctype
+
+                    for date_field in ["from_date", "to_date", "request_date"]:
+                        if row.get(date_field):
+                            try:
+                                row[date_field] = frappe.utils.getdate(row[date_field])
+                            except Exception:
+                                pass
+
                     if config.get("null_dates"):
                         row.update({"from_date": None, "to_date": None})
                     if config.get("null_attachment"):
-                         row["attachment"] = None
-                
+                        row["attachment"] = None
+
                 all_data.extend(rows)
                 total_count += cint(result.get("totalCount"))
                 page_count += cint(result.get("pageCount"))
-                
-                # Update response metadata (last successful one wins - matches original behavior roughly)
+
                 response_data.update(result)
 
             if not has_success and errors:
                 frappe.throw(f"Failed to Read Employee Requests: {errors}")
 
-            # 3. Sort
             order_by = args.get("order_by", "modified")
-            if order_by not in ["name", "employee", "employee_name", "status", "docstatus", "request_date", "modified", "creation", "doctype"]:
+            if order_by == "date":
+                order_by = "request_date"
+
+            if order_by not in [
+                "name",
+                "employee",
+                "employee_name",
+                "status",
+                "docstatus",
+                "request_date",
+                "modified",
+                "creation",
+                "doctype",
+            ]:
                 order_by = "modified"
-            
-            reverse = (args.get("order", "").upper() == "DESC")
-            
+
+            reverse = args.get("order", "").upper() == "DESC"
+
             try:
-                all_data.sort(key=lambda x: x.get(order_by) or "", reverse=reverse)
+                from frappe.utils import cstr
+
+                all_data.sort(
+                    key=lambda x: cstr(x.get(order_by) or ""), reverse=reverse
+                )
             except Exception:
-                pass # Fallback if sort fails
-                
-            # 4. Paginate/Slice
-            # Note: The original logic fetched 'limit' items from EACH doctype, then combined them, THEN sliced to 'limit'. 
-            # This is technically incorrect pagination for aggregated data (page 2 will show mixed data weirdly), 
-            # but I must strictly maintain original behavior.
+                pass
             final_data = all_data[:limit]
-            
-            response_data.update({
-                "data_list": final_data,
-                "perPage": limit,
-                "totalCount": total_count,
-                "pageCount": page_count # This is sum of page counts from sub-queries? Original was same.
-            })
+
+            from common.api.utils.response_data import format_response_data
+
+            formatted_data = []
+            for row in final_data:
+                dt = row.get("doctype")
+                # Use format_response_data to add perms, wf, and format fields
+                formatted_row = format_response_data(
+                    dt,
+                    [row],
+                    add_perms=cls.add_perms,
+                    add_wf=cls.add_wf,
+                )[0]
+                formatted_data.append(formatted_row)
+
+            response_data.update(
+                {
+                    "data_list": formatted_data,
+                    "perPage": limit,
+                    "totalCount": total_count,
+                    "pageCount": page_count,
+                }
+            )
 
             if errors:
                 response_data["errors"] = errors
                 return response_data, "Employee Requests Fetched with Errors"
-            
+
             return response_data, "Employee Requests Fetched"
 
         _list.__name__ = "employee_requests_list"
         return _list
 
+
 class UnifiedRequestStatusResource(BaseResource):
     doctype = "Workflow State"
     url_prefix = ""
     resource_name = "employee-requests-status"
-    
+
     @classmethod
     def list(cls):
         @safe_api
         def _list():
-            return base_document_list("Workflow State", ["name", "workflow_state_name", "style"])
+            return base_document_list(
+                "Workflow State", ["name", "workflow_state_name", "style"]
+            )
+
         _list.__name__ = "employee_requests_state_list"
         return _list

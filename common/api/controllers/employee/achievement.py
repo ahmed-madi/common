@@ -1,8 +1,9 @@
 from common.api.utils.resource import BaseResource
 
+
 class EmployeeAchievementResource(BaseResource):
     doctype = "Employee Achievement"
-    url_prefix = "/hr-employee"
+    url_prefix = "/employee"
     resource_name = "achievement"
     fields = [
         "name",
