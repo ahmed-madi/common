@@ -5,6 +5,7 @@ from common.api.utils.endpoints import document_list
 from common.api.utils.decorators import safe_api
 from werkzeug.routing import Rule
 
+
 class NotificationResource(BaseResource):
     doctype = "Notification Log"
     url_prefix = "/user"
@@ -29,9 +30,7 @@ class NotificationResource(BaseResource):
     def list(cls):
         @safe_api
         def _list():
-            user_filters = []
-            if frappe.session.user != "Administrator":
-                user_filters.append(["for_user", "=", frappe.session.user])
+            user_filters = [["for_user", "=", frappe.session.user]]
             return document_list(
                 cls.doctype,
                 cls.fields,
@@ -40,6 +39,7 @@ class NotificationResource(BaseResource):
                 add_perms=False,
                 add_wf=False,
             )
+
         _list.__name__ = "notification_list"
         return _list
 
@@ -54,6 +54,7 @@ class NotificationResource(BaseResource):
                     "Notification Log", str(docname), "read", 1, update_modified=False
                 )
             return {}, _("Marked as read")
+
         _action.__name__ = "mark_as_read"
         return _action
 
@@ -65,9 +66,13 @@ class NotificationResource(BaseResource):
             # handle_call("frappe.desk.doctype.notification_log.notification_log.mark_all_as_read")
             # We can can call it directly or replicate logic.
             # Calling module method directly is safer if available.
-            from frappe.desk.doctype.notification_log.notification_log import mark_all_as_read
+            from frappe.desk.doctype.notification_log.notification_log import (
+                mark_all_as_read,
+            )
+
             mark_all_as_read()
             return {}, _("All Notification marked as Read")
+
         _action.__name__ = "mark_all_notifications_as_read"
         return _action
 
