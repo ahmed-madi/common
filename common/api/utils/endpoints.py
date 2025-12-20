@@ -17,6 +17,7 @@ from common.api.utils.response import (
 )
 from common.utils.hr import get_last_checkin_status
 
+
 def load_extra_list_data(data, doctype):
     if not isinstance(data, list):
         return
@@ -53,6 +54,7 @@ def get_doc_list(
     user_filters=[],
     force_user_filters=False,
     append_user_filters=False,
+    ignore_perms=False,
     add_perms=True,
     add_wf=True,
 ):
@@ -90,10 +92,15 @@ def get_doc_list(
     )
     # Use efficient count query instead of fetching all records
     count = frappe.db.count(doctype, filters=filters)
-    data = frappe.call(frappe.client.get_list, doctype, **args)
+    if ignore_perms:
+        data = frappe.call(frappe.get_all, doctype, **args)
+    else:
+        data = frappe.call(frappe.client.get_list, doctype, **args)
 
     # load perms and workflows, translate link and select field
-    data = format_response_data(doctype, data, add_perms=add_perms, wf=wf, add_wf=add_wf)
+    data = format_response_data(
+        doctype, data, add_perms=add_perms, wf=wf, add_wf=add_wf
+    )
     response_data = frappe._dict()
     response_data.update(
         {
@@ -118,6 +125,7 @@ def document_list(
     user_filters=[],
     force_user_filters=False,
     append_user_filters=False,
+    ignore_perms=False,
     add_perms=True,
     add_wf=True,
 ):
@@ -128,6 +136,7 @@ def document_list(
             user_filters=user_filters,
             force_user_filters=force_user_filters,
             append_user_filters=append_user_filters,
+            ignore_perms=ignore_perms,
             add_perms=add_perms,
             add_wf=add_wf,
         )

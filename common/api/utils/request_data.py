@@ -29,6 +29,7 @@ DOCTYPE_ALLOWED_FILTERS = {
     "Department": ["name", "department_name", "is_group"],
     "Employee": [
         "name",
+        "status",
         "employee_name",
         "department",
         "designation",
