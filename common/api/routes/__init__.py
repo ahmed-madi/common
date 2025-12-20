@@ -30,6 +30,7 @@ from common.api.routes.helpdesk.employee_feedback import employee_feedback_rules
 from common.api.routes.helpdesk.employee_inquiry import request_to_management_rules
 from common.api.routes.helpdesk.ticket_comment import ticket_comment_rules
 from common.api.routes.helpdesk.ticket import ticket_rules
+from common.api.routes.helpdesk.department_contact import department_contact_rules
 
 # HR Requests
 from common.api.routes.hr_requests import employee_requests_rules
@@ -103,6 +104,7 @@ url_rules += employee_feedback_rules
 url_rules += request_to_management_rules
 url_rules += ticket_comment_rules
 url_rules += ticket_rules
+url_rules += department_contact_rules
 
 # HR Requests
 url_rules += employee_requests_rules

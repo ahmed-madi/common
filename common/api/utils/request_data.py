@@ -25,6 +25,7 @@ FILTER_OPERATORS = {
 
 DOCTYPE_ALLOWED_FILTERS = {
     "HR Issue Type": ["name"],
+    "Department Contact": ["name", "request_date", "department", "from_employee"],
     "FAQ": ["name", "question", "answer"],
     "HR Issue Priority": ["name"],
     "Clearance Letter Purpose": ["name", "purpose"],
@@ -274,6 +275,7 @@ DOCTYPE_ALLOWED_CUSTOM_FILTERS = {
     "Employee Achievement": ["f_date", "t_date"],
     "Employee Checkin": ["f_date", "t_date"],
     "Employee Certification": ["f_date", "t_date"],
+    "Department Contact": ["f_date", "t_date"],
 }
 DATA_FIELDS = [
     "Autocomplete",
