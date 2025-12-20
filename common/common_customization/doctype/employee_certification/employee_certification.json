@@ -67,7 +67,6 @@
    "label": "Employee Name"
   }
  ],
- "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
  "modified": "2025-12-20 14:48:38.659253",
@@ -138,7 +137,6 @@
    "write": 1
   }
  ],
- "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

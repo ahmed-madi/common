@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"ty30KbQYaK\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Apply for Leaves</span>\",\"col\":12}},{\"id\":\"qeEiV1s59L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Type\",\"col\":4}},{\"id\":\"nmDz0Z6vh_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Apply for Leave\",\"col\":4}},{\"id\":\"VbSYzUq6MN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Balance (Report)\",\"col\":4}},{\"id\":\"veDZfuPKAL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cancel Leave\",\"col\":4}},{\"id\":\"rW1sU0YKU_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Suspension\",\"col\":4}},{\"id\":\"8ckhzF8DAq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Early Leave\",\"col\":4}},{\"id\":\"cUhSuXlkVR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work From Home\",\"col\":4}},{\"id\":\"YE3vZ_TFcy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Compensatory Leave\",\"col\":4}},{\"id\":\"fomMGDWa7M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Outside Office\",\"col\":4}},{\"id\":\"smzgSI-RSk\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7pPPc1KjKe\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Leave Applications\",\"col\":4}},{\"id\":\"BUmVKefqLe\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Compensatory Leave\",\"col\":4}},{\"id\":\"3j7JnklWuF\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Remote Work Request\",\"col\":4}},{\"id\":\"wTOHsed_gn\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"m8OJCkh7S9\",\"type\":\"card\",\"data\":{\"card_name\":\"Shifts\",\"col\":3}},{\"id\":\"xZxTEQ6ov7\",\"type\":\"card\",\"data\":{\"card_name\":\"Leaves\",\"col\":3}},{\"id\":\"7m2p1EhTGO\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave Policy\",\"col\":3}},{\"id\":\"047YcCLqxs\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave Control Panel\",\"col\":3}}]",
+ "content": "[{\"id\":\"ty30KbQYaK\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Apply for Leaves</span>\",\"col\":12}},{\"id\":\"qeEiV1s59L\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Type\",\"col\":4}},{\"id\":\"nmDz0Z6vh_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Apply for Leave\",\"col\":4}},{\"id\":\"VbSYzUq6MN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Balance (Report)\",\"col\":4}},{\"id\":\"veDZfuPKAL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cancel Leave\",\"col\":4}},{\"id\":\"rW1sU0YKU_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Leave Suspension\",\"col\":4}},{\"id\":\"8ckhzF8DAq\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Early Leave\",\"col\":4}},{\"id\":\"YE3vZ_TFcy\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Compensatory Leave\",\"col\":4}},{\"id\":\"smzgSI-RSk\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"7pPPc1KjKe\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Leave Applications\",\"col\":4}},{\"id\":\"BUmVKefqLe\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Compensatory Leave\",\"col\":4}},{\"id\":\"3j7JnklWuF\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Remote Work Request\",\"col\":4}},{\"id\":\"wTOHsed_gn\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"m8OJCkh7S9\",\"type\":\"card\",\"data\":{\"card_name\":\"Shifts\",\"col\":3}},{\"id\":\"xZxTEQ6ov7\",\"type\":\"card\",\"data\":{\"card_name\":\"Leaves\",\"col\":3}},{\"id\":\"7m2p1EhTGO\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave Policy\",\"col\":3}},{\"id\":\"047YcCLqxs\",\"type\":\"card\",\"data\":{\"card_name\":\"Leave Control Panel\",\"col\":3}}]",
  "creation": "2025-04-13 13:42:06.095767",
  "custom_blocks": [],
  "docstatus": 0,
@@ -170,7 +170,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-09-07 14:35:50.712093",
+ "modified": "2025-11-13 11:36:13.672015",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Leaves",
@@ -219,7 +219,6 @@
    "doc_view": "List",
    "label": "Leave Balance (Report)",
    "link_to": "Employee Leave Balance",
-   "report_ref_doctype": "Employee",
    "type": "Report"
   },
   {
@@ -235,22 +234,6 @@
    "doc_view": "New",
    "label": "Compensatory Leave",
    "link_to": "Compensatory Leave Request",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "Work Outside Office",
-   "link_to": "Work Outside Office Request",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "Work From Home",
-   "link_to": "Work From Home Request",
    "stats_filter": "[]",
    "type": "DocType"
   },

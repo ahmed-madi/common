@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"AjDup3eW4R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Self Service</span>\",\"col\":12}},{\"id\":\"aFkVkb-Qud\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fiscal Year\",\"col\":3}},{\"id\":\"Sb6Wgy1sRY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Language\",\"col\":3}},{\"id\":\"eWX4dBrTeJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Approved Clubs\",\"col\":3}},{\"id\":\"M6cCEaYTxA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fixation Reason\",\"col\":3}},{\"id\":\"4cwdjJ5SxZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loan Product\",\"col\":3}},{\"id\":\"ifr1SELqqG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"System Access Level\",\"col\":3}},{\"id\":\"dn_EtC5qGU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Clearance Letter Purpose\",\"col\":3}},{\"id\":\"KcULScL5HW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ks7QsRpdfV\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Requests\",\"col\":4}},{\"id\":\"SmWVNlCQgp\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Requests\",\"col\":4}},{\"id\":\"0tY3V8ML3r\",\"type\":\"card\",\"data\":{\"card_name\":\"Employee Requests\",\"col\":4}}]",
+ "content": "[{\"id\":\"AjDup3eW4R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Self Service</span>\",\"col\":12}},{\"id\":\"aFkVkb-Qud\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fiscal Year\",\"col\":3}},{\"id\":\"Sb6Wgy1sRY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Language\",\"col\":3}},{\"id\":\"M6cCEaYTxA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fixation Reason\",\"col\":3}},{\"id\":\"4cwdjJ5SxZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loan Product\",\"col\":3}},{\"id\":\"ifr1SELqqG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"System Access Level\",\"col\":3}},{\"id\":\"dn_EtC5qGU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Clearance Letter Purpose\",\"col\":3}},{\"id\":\"KcULScL5HW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ks7QsRpdfV\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Requests\",\"col\":4}},{\"id\":\"SmWVNlCQgp\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Requests\",\"col\":4}},{\"id\":\"0tY3V8ML3r\",\"type\":\"card\",\"data\":{\"card_name\":\"Employee Requests\",\"col\":4}}]",
  "creation": "2025-04-13 13:56:45.003059",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,35 +13,6 @@
  "is_hidden": 0,
  "label": "Self Service",
  "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Financial Requests",
-   "link_count": 2,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Loan Application",
-   "link_count": 0,
-   "link_to": "Loan Application",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Education Allowance Request",
-   "link_count": 0,
-   "link_to": "Education Allowance Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -114,8 +85,27 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Financial Requests",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Loan Application",
+   "link_count": 0,
+   "link_to": "Loan Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Employee Requests",
-   "link_count": 6,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -133,29 +123,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Change IBAN Request",
-   "link_count": 0,
-   "link_to": "Change IBAN Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "System Access Request",
    "link_count": 0,
    "link_to": "System Access Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Club Request",
-   "link_count": 0,
-   "link_to": "Club Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -181,7 +151,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-07-05 10:00:43.811139",
+ "modified": "2025-11-13 11:35:34.597600",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Self Service",
@@ -230,14 +200,6 @@
    "doc_view": "List",
    "label": "Language",
    "link_to": "Language",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Approved Clubs",
-   "link_to": "Club",
    "stats_filter": "[]",
    "type": "DocType"
   },
