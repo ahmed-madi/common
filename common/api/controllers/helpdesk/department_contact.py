@@ -14,6 +14,8 @@ class DepartmentContactResource(BaseResource):
         "from_employee",
         "employee_name",
         "employee_department",
+        "replay_to",
+        "is_replay",
     ]
     add_perms = False
     add_wf = False
