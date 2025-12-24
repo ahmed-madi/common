@@ -15,6 +15,8 @@
   "column_break_utyt",
   "request_date",
   "department",
+  "is_reply",
+  "reply_to",
   "content_section",
   "subject",
   "message"
@@ -73,7 +75,8 @@
    "in_standard_filter": 1,
    "label": "From Employee",
    "options": "Employee",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "department",
@@ -95,12 +98,26 @@
    "fieldname": "employee_email",
    "fieldtype": "Read Only",
    "label": "Employee Email"
+  },
+  {
+   "depends_on": "is_reply",
+   "fieldname": "reply_to",
+   "fieldtype": "Link",
+   "label": "Reply to",
+   "mandatory_depends_on": "is_reply",
+   "options": "Department Contact"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_reply",
+   "fieldtype": "Check",
+   "label": "Is Reply"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-20 15:56:16.134358",
+ "modified": "2025-12-24 12:32:19.788395",
  "modified_by": "Administrator",
  "module": "HR Support",
  "name": "Department Contact",
