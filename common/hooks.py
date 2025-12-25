@@ -139,9 +139,11 @@ override_doctype_class = {
     "Leave Type": "common.overrides.leave_type.LeaveType",
     "Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",
     "Loan Application": "common.overrides.loan_application.LoanApplication",
-    "Notification": "common.overrides.notification.CustomNotification",
-    "Notification Log": "common.overrides.notification.CustomNotificationLog",
+    "Notification": "common.overrides.notification.Notification",
+    "Notification Log": "common.overrides.notification.NotificationLog",
     "Employee Checkin": "common.overrides.employee_checkin.EmployeeCheckin",
+    "Reminder": "common.overrides.reminder.Reminder",
+    "Submission Queue": "common.overrides.submission_queue.SubmissionQueue",
 }
 
 # Document Events
@@ -185,9 +187,9 @@ override_doctype_class = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "common.event.get_events"
-# }
+override_whitelisted_methods = {
+    "frappe.core.doctype.user.user.impersonate": "common.overrides.whitelisted.user.impersonate"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

@@ -8,9 +8,11 @@ from frappe.desk.doctype.notification_log.notification_log import (
 )
 
 from frappe.email.doctype.notification.notification import (
-    Notification,
+    Notification as BaseNotification,
 )
-from frappe.desk.doctype.notification_log.notification_log import NotificationLog
+from frappe.desk.doctype.notification_log.notification_log import (
+    NotificationLog as BaseNotificationLog,
+)
 
 import firebase_admin
 from firebase_admin import credentials, messaging
@@ -25,9 +27,10 @@ def get_reference_name(doc):
     return doc.parent if doc.meta.istable else doc.name
 
 
-class CustomNotification(Notification):
+class Notification(BaseNotification):
     def create_system_notification(self, doc, context):
         subject = self.subject
+        base_subject = self.subject
         if "{" in subject:
             subject = frappe.render_template(self.subject, context)
 
@@ -49,11 +52,14 @@ class CustomNotification(Notification):
             "email_content": frappe.render_template(self.message, context),
             "attached_file": attachments and json.dumps(attachments[0]),
             "push_notification": cint(self.send_push_notification),
+            "base_subject": base_subject,
+            "base_message": self.message,
+            "base_variables": f"{context}",
         }
         enqueue_create_notification(users, notification_doc)
 
 
-class CustomNotificationLog(NotificationLog):
+class NotificationLog(BaseNotificationLog):
     def after_insert(self):
         super().after_insert()
         file_path = frappe.db.get_single_value("FCM Settings", "service_account_file")
