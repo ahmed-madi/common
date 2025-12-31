@@ -1,3 +1,5 @@
+import json
+
 import frappe
 from frappe import _
 from frappe.utils import get_system_timezone
@@ -35,6 +37,23 @@ def format_response_data(
     for row in data:
         if doctype == "Employee":
             row.update(add_check_data(row["name"]))
+        if doctype == "Notification Log":
+            base_subject = row.get("base_subject")
+            base_message = row.get("base_message")
+            context = {}
+            try:
+                context = json.loads(row.get("base_variables", "{}"))
+            except Exception:
+                context = {}
+            base_subject = frappe.render_template(_(base_subject), context)
+            base_message = frappe.render_template(_(base_message), context)
+            row.update(
+                {
+                    "base_subject": base_subject,
+                    "base_message": base_message,
+                    "base_variables": context,
+                }
+            )
         workflow = {
             "state_field": None,
             "actions": [],

@@ -2,7 +2,7 @@ import re
 import json
 
 import frappe
-from frappe.utils import cint, get_site_path
+from frappe.utils import cint, get_site_path, strip_html
 from frappe.desk.doctype.notification_log.notification_log import (
     enqueue_create_notification,
 )
@@ -52,14 +52,18 @@ class Notification(BaseNotification):
             "email_content": frappe.render_template(self.message, context),
             "attached_file": attachments and json.dumps(attachments[0]),
             "push_notification": cint(self.send_push_notification),
-            "base_subject": base_subject,
-            "base_message": self.message,
+            "base_subject": strip_html(base_subject),
+            "base_message": strip_html(self.message),
             "base_variables": f"{context}",
         }
         enqueue_create_notification(users, notification_doc)
 
 
 class NotificationLog(BaseNotificationLog):
+    def validate(self):
+        self.base_subject = strip_html(self.base_subject or "")
+        self.base_message = strip_html(self.base_message or "")
+
     def after_insert(self):
         super().after_insert()
         file_path = frappe.db.get_single_value("FCM Settings", "service_account_file")
