@@ -105,11 +105,6 @@ def get_doc_list(
     response_data.update(
         {
             "data_list": data,
-            "doctype": {
-                "label": _(doctype),
-                "value": doctype,
-            },
-            "meta": "",
             "page": limit_start + 1,
             "perPage": limit_page_length,
             "totalCount": count,

@@ -219,17 +219,23 @@ def get_valid_request_fields(
     return base_fields, filters
 
 
-def custom_document_list(doctype, fields, filters):
+def custom_document_list(
+    doctype, fields, filters, limit_start=None, limit_page_length=None
+):
     """
-    Fetch documents with pagination independently of arguments
+    Fetch documents with pagination
     """
     args = frappe.request.args
-    limit_page_length = cint(args.get("limit_page_length", args.get("limit", 20)))
-    page = cint(args.get("limit_start", args.get("page", 1)))
-    if page < 1:
-        page = 1
+    if limit_page_length is None:
+        limit_page_length = cint(args.get("limit_page_length", args.get("limit", 20)))
 
-    limit_start = (page - 1) * limit_page_length
+    if limit_start is None:
+        page = cint(args.get("limit_start", args.get("page", 1)))
+        if page < 1:
+            page = 1
+        limit_start = (page - 1) * limit_page_length
+    else:
+        page = (limit_start // limit_page_length) + 1
 
     try:
         data = frappe.get_list(
@@ -290,13 +296,16 @@ class UnifiedRequestResource(BaseResource):
             to_date = args.get("to_date")
             status = args.get("status")
             docstatus = args.get("docstatus")
+            page = cint(args.get("limit_start", args.get("page", 1)))
+            if page < 1:
+                page = 1
             limit = cint(args.get("limit_page_length", args.get("limit", 20)))
+            limit_start = (page - 1) * limit
 
             response_data = frappe._dict()
             all_data = []
             errors = []
             total_count = 0
-            page_count = 0
             has_success = False
 
             for doctype in doctypes:
@@ -310,7 +319,9 @@ class UnifiedRequestResource(BaseResource):
                     to_date,
                 )
 
-                is_valid, code, result = custom_document_list(doctype, fields, filters)
+                is_valid, code, result = custom_document_list(
+                    doctype, fields, filters, limit_start=0, limit_page_length=999999
+                )
 
                 if not is_valid:
                     errors.append(
@@ -344,7 +355,6 @@ class UnifiedRequestResource(BaseResource):
 
                 all_data.extend(rows)
                 total_count += cint(result.get("totalCount"))
-                page_count += cint(result.get("pageCount"))
 
                 response_data.update(result)
 
@@ -378,7 +388,8 @@ class UnifiedRequestResource(BaseResource):
                 )
             except Exception:
                 pass
-            final_data = all_data[:limit]
+
+            final_data = all_data[limit_start : limit_start + limit]
 
             from common.api.utils.response_data import format_response_data
 
@@ -397,9 +408,10 @@ class UnifiedRequestResource(BaseResource):
             response_data.update(
                 {
                     "data_list": formatted_data,
+                    "page": page,
                     "perPage": limit,
                     "totalCount": total_count,
-                    "pageCount": page_count,
+                    "pageCount": len(formatted_data),
                 }
             )
 

@@ -1,4 +1,3 @@
-
 import frappe
 from frappe import _
 from frappe.utils import get_system_timezone
@@ -9,6 +8,7 @@ from common.utils.hr import get_last_checkin_status
 EXTRA_DATA_MAPPER = {
     # DOCTYPE : [["cdt", "cdt_field"]]
 }
+
 
 def add_check_data(name):
     extra_data = {}
@@ -24,8 +24,11 @@ def format_response_data(
     links, selects, start_time = get_field_maps(meta)
     title_field = meta.title_field
     roles = frappe.get_roles()
-    
-    user_tz = frappe.db.get_value("User", frappe.session.user, "time_zone") or get_system_timezone()
+
+    user_tz = (
+        frappe.db.get_value("User", frappe.session.user, "time_zone")
+        or get_system_timezone()
+    )
     system_timezone = get_system_timezone()
 
     result = []
@@ -36,6 +39,14 @@ def format_response_data(
             "state_field": None,
             "actions": [],
         }
+        row.update(
+            {
+                "doctype": {
+                    "label": _(doctype),
+                    "value": doctype,
+                },
+            }
+        )
         r1 = {}
         meta_data = {"title_field": title_field}
         for k in row:
@@ -73,17 +84,22 @@ def format_response_data(
                         # Datetime field
                         value = format_user_time(value, user_tz, system_timezone)
                     except Exception:
-                        pass # Keep original if conversion fails
+                        pass  # Keep original if conversion fails
             r1.update(
                 {
                     f"{k}": value,
                 }
             )
         if not add_perms and not add_wf:
-            meta_data.update({"permissions": {}, "workflow": {
-            "state_field": None,
-            "actions": [],
-        }})
+            meta_data.update(
+                {
+                    "permissions": {},
+                    "workflow": {
+                        "state_field": None,
+                        "actions": [],
+                    },
+                }
+            )
             r1.update({"meta_data": meta_data})
             result.append(r1)
             continue
@@ -94,18 +110,18 @@ def format_response_data(
         if add_perms:
             doc = frappe.get_doc(doctype, row["name"])
             permissions = frappe.permissions.get_doc_permissions(doc)
-            meta_data.update(
-                {"permissions": permissions or {}}
-            )
+            meta_data.update({"permissions": permissions or {}})
         # Handle workflow actions using WorkflowActionManager
         if add_wf or wf:
             if doc is None:
                 doc = frappe.get_doc(doctype, row["name"])
             if permissions is None:
                 permissions = frappe.permissions.get_doc_permissions(doc)
-            
+
             workflow_manager = WorkflowActionManager()
-            workflow = workflow_manager.get_workflow_data(doc, meta, wf, permissions, roles)
+            workflow = workflow_manager.get_workflow_data(
+                doc, meta, wf, permissions, roles
+            )
         else:
             workflow = {
                 "state_field": None,
@@ -122,7 +138,7 @@ def get_field_maps(meta):
     links = {}
     selects = {}
     datetimes = {}
-    
+
     for l_field in meta.get_link_fields():
         links.update(
             {
@@ -143,7 +159,7 @@ def get_field_maps(meta):
                 },
             }
         )
-    
+
     for field in meta.fields:
         if field.fieldtype in ["Datetime"]:
             datetimes[field.fieldname] = field.fieldtype

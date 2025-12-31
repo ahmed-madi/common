@@ -306,10 +306,11 @@
    "search_index": 1
   }
  ],
+ "grid_page_length": 50,
  "icon": "fa fa-ticket",
  "is_submittable": 1,
  "links": [],
- "modified": "2025-06-26 09:44:16.433094",
+ "modified": "2025-12-31 15:29:56.324848",
  "modified_by": "Administrator",
  "module": "HR Support",
  "name": "HR Ticket",
@@ -356,7 +357,6 @@
    "delete": 1,
    "email": 1,
    "export": 1,
-   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
@@ -365,19 +365,41 @@
    "write": 1
   },
   {
+   "create": 1,
+   "delete": 1,
    "email": 1,
    "export": 1,
-   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee Self Service",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
    "permlevel": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Employee",
    "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee Self Service",
+   "share": 1
   }
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "search_fields": "status,employee,employee_name,subject,raised_by",
  "sender_field": "raised_by",
  "sort_field": "modified",
