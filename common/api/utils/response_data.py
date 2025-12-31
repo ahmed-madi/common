@@ -38,8 +38,10 @@ def format_response_data(
         if doctype == "Employee":
             row.update(add_check_data(row["name"]))
         if doctype == "Notification Log":
-            base_subject = row.get("base_subject", "") or ""
-            base_message = row.get("base_message", "") or ""
+            base_subject = row.get("base_subject", "") or row.get("subject", "") or ""
+            base_message = (
+                row.get("base_message", "") or row.get("email_content", "") or ""
+            )
             context = {}
             try:
                 context = json.loads(row.get("base_variables", "{}"))
@@ -49,13 +51,16 @@ def format_response_data(
             base_message = frappe.render_template(_(base_message), context)
             row.update(
                 {
-                    "email_content": strip_html(row.get("email_content", "") or ""),
-                    "subject": strip_html(row.get("subject", "") or ""),
-                    "base_subject": base_subject,
-                    "base_message": base_message,
-                    "base_variables": context,
+                    "email_content": strip_html(base_message),
+                    "subject": strip_html(base_subject),
                 }
             )
+            if hasattr(row, "base_variables"):
+                del row["base_variables"]
+            if hasattr(row, "base_message"):
+                del row["base_message"]
+            if hasattr(row, "base_subject"):
+                del row["base_subject"]
         workflow = {
             "state_field": None,
             "actions": [],
