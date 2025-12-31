@@ -2,7 +2,7 @@ import json
 
 import frappe
 from frappe import _
-from frappe.utils import get_system_timezone
+from frappe.utils import get_system_timezone, strip_html
 from common.api.utils.workflow_handlers import WorkflowActionManager
 from common.utils import format_user_time
 from common.utils.hr import get_last_checkin_status
@@ -38,8 +38,10 @@ def format_response_data(
         if doctype == "Employee":
             row.update(add_check_data(row["name"]))
         if doctype == "Notification Log":
-            base_subject = row.get("base_subject")
-            base_message = row.get("base_message")
+            base_subject = row.get("base_subject", "") or row.get("subject", "") or ""
+            base_message = (
+                row.get("base_message", "") or row.get("email_content", "") or ""
+            )
             context = {}
             try:
                 context = json.loads(row.get("base_variables", "{}"))
@@ -49,11 +51,16 @@ def format_response_data(
             base_message = frappe.render_template(_(base_message), context)
             row.update(
                 {
-                    "base_subject": base_subject,
-                    "base_message": base_message,
-                    "base_variables": context,
+                    "email_content": strip_html(base_message),
+                    "subject": strip_html(base_subject),
                 }
             )
+            if hasattr(row, "base_variables"):
+                del row["base_variables"]
+            if hasattr(row, "base_message"):
+                del row["base_message"]
+            if hasattr(row, "base_subject"):
+                del row["base_subject"]
         workflow = {
             "state_field": None,
             "actions": [],
@@ -74,7 +81,7 @@ def format_response_data(
                 continue
             # convert link, select field and title link to object with translation
             value = row[k]
-            if title_field and k == title_field:
+            if title_field and k == title_field and doctype != "Notification Log":
                 value = {
                     "label": _(value),
                     "value": value,
