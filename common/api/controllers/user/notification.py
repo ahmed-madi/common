@@ -22,6 +22,9 @@ class NotificationResource(BaseResource):
         "attached_file",
         "attachment_link",
         "from_user",
+        "base_subject",
+        "base_message",
+        "base_variables",
         "link",
         "push_notification",
     ]
