@@ -81,7 +81,7 @@ def format_response_data(
                 continue
             # convert link, select field and title link to object with translation
             value = row[k]
-            if title_field and k == title_field:
+            if title_field and k == title_field and doctype != "Notification Log":
                 value = {
                     "label": _(value),
                     "value": value,
