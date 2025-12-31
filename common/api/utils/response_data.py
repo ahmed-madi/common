@@ -2,7 +2,7 @@ import json
 
 import frappe
 from frappe import _
-from frappe.utils import get_system_timezone
+from frappe.utils import get_system_timezone, strip_html
 from common.api.utils.workflow_handlers import WorkflowActionManager
 from common.utils import format_user_time
 from common.utils.hr import get_last_checkin_status
@@ -38,8 +38,8 @@ def format_response_data(
         if doctype == "Employee":
             row.update(add_check_data(row["name"]))
         if doctype == "Notification Log":
-            base_subject = row.get("base_subject")
-            base_message = row.get("base_message")
+            base_subject = row.get("base_subject", "") or ""
+            base_message = row.get("base_message", "") or ""
             context = {}
             try:
                 context = json.loads(row.get("base_variables", "{}"))
@@ -49,6 +49,8 @@ def format_response_data(
             base_message = frappe.render_template(_(base_message), context)
             row.update(
                 {
+                    "email_content": strip_html(row.get("email_content", "") or ""),
+                    "subject": strip_html(row.get("subject", "") or ""),
                     "base_subject": base_subject,
                     "base_message": base_message,
                     "base_variables": context,
