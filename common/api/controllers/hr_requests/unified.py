@@ -378,7 +378,7 @@ class UnifiedRequestResource(BaseResource):
             ]:
                 order_by = "modified"
 
-            reverse = args.get("order", "").upper() == "DESC"
+            reverse = args.get("order", "").upper() != "DESC"
 
             try:
                 from frappe.utils import cstr
@@ -402,6 +402,7 @@ class UnifiedRequestResource(BaseResource):
                     [row],
                     add_perms=cls.add_perms,
                     add_wf=cls.add_wf,
+                    is_for_list=True,
                 )[0]
                 formatted_data.append(formatted_row)
 

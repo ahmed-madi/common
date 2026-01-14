@@ -195,6 +195,7 @@ class ActivityResource(BaseResource):
                     [row],
                     add_perms=cls.add_perms,
                     add_wf=cls.add_wf,
+                    is_for_list=True,
                 )[0]
                 formatted_data.append(formatted_row)
 
