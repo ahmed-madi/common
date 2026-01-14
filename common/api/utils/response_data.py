@@ -20,7 +20,13 @@ def add_check_data(name):
 
 
 def format_response_data(
-    doctype, data, wf=None, add_perms=False, reqd_field=None, add_wf=False
+    doctype,
+    data,
+    wf=None,
+    add_perms=False,
+    reqd_field=None,
+    add_wf=False,
+    is_for_list=False,
 ):
     meta = frappe.get_meta(doctype)
     links, selects, start_time = get_field_maps(meta)
@@ -77,7 +83,7 @@ def format_response_data(
         meta_data = {"title_field": title_field}
         for k in row:
             # skip rows for read_doc
-            if reqd_field and k not in reqd_field:
+            if is_for_list and reqd_field and k not in reqd_field:
                 continue
             # convert link, select field and title link to object with translation
             value = row[k]

@@ -99,7 +99,7 @@ def get_doc_list(
 
     # load perms and workflows, translate link and select field
     data = format_response_data(
-        doctype, data, add_perms=add_perms, wf=wf, add_wf=add_wf
+        doctype, data, add_perms=add_perms, wf=wf, add_wf=add_wf, is_for_list=True
     )
     response_data = frappe._dict()
     response_data.update(
