@@ -378,7 +378,7 @@ class UnifiedRequestResource(BaseResource):
             ]:
                 order_by = "modified"
 
-            reverse = args.get("order", "").upper() != "DESC"
+            reverse = args.get("order", "").upper() == "DESC"
 
             try:
                 from frappe.utils import cstr
