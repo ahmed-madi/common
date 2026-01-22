@@ -256,3 +256,28 @@ before_request = ["common.api.utils.request.before_request"]
 website_route_rules = [
     {"from_route": "/hr-services/<path:app_path>", "to_route": "hr_service"},
 ]
+
+
+fixtures = [
+    {"dt": "Workflow", "filters": [["name", "in", ["Task"]]]},
+    {
+        "dt": "Workflow State",
+        "filters": [
+            [
+                "name",
+                "in",
+                ["Open", "In Progress", "Completed", "Pending Review", "Re-Open"],
+            ]
+        ],
+    },
+    {
+        "dt": "Workflow Action Master",
+        "filters": [
+            [
+                "name",
+                "in",
+                ["Start", "Review", "Approve", "Re-Open"],
+            ]
+        ],
+    },
+]
