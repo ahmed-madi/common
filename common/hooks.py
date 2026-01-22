@@ -150,13 +150,11 @@ override_doctype_class = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "Task": {
+        "on_update": "common.events.task.on_update",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
