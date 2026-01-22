@@ -9,3 +9,4 @@ common.patches.v1.add_all_translations
 common.patches.v1.update_jwt_configs
 common.patches.v1.add_hr_permissions
 common.patches.v1.remove_task_property_setter
+common.patches.v1.remove_task_custom_field
