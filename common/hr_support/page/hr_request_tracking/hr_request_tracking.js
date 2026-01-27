@@ -57,24 +57,10 @@ class HRRequestTracking {
 				</div>
 
 				<div class="hr-filters">
-					<div class="hr-filter-group" id="employee-filter-container">
-						<label for="filter-employee">Employee</label>
-						<div id="filter-employee-input"></div>
-					</div>
-					<div class="hr-filter-group">
-						<label for="filter-doctype">Request Type</label>
-						<select id="filter-doctype" class="hr-select">
-							<option value="">All Types</option>
-						</select>
-					</div>
-					<div class="hr-filter-group">
-						<label for="filter-from-date">From Date</label>
-						<input type="date" id="filter-from-date" class="hr-input">
-					</div>
-					<div class="hr-filter-group">
-						<label for="filter-to-date">To Date</label>
-						<input type="date" id="filter-to-date" class="hr-input">
-					</div>
+					<div class="hr-filter-item" id="employee-filter-container"></div>
+					<div class="hr-filter-item" id="doctype-filter-container"></div>
+					<div class="hr-filter-item" id="from-date-filter-container"></div>
+					<div class="hr-filter-item" id="to-date-filter-container"></div>
 					<div class="hr-filter-actions">
 						<button id="btn-reset-filters" class="hr-btn hr-btn-secondary">Reset</button>
 						<button id="btn-apply-filters" class="hr-btn hr-btn-primary">Apply Filters</button>
@@ -107,13 +93,14 @@ class HRRequestTracking {
     init_filters() {
         const me = this;
 
-        // Init Employee Link Field
+        // 1. Employee Filter
         this.employee_filter = frappe.ui.form.make_control({
-            parent: this.container.find('#filter-employee-input'),
+            parent: this.container.find('#employee-filter-container'),
             df: {
                 fieldtype: 'Link',
                 options: 'Employee',
                 fieldname: 'employee',
+                label: 'Employee',
                 placeholder: 'Select Employee'
             },
             render_input: true,
@@ -122,15 +109,51 @@ class HRRequestTracking {
             }
         });
 
-        // Popluate Doctype Select
-        const doctype_select = this.container.find('#filter-doctype');
-        this.request_doctypes.forEach(dt => {
-            doctype_select.append(`<option value="${dt}">${dt}</option>`);
+        // 2. Request Type (DocType) Filter
+        this.doctype_filter = frappe.ui.form.make_control({
+            parent: this.container.find('#doctype-filter-container'),
+            df: {
+                fieldtype: 'Select',
+                options: ['', ...this.request_doctypes],
+                fieldname: 'doctype',
+                label: 'Request Type',
+                placeholder: 'All Types'
+            },
+            render_input: true,
+            on_change: () => {
+                me.filters.doctype = me.doctype_filter.get_value();
+            }
         });
 
-        // Set default dates (optional)
-        // this.container.find('#filter-from-date').val(frappe.datetime.month_start());
-        // this.container.find('#filter-to-date').val(frappe.datetime.nowdate());
+        // 3. From Date Filter
+        this.from_date_filter = frappe.ui.form.make_control({
+            parent: this.container.find('#from-date-filter-container'),
+            df: {
+                fieldtype: 'Date',
+                fieldname: 'from_date',
+                label: 'From Date',
+                placeholder: 'From Date'
+            },
+            render_input: true,
+            on_change: () => {
+                me.filters.from_date = me.from_date_filter.get_value();
+            }
+        });
+
+        // 4. To Date Filter
+        this.to_date_filter = frappe.ui.form.make_control({
+            parent: this.container.find('#to-date-filter-container'),
+            df: {
+                fieldtype: 'Date',
+                fieldname: 'to_date',
+                label: 'To Date',
+                placeholder: 'To Date'
+            },
+            render_input: true,
+            on_change: () => {
+                me.filters.to_date = me.to_date_filter.get_value();
+            }
+        });
     }
 
     bind_events() {
@@ -153,18 +176,16 @@ class HRRequestTracking {
         });
 
         this.container.find('#btn-apply-filters').on('click', () => {
-            me.filters.doctype = me.container.find('#filter-doctype').val();
-            me.filters.from_date = me.container.find('#filter-from-date').val();
-            me.filters.to_date = me.container.find('#filter-to-date').val();
             me.filters.page = 1;
             me.fetch_data();
         });
 
         this.container.find('#btn-reset-filters').on('click', () => {
             me.employee_filter.set_value('');
-            me.container.find('#filter-doctype').val('');
-            me.container.find('#filter-from-date').val('');
-            me.container.find('#filter-to-date').val('');
+            me.doctype_filter.set_value('');
+            me.from_date_filter.set_value('');
+            me.to_date_filter.set_value('');
+
             me.filters.employee = '';
             me.filters.doctype = '';
             me.filters.from_date = '';
@@ -331,14 +352,14 @@ class HRRequestTracking {
 					<button class="hr-view-btn" title="View Details">
 						<i class="fa fa-eye"></i>
 					</button>
-					${has_actions ? `
 					<div class="hr-card-actions">
+						${has_actions ? `
 						<button class="hr-dots-btn">⋮</button>
 						<div class="hr-dropdown-content">
 							${actions_html}
 						</div>
+						` : ''}
 					</div>
-					` : ''}
 				</div>
 			</div>
 		`;

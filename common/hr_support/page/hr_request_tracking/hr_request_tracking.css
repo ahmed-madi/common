@@ -50,49 +50,44 @@
 
 .hr-filters {
     background: #fff;
-    padding: 20px 25px;
+    padding: 15px 20px;
     border-radius: 12px;
     margin-bottom: 25px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 15px;
     align-items: flex-end;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.hr-filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.hr-filter-item {
+    min-width: 0;
+    /* Allow shrinking in grid */
 }
 
-.hr-filter-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #4a5568;
+/* Override Frappe standard control margins in filters */
+.hr-filters .frappe-control {
+    margin-bottom: 0 !important;
 }
 
-.hr-input,
-.hr-select {
-    padding: 10px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #2d3748;
-    background-color: #f8fafc;
-    transition: border-color 0.2s;
+.hr-filters .form-group {
+    margin-bottom: 0 !important;
 }
 
-.hr-input:focus,
-.hr-select:focus {
-    outline: none;
-    border-color: #2b6cb0;
-    box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+.hr-filters .control-label {
+    margin-bottom: 4px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #718096 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
 }
 
 .hr-filter-actions {
     display: flex;
-    gap: 12px;
+    gap: 8px;
+    padding-bottom: 2px;
+    /* Fine-tune button alignment with inputs */
 }
 
 .hr-btn {
@@ -124,12 +119,13 @@
 }
 
 .hr-card-status {
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     display: inline-block;
+    line-height: 1.4;
 }
 
 .status-pending,
@@ -179,24 +175,25 @@
 
 .hr-list-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 2fr 100px;
-    padding: 15px 20px;
+    grid-template-columns: 1.5fr 2.5fr 1fr 1.5fr 100px;
+    padding: 12px 20px;
     background: #f7fafc;
-    border-bottom: 1px solid #edf2f7;
-    font-size: 13px;
+    border-bottom: 2px solid #edf2f7;
+    font-size: 11px;
     font-weight: 700;
     color: #718096;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
+    align-items: center;
 }
 
 .hr-list-item {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 2fr 100px;
-    padding: 15px 20px;
+    grid-template-columns: 1.5fr 2.5fr 1fr 1.5fr 100px;
+    padding: 12px 20px;
     align-items: center;
     border-bottom: 1px solid #edf2f7;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
 .hr-list-item:last-child {
@@ -204,28 +201,32 @@
 }
 
 .hr-list-item:hover {
-    background: #fdfdfd;
+    background: #f8fafc;
 }
 
 .hr-list-item .hr-card-doctype {
-    font-size: 14px;
-    color: #2d3748;
-    text-transform: none;
-    letter-spacing: normal;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4a5568;
 }
 
 .hr-list-item .hr-card-status {
     justify-self: start;
+    font-size: 10px;
+    text-align: center;
+    max-width: 100%;
+    word-break: break-all;
+    /* For very long status strings */
 }
 
 .hr-list-item .hr-info-date {
-    font-size: 14px;
-    color: #4a5568;
+    font-size: 13px;
+    color: #718096;
 }
 
 .hr-list-item .hr-info-employee {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
     color: #2d3748;
 }
 
@@ -233,7 +234,7 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 15px;
+    gap: 8px;
 }
 
 .hr-view-btn {
@@ -241,19 +242,25 @@
     border: none;
     color: #718096;
     cursor: pointer;
-    padding: 5px;
+    padding: 6px;
     font-size: 16px;
     display: flex;
     align-items: center;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    border-radius: 4px;
 }
 
 .hr-view-btn:hover {
     color: #2b6cb0;
+    background: #f1f5f9;
 }
 
 .hr-card-actions {
     position: relative;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .hr-dots-btn {
@@ -262,13 +269,14 @@
     font-size: 20px;
     color: #718096;
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 2px 8px;
     border-radius: 4px;
     line-height: 1;
+    transition: all 0.2s;
 }
 
 .hr-dots-btn:hover {
-    background: #f7fafc;
+    background: #f1f5f9;
     color: #2d3748;
 }
 
