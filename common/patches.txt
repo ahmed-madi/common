@@ -8,3 +8,7 @@ common.patches.create_salary_fixation_reasons
 common.patches.v1.add_all_translations
 common.patches.v1.update_jwt_configs
 common.patches.v1.add_hr_permissions
+common.patches.v1.cleanup_hr_roles
+common.patches.v1.remove_task_props
+common.patches.v1.add_hr_permissions_2
+common.patches.v1.copy_empoyee_field_in_tasks

@@ -20,152 +20,71 @@ EMPLOYEE_READ_ONLY_DOCTYPES = [
     "Project",
 ]
 
-EMPLOYEE_FULL_DOCTYPES_LEVEL_0 = [
+EMPLOYEE_FULL_DOCTYPES_LEVEL = [
     "Task",
 ]
 
 
 def create_custom_doc_perms():
-    create_employee_read_only_docperms()
-    create_employee_full_level_0_docperms()
-    create_employee_read_level_1_docperms()
-    create_manager_full_level_1_docperms()
+    ensure_roles_exist(EMPLOYEE_ROLES + MANAGER_ROLES)
+    create_employee_doc_perms()
+    create_manager_doc_perms()
 
 
-def create_employee_read_only_docperms():
+def ensure_roles_exist(roles):
+    for role in roles:
+        if not frappe.db.exists("Role", role):
+            frappe.get_doc({"doctype": "Role", "role_name": role}).insert(
+                ignore_if_duplicate=True
+            )
+    frappe.db.commit()
+
+
+def create_employee_doc_perms():
+    # Read-only doctypes
     for doctype in EMPLOYEE_READ_ONLY_DOCTYPES:
         for role in EMPLOYEE_ROLES:
-            role = frappe.db.exists("Role", {"name": role})
-            if not role:
-                continue
-            exists = frappe.db.exists(
-                "Custom DocPerm", {"role": role, "parent": doctype, "permlevel": 0}
-            )
-            if exists:
-                doc_perm = frappe.get_doc("Custom DocPerm", exists)
-            else:
-                doc_perm = frappe.new_doc("Custom DocPerm")
-                doc_perm.update(
-                    {
-                        "role": role,
-                        "parent": doctype,
-                        "permlevel": 0,
-                    }
-                )
-            doc_perm.update(
-                {
-                    "select": 1,
-                    "read": 1,
-                    "write": 0,
-                    "create": 0,
-                    "submit": 0,
-                    "cancel": 0,
-                    "amend": 0,
-                    "report": 1,
-                    "export": 1,
-                    "import": 0,
-                    "share": 1,
-                    "print": 1,
-                    "email": 1,
-                }
-            )
-            doc_perm.save(ignore_permissions=True)
+            set_perms(role, doctype, read_only=True)
 
-
-def create_employee_full_level_0_docperms():
-    for doctype in EMPLOYEE_FULL_DOCTYPES_LEVEL_0:
-        for role in EMPLOYEE_ROLES + MANAGER_ROLES:
-            role = frappe.db.exists("Role", {"name": role})
-            if not role:
-                continue
-            exists = frappe.db.exists(
-                "Custom DocPerm", {"role": role, "parent": doctype, "permlevel": 0}
-            )
-            if exists:
-                doc_perm = frappe.get_doc("Custom DocPerm", exists)
-            else:
-                doc_perm = frappe.new_doc("Custom DocPerm")
-                doc_perm.update(
-                    {
-                        "role": role,
-                        "parent": doctype,
-                        "permlevel": 0,
-                    }
-                )
-            doc_perm.update(
-                {
-                    "select": 1,
-                    "read": 1,
-                    "write": 1,
-                    "create": 1,
-                    "delete": role in MANAGER_ROLES,
-                    "submit": 0,
-                    "cancel": 0,
-                    "amend": 0,
-                    "report": 1,
-                    "export": 1,
-                    "import": 0,
-                    "share": 1,
-                    "print": 1,
-                    "email": 1,
-                }
-            )
-            doc_perm.save(ignore_permissions=True)
-
-
-def create_employee_read_level_1_docperms():
-    for doctype in EMPLOYEE_FULL_DOCTYPES_LEVEL_0:
+    # Full access except delete (e.g. Task)
+    for doctype in EMPLOYEE_FULL_DOCTYPES_LEVEL:
         for role in EMPLOYEE_ROLES:
-            role = frappe.db.exists("Role", {"name": role})
-            if not role:
-                continue
-            exists = frappe.db.exists(
-                "Custom DocPerm", {"role": role, "parent": doctype, "permlevel": 1}
-            )
-            if exists:
-                doc_perm = frappe.get_doc("Custom DocPerm", exists)
-            else:
-                doc_perm = frappe.new_doc("Custom DocPerm")
-                doc_perm.update(
-                    {
-                        "role": role,
-                        "parent": doctype,
-                        "permlevel": 1,
-                    }
-                )
-            doc_perm.update(
-                {
-                    "read": 1,
-                    "write": 0,
-                }
-            )
-            doc_perm.save(ignore_permissions=True)
+            set_perms(role, doctype, read_only=False, delete=0)
 
 
-def create_manager_full_level_1_docperms():
-    for doctype in EMPLOYEE_FULL_DOCTYPES_LEVEL_0:
+def create_manager_doc_perms():
+    all_doctypes = EMPLOYEE_READ_ONLY_DOCTYPES + EMPLOYEE_FULL_DOCTYPES_LEVEL
+    for doctype in all_doctypes:
         for role in MANAGER_ROLES:
-            role = frappe.db.exists("Role", {"name": role})
-            if not role:
-                continue
-            exists = frappe.db.exists(
-                "Custom DocPerm", {"role": role, "parent": doctype, "permlevel": 1}
-            )
-            if exists:
-                doc_perm = frappe.get_doc("Custom DocPerm", exists)
-            else:
-                doc_perm = frappe.new_doc("Custom DocPerm")
-                doc_perm.update(
-                    {
-                        "role": role,
-                        "parent": doctype,
-                        "permlevel": 1,
-                    }
-                )
-            doc_perm.update(
-                {
-                    "read": 1,
-                    "write": 1,
-                }
-            )
-            doc_perm.save(ignore_permissions=True)
+            set_perms(role, doctype, read_only=False, delete=1)
+
+
+def set_perms(role, doctype, read_only=False, delete=0):
+    exists = frappe.db.exists(
+        "Custom DocPerm", {"role": role, "parent": doctype, "permlevel": 0}
+    )
+    if exists:
+        doc_perm = frappe.get_doc("Custom DocPerm", exists)
+    else:
+        doc_perm = frappe.new_doc("Custom DocPerm")
+        doc_perm.update({"role": role, "parent": doctype, "permlevel": 0})
+
+    doc_perm.update(
+        {
+            "select": 1,
+            "read": 1,
+            "write": 0 if read_only else 1,
+            "create": 0 if read_only else 1,
+            "delete": 0 if read_only else delete,
+            "submit": 0,
+            "cancel": 0,
+            "amend": 0,
+            "report": 1,
+            "export": 1,
+            "import": 0,
+            "share": 1,
+            "print": 1,
+            "email": 1,
+        }
+    )
+    doc_perm.save(ignore_permissions=True)
