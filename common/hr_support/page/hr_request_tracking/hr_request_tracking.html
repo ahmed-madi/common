@@ -1,0 +1,45 @@
+<div id="hr-request-tracking-container" class="hr-container">
+    <div class="hr-header">
+        <h2 class="hr-title">HR Request Tracking</h2>
+        <div class="hr-tabs">
+            <button class="hr-tab active" data-tab="all">All Requests</button>
+            <button class="hr-tab" data-tab="mine">My Requests</button>
+        </div>
+    </div>
+
+    <div class="hr-filters">
+        <div class="hr-filter-group" id="employee-filter-container">
+            <label for="filter-employee">Employee</label>
+            <div id="filter-employee-input"></div>
+        </div>
+        <div class="hr-filter-group">
+            <label for="filter-doctype">Request Type</label>
+            <select id="filter-doctype" class="hr-select">
+                <option value="">All Types</option>
+            </select>
+        </div>
+        <div class="hr-filter-group">
+            <label for="filter-from-date">From Date</label>
+            <input type="date" id="filter-from-date" class="hr-input">
+        </div>
+        <div class="hr-filter-group">
+            <label for="filter-to-date">To Date</label>
+            <input type="date" id="filter-to-date" class="hr-input">
+        </div>
+        <div class="hr-filter-actions">
+            <button id="btn-reset-filters" class="hr-btn hr-btn-secondary">Reset</button>
+            <button id="btn-apply-filters" class="hr-btn hr-btn-primary">Apply Filters</button>
+        </div>
+    </div>
+
+    <div id="requests-list" class="hr-requests-grid">
+        <!-- Cards will be rendered here -->
+        <div class="hr-loader-container">
+            <div class="hr-loader"></div>
+        </div>
+    </div>
+
+    <div id="pagination-container" class="hr-pagination">
+        <!-- Pagination controls -->
+    </div>
+</div>

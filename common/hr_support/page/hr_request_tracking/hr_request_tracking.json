@@ -1,0 +1,26 @@
+{
+    "content": "<h1>HR Request Tracking</h1>",
+    "creation": "2026-01-27 15:45:00.000000",
+    "docstatus": 0,
+    "doctype": "Page",
+    "idx": 0,
+    "modified": "2026-01-27 15:45:00.000000",
+    "modified_by": "Administrator",
+    "module": "HR Support",
+    "name": "hr-request-tracking",
+    "owner": "Administrator",
+    "page_name": "hr-request-tracking",
+    "roles": [
+        {
+            "role": "System Manager"
+        },
+        {
+            "role": "HR Manager"
+        },
+        {
+            "role": "Employee"
+        }
+    ],
+    "standard": "Yes",
+    "title": "HR Request Tracking"
+}

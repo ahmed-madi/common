@@ -1,3 +1,4 @@
+import frappe
 from frappe import _
 from common.api.utils.resource import BaseResource
 from common.api.utils.decorators import safe_api
@@ -59,3 +60,8 @@ class WorkflowActionResource(BaseResource):
         return [
             Rule("/hr-common/workflow-action", methods=["POST"], endpoint=cls.execute())
         ]
+
+
+@frappe.whitelist()
+def execute_workflow_action():
+    return WorkflowActionResource.execute()()
