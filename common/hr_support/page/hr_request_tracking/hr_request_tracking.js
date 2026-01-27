@@ -61,6 +61,8 @@ class HRRequestTracking {
 					<div class="hr-filter-item" id="doctype-filter-container"></div>
 					<div class="hr-filter-item" id="from-date-filter-container"></div>
 					<div class="hr-filter-item" id="to-date-filter-container"></div>
+					<div class="hr-filter-item" id="order-by-filter-container"></div>
+					<div class="hr-filter-item" id="order-direction-filter-container"></div>
 					<div class="hr-filter-actions">
 						<button id="btn-reset-filters" class="hr-btn hr-btn-secondary">Reset</button>
 						<button id="btn-apply-filters" class="hr-btn hr-btn-primary">Apply Filters</button>
@@ -154,6 +156,49 @@ class HRRequestTracking {
                 me.filters.to_date = me.to_date_filter.get_value();
             }
         });
+
+        // 5. Order By Filter
+        this.order_by_filter = frappe.ui.form.make_control({
+            parent: this.container.find('#order-by-filter-container'),
+            df: {
+                fieldtype: 'Select',
+                options: [
+                    { label: 'Modified', value: 'modified' },
+                    { label: 'Request Date', value: 'request_date' },
+                    { label: 'Creation', value: 'creation' },
+                    { label: 'Name', value: 'name' },
+                    { label: 'Request Type', value: 'doctype' }
+                ],
+                fieldname: 'order_by',
+                label: 'Sort By',
+                default: 'modified'
+            },
+            render_input: true,
+            on_change: () => {
+                me.filters.order_by = me.order_by_filter.get_value();
+            }
+        });
+        this.order_by_filter.set_value('modified');
+
+        // 6. Order Direction Filter
+        this.order_direction_filter = frappe.ui.form.make_control({
+            parent: this.container.find('#order-direction-filter-container'),
+            df: {
+                fieldtype: 'Select',
+                options: [
+                    { label: 'DESC', value: 'DESC' },
+                    { label: 'ASC', value: 'ASC' }
+                ],
+                fieldname: 'order',
+                label: 'Order',
+                default: 'DESC'
+            },
+            render_input: true,
+            on_change: () => {
+                me.filters.order = me.order_direction_filter.get_value();
+            }
+        });
+        this.order_direction_filter.set_value('DESC');
     }
 
     bind_events() {
@@ -185,11 +230,15 @@ class HRRequestTracking {
             me.doctype_filter.set_value('');
             me.from_date_filter.set_value('');
             me.to_date_filter.set_value('');
+            me.order_by_filter.set_value('modified');
+            me.order_direction_filter.set_value('DESC');
 
             me.filters.employee = '';
             me.filters.doctype = '';
             me.filters.from_date = '';
             me.filters.to_date = '';
+            me.filters.order_by = 'modified';
+            me.filters.order = 'DESC';
             me.filters.page = 1;
             me.fetch_data();
         });
@@ -213,7 +262,7 @@ class HRRequestTracking {
             from_date: this.filters.from_date,
             to_date: this.filters.to_date,
             order: 'DESC',
-            order_by: 'creation'
+            order_by: 'modified'
         };
 
         if (this.filters.tab === 'mine') {
@@ -293,8 +342,20 @@ class HRRequestTracking {
             // Toggle Dropdown
             $item.find('.hr-dots-btn').on('click', function (e) {
                 e.stopPropagation();
-                $('.hr-dropdown-content').not($(this).next()).removeClass('show');
-                $(this).next().toggleClass('show');
+                const $dropdown = $(this).next();
+                const is_showing = $dropdown.hasClass('show');
+
+                // Close all other dropdowns and reset their row z-index
+                $('.hr-dropdown-content').not($dropdown).removeClass('show');
+                $('.hr-list-item').css('z-index', '');
+
+                $dropdown.toggleClass('show');
+
+                if (!is_showing) {
+                    $(this).closest('.hr-list-item').css('z-index', '100');
+                } else {
+                    $(this).closest('.hr-list-item').css('z-index', '');
+                }
             });
 
             // Bind eye icon click
