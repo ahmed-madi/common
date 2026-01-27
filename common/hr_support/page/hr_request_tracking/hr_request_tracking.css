@@ -170,7 +170,6 @@
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     border: 1px solid #edf2f7;
-    overflow: hidden;
 }
 
 .hr-list-header {
@@ -292,6 +291,14 @@
     border-radius: 8px;
     border: 1px solid #edf2f7;
     margin-top: 4px;
+}
+
+.hr-card-actions.dropup .hr-dropdown-content {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+    box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .hr-dropdown-content.show {

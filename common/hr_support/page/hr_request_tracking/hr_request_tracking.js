@@ -335,7 +335,7 @@ class HRRequestTracking {
             return;
         }
 
-        data.forEach(item => {
+        data.forEach((item, index) => {
             const item_html = this.create_list_item_html(item);
             const $item = $(item_html);
 
@@ -348,6 +348,18 @@ class HRRequestTracking {
                 // Close all other dropdowns and reset their row z-index
                 $('.hr-dropdown-content').not($dropdown).removeClass('show');
                 $('.hr-list-item').css('z-index', '');
+
+                // Calculate distance to bottom of window to decide if we show up or down
+                const btn_offset = $(this).offset();
+                const window_height = $(window).height();
+                const scroll_top = $(window).scrollTop();
+                const distance_from_bottom = window_height - (btn_offset.top - scroll_top);
+
+                if (distance_from_bottom < 200) {
+                    $(this).closest('.hr-card-actions').addClass('dropup');
+                } else {
+                    $(this).closest('.hr-card-actions').removeClass('dropup');
+                }
 
                 $dropdown.toggleClass('show');
 
