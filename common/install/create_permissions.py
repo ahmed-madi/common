@@ -10,6 +10,9 @@ MANAGER_ROLES = [
     "HR User",
     "HR Specialist",
     "Direct Manager",
+    "Sector Manager",
+    "Department Manager",
+    "Branch Manager",
 ]
 
 EMPLOYEE_READ_ONLY_DOCTYPES = [
