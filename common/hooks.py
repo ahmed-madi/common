@@ -28,7 +28,7 @@ app_license = "mit"
 app_include_css = [
     "/assets/common/css/common-style3.css",
 ]
-# app_include_js = "/assets/common/js/common.js"
+app_include_js = "/assets/common/js/form_timeline_workflow.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/common/css/common.css"
@@ -150,13 +150,19 @@ override_doctype_class = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "*": {
+        # Workflow tracking handled by client-side JS
+    }
+}
+
+# Additional Timeline Content
+# ---------------------------
+# Add custom content to form timeline
+
+additional_timeline_content = {
+    "*": ["common.overrides.form_load.get_workflow_actions_timeline_content"]
+}
 
 # Scheduled Tasks
 # ---------------
