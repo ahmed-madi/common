@@ -150,13 +150,11 @@ override_doctype_class = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "Task": {
+        "on_update": "common.events.task.on_update",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
@@ -257,4 +255,29 @@ before_request = ["common.api.utils.request.before_request"]
 
 website_route_rules = [
     {"from_route": "/hr-services/<path:app_path>", "to_route": "hr_service"},
+]
+
+
+fixtures = [
+    {"dt": "Workflow", "filters": [["name", "in", ["Task"]]]},
+    {
+        "dt": "Workflow State",
+        "filters": [
+            [
+                "name",
+                "in",
+                ["Open", "In Progress", "Completed", "Pending Review", "Re-Open"],
+            ]
+        ],
+    },
+    {
+        "dt": "Workflow Action Master",
+        "filters": [
+            [
+                "name",
+                "in",
+                ["Start", "Review", "Approve", "Re-Open"],
+            ]
+        ],
+    },
 ]
