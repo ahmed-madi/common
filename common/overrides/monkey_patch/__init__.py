@@ -3,6 +3,7 @@ from common.overrides.monkey_patch.api_handle import patch_api_handle
 from common.overrides.monkey_patch.frappe_utils import patch_frappe_utils
 from common.overrides.monkey_patch.notify_assignment import patch_notify_assignment
 from common.overrides.monkey_patch.notify_mentions import patch_notify_mentions
+from common.overrides.monkey_patch.v16.holiday_list import patch_holiday_list
 
 
 def apply_patches():
@@ -11,3 +12,4 @@ def apply_patches():
     patch_frappe_utils()
     patch_notify_assignment()
     patch_notify_mentions()
+    patch_holiday_list()
