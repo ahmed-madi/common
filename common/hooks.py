@@ -46,6 +46,9 @@ app_include_js = "/assets/common/js/form_timeline_workflow.js"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Employee": "public/js/employee.js",
+}
 doctype_list_js = {
     "Attendance": "public/js/attendance_list.js",
     "Project": "public/js/project.js",
