@@ -59,7 +59,7 @@ doctype_list_js = {
 # Svg Icons
 # ------------------
 # include app icons in desk
-# app_include_icons = "common/public/icons.svg"
+app_include_icons = ["common/icons/palm_tree.svg"]
 
 # Home Pages
 # ----------

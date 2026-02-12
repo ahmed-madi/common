@@ -14,3 +14,4 @@ common.patches.v1.add_hr_permissions_2
 common.patches.v1.copy_empoyee_field_in_tasks
 common.patches.v2.add_managers_roles
 common.patches.v2.remove_workflow_html_fields
+common.patches.v2.update_leave_workspace_icon
