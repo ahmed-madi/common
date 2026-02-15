@@ -108,6 +108,9 @@ REQUEST_CONFIG = {
             "creation as from_date",
         ],
     },
+    "General Request": {
+        "extra_fields": ["attachment"],
+    },
 }
 
 REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())

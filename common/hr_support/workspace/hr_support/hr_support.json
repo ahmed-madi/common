@@ -1,94 +1,115 @@
 {
- "charts": [],
- "content": "[{\"id\":\"LpAnc6t9qY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Support</span>\",\"col\":12}},{\"id\":\"4W1aj-g0Du\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Open Ticket\",\"col\":4}},{\"id\":\"8ImqF2ZFHH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Issue Type\",\"col\":4}},{\"id\":\"q3OACL67s6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Issue Priority\",\"col\":4}},{\"id\":\"r7OsZaULv6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Inquiry\",\"col\":3}},{\"id\":\"4vQLIrPmZ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Feedback\",\"col\":3}},{\"id\":\"N9AaX4xgQI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Faq\",\"col\":3}},{\"id\":\"iXEzzQgrIJ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"K1kalnwXD0\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"HR Ticket\",\"col\":4}},{\"id\":\"nBACDCLzS5\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Issue Type\",\"col\":4}},{\"id\":\"imZFC27Jts\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Issue Priority\",\"col\":4}}]",
- "creation": "2025-05-23 08:09:53.604155",
- "custom_blocks": [],
- "docstatus": 0,
- "doctype": "Workspace",
- "for_user": "",
- "hide_custom": 0,
- "icon": "support",
- "idx": 0,
- "indicator_color": "",
- "is_hidden": 0,
- "label": "HR Support",
- "links": [],
- "modified": "2025-12-31 15:21:55.968167",
- "modified_by": "Administrator",
- "module": "HR Support",
- "name": "HR Support",
- "number_cards": [],
- "owner": "Administrator",
- "parent_page": "Staff Portal",
- "public": 1,
- "quick_lists": [
-  {
-   "document_type": "HR Issue Type",
-   "label": "Issue Type",
-   "quick_list_filter": "[]"
-  },
-  {
-   "document_type": "HR Ticket",
-   "label": "HR Ticket",
-   "quick_list_filter": "[]"
-  },
-  {
-   "document_type": "HR Issue Priority",
-   "label": "Issue Priority",
-   "quick_list_filter": "[]"
-  }
- ],
- "roles": [],
- "sequence_id": 9.0,
- "shortcuts": [
-  {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "Open Ticket",
-   "link_to": "HR Ticket",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "Add Issue Type",
-   "link_to": "HR Issue Type",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Faq",
-   "link_to": "FAQ",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Employee Feedback",
-   "link_to": "Employee HR Feedback",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Employee Inquiry",
-   "link_to": "Employee Inquiry",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "New",
-   "label": "Add Issue Priority",
-   "link_to": "HR Issue Priority",
-   "stats_filter": "[]",
-   "type": "DocType"
-  }
- ],
- "title": "HR Support"
+    "charts": [],
+    "content": "[{\"id\":\"LpAnc6t9qY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">HR Support</span>\",\"col\":12}},{\"id\":\"4W1aj-g0Du\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Open Ticket\",\"col\":4}},{\"id\":\"8ImqF2ZFHH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Issue Type\",\"col\":4}},{\"id\":\"q3OACL67s6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Issue Priority\",\"col\":4}},{\"id\":\"r7OsZaULv6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Inquiry\",\"col\":3}},{\"id\":\"4vQLIrPmZ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Feedback\",\"col\":3}},{\"id\":\"N9AaX4xgQI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Faq\",\"col\":3}},{\"id\":\"iXEzzQgrIJ\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"K1kalnwXD0\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"HR Ticket\",\"col\":4}},{\"id\":\"nBACDCLzS5\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Issue Type\",\"col\":4}},{\"id\":\"imZFC27Jts\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Issue Priority\",\"col\":4}}]",
+    "creation": "2025-05-23 08:09:53.604155",
+    "custom_blocks": [],
+    "docstatus": 0,
+    "doctype": "Workspace",
+    "for_user": "",
+    "hide_custom": 0,
+    "icon": "support",
+    "idx": 0,
+    "indicator_color": "",
+    "is_hidden": 0,
+    "label": "HR Support",
+    "links": [],
+    "modified": "2025-12-31 15:21:55.968167",
+    "modified_by": "Administrator",
+    "module": "HR Support",
+    "name": "HR Support",
+    "number_cards": [],
+    "owner": "Administrator",
+    "parent_page": "Staff Portal",
+    "public": 1,
+    "quick_lists": [
+        {
+            "document_type": "HR Issue Type",
+            "label": "Issue Type",
+            "quick_list_filter": "[]"
+        },
+        {
+            "document_type": "HR Ticket",
+            "label": "HR Ticket",
+            "quick_list_filter": "[]"
+        },
+        {
+            "document_type": "General Request",
+            "label": "General Request",
+            "quick_list_filter": "[]"
+        },
+        {
+            "document_type": "HR Issue Priority",
+            "label": "Issue Priority",
+            "quick_list_filter": "[]"
+        }
+    ],
+    "roles": [],
+    "sequence_id": 9.0,
+    "shortcuts": [
+        {
+            "color": "Grey",
+            "doc_view": "New",
+            "label": "Open Ticket",
+            "link_to": "HR Ticket",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "New",
+            "label": "Add Issue Type",
+            "link_to": "HR Issue Type",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "List",
+            "label": "Faq",
+            "link_to": "FAQ",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "List",
+            "label": "Employee Feedback",
+            "link_to": "Employee HR Feedback",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "List",
+            "label": "Employee Inquiry",
+            "link_to": "Employee Inquiry",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "New",
+            "label": "Add Issue Priority",
+            "link_to": "HR Issue Priority",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "New",
+            "label": "General Request",
+            "link_to": "General Request",
+            "stats_filter": "[]",
+            "type": "DocType"
+        },
+        {
+            "color": "Grey",
+            "doc_view": "New",
+            "label": "Add Request Type",
+            "link_to": "General Request Type",
+            "stats_filter": "[]",
+            "type": "DocType"
+        }
+    ],
+    "title": "HR Support"
 }
