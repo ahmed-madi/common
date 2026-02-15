@@ -16,75 +16,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "HR Requests",
-   "link_count": 6,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Document Request",
-   "link_count": 0,
-   "link_to": "Document Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": " Salary Identification Letter ",
-   "link_count": 0,
-   "link_to": "Salary Identification Letter",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Training Request ",
-   "link_count": 0,
-   "link_to": "Training Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Visa Application",
-   "link_count": 0,
-   "link_to": "Visa Application",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Employee Resignation",
-   "link_count": 0,
-   "link_to": "Employee Resignation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Clearance Letter Request",
-   "link_count": 0,
-   "link_to": "Clearance Letter Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Financial Requests",
    "link_count": 1,
    "link_type": "DocType",
@@ -149,9 +80,88 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "HR Requests",
+   "link_count": 7,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "General request",
+   "link_count": 0,
+   "link_to": "Hr General request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Document Request",
+   "link_count": 0,
+   "link_to": "Document Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": " Salary Identification Letter ",
+   "link_count": 0,
+   "link_to": "Salary Identification Letter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Request ",
+   "link_count": 0,
+   "link_to": "Training Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Visa Application",
+   "link_count": 0,
+   "link_to": "Visa Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Resignation",
+   "link_count": 0,
+   "link_to": "Employee Resignation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Clearance Letter Request",
+   "link_count": 0,
+   "link_to": "Clearance Letter Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-11-13 11:35:34.597600",
+ "modified": "2026-02-15 11:45:12.839872",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Self Service",
