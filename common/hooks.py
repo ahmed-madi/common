@@ -156,7 +156,8 @@ override_doctype_class = {
 doc_events = {
     "*": {
         # Workflow tracking handled by client-side JS
-    }
+    },
+    "Employee": {"after_insert": "common.overrides.employee.after_insert"},
 }
 
 # Additional Timeline Content
