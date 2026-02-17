@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"AjDup3eW4R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Self Service</span>\",\"col\":12}},{\"id\":\"aFkVkb-Qud\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fiscal Year\",\"col\":3}},{\"id\":\"Sb6Wgy1sRY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Language\",\"col\":3}},{\"id\":\"M6cCEaYTxA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fixation Reason\",\"col\":3}},{\"id\":\"4cwdjJ5SxZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loan Product\",\"col\":3}},{\"id\":\"ifr1SELqqG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"System Access Level\",\"col\":3}},{\"id\":\"dn_EtC5qGU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Clearance Letter Purpose\",\"col\":3}},{\"id\":\"KcULScL5HW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ks7QsRpdfV\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Requests\",\"col\":4}},{\"id\":\"SmWVNlCQgp\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Requests\",\"col\":4}},{\"id\":\"0tY3V8ML3r\",\"type\":\"card\",\"data\":{\"card_name\":\"Employee Requests\",\"col\":4}}]",
+ "content": "[{\"id\":\"AjDup3eW4R\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Self Service</span>\",\"col\":12}},{\"id\":\"A15pmb-153\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"HR Requests\",\"col\":3}},{\"id\":\"07TMHnU8ze\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"aFkVkb-Qud\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fiscal Year\",\"col\":3}},{\"id\":\"Sb6Wgy1sRY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Language\",\"col\":3}},{\"id\":\"M6cCEaYTxA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fixation Reason\",\"col\":3}},{\"id\":\"4cwdjJ5SxZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loan Product\",\"col\":3}},{\"id\":\"ifr1SELqqG\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"System Access Level\",\"col\":3}},{\"id\":\"dn_EtC5qGU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Clearance Letter Purpose\",\"col\":3}},{\"id\":\"KcULScL5HW\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Ks7QsRpdfV\",\"type\":\"card\",\"data\":{\"card_name\":\"HR Requests\",\"col\":4}},{\"id\":\"SmWVNlCQgp\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Requests\",\"col\":4}},{\"id\":\"0tY3V8ML3r\",\"type\":\"card\",\"data\":{\"card_name\":\"Employee Requests\",\"col\":4}}]",
  "creation": "2025-04-13 13:56:45.003059",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,6 +13,75 @@
  "is_hidden": 0,
  "label": "Self Service",
  "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "HR Requests",
+   "link_count": 6,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Document Request",
+   "link_count": 0,
+   "link_to": "Document Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": " Salary Identification Letter ",
+   "link_count": 0,
+   "link_to": "Salary Identification Letter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Request ",
+   "link_count": 0,
+   "link_to": "Training Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Visa Application",
+   "link_count": 0,
+   "link_to": "Visa Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Resignation",
+   "link_count": 0,
+   "link_to": "Employee Resignation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Clearance Letter Request",
+   "link_count": 0,
+   "link_to": "Clearance Letter Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -80,88 +149,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "HR Requests",
-   "link_count": 7,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "General request",
-   "link_count": 0,
-   "link_to": "Hr General request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Document Request",
-   "link_count": 0,
-   "link_to": "Document Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": " Salary Identification Letter ",
-   "link_count": 0,
-   "link_to": "Salary Identification Letter",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Training Request ",
-   "link_count": 0,
-   "link_to": "Training Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Visa Application",
-   "link_count": 0,
-   "link_to": "Visa Application",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Employee Resignation",
-   "link_count": 0,
-   "link_to": "Employee Resignation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Clearance Letter Request",
-   "link_count": 0,
-   "link_to": "Clearance Letter Request",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2026-02-15 11:45:12.839872",
+ "modified": "2026-02-17 12:58:17.863134",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Self Service",
@@ -173,6 +163,13 @@
  "roles": [],
  "sequence_id": 8.0,
  "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "HR Requests",
+   "link_to": "hr-request-tracking",
+   "type": "Page"
+  },
   {
    "color": "Grey",
    "doc_view": "List",
