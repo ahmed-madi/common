@@ -4,7 +4,6 @@ from common.api.utils import (
     get_request_form_data,
     format_data,
     upload_file,
-    delete_duplicated_or_after_error,
     sanitize_html,
 )
 from common.api.utils.request_data import setup_request_data
@@ -172,16 +171,28 @@ def create_doc(
         else:
             doc = frappe.new_doc(doctype)
         uploaded_files = handle_files(doc)
-        for file in uploaded_files:
-            fieldname = file.get("fieldname")
-            doc.update(
-                {
-                    f"{fieldname}": file.get("file_url"),
-                }
-            )
-        doc.update(default_data)
         doc.save()
-        delete_duplicated_or_after_error(uploaded_files)
+        # Link uploaded files to the newly created document and update field values
+        for file in uploaded_files:
+            if file.get("name"):
+                frappe.db.set_value(
+                    "File",
+                    file.get("name"),
+                    {
+                        "attached_to_doctype": doctype,
+                        "attached_to_name": doc.name,
+                    },
+                    update_modified=False,
+                )
+                # Update the document field with the file URL
+                fieldname = file.get("fieldname")
+                frappe.db.set_value(
+                    doctype,
+                    doc.name,
+                    fieldname,
+                    file.get("file_url"),
+                    update_modified=False,
+                )
         msg = _("{} created").format(_(doctype))
         doc = get_doc(doctype, doc.name, add_perms=add_perms, add_wf=add_wf)
         return build_success_response(201, msg, doc)
@@ -195,12 +206,25 @@ def create_doc(
 def handle_files(doc):
     meta = frappe.get_meta(doc.doctype)
     uploaded_files = []
+    processed_fieldnames = set()  # Track which files we've already uploaded
+
+    # Use name if not a temporary name (starts with "New ")
+    docname = doc.name if doc.name and not doc.name.startswith("New ") else None
+
     for field in meta.fields:
         if field.fieldtype not in ["Attach", "Attach Image"]:
             continue
-        file_doc_name = upload_file(field.fieldname)
-        if file_doc_name is not None:
-            uploaded_files.append(file_doc_name)
+
+        # Skip if we've already processed this fieldname
+        if field.fieldname in processed_fieldnames:
+            continue
+
+        file_doc_info = upload_file(
+            field.fieldname, doctype=doc.doctype, docname=docname
+        )
+        if file_doc_info is not None:
+            uploaded_files.append(file_doc_info)
+            processed_fieldnames.add(field.fieldname)
     return uploaded_files
 
 
@@ -407,15 +431,28 @@ def update_doc(
                 new_data = data
             doc.update(new_data)
         uploaded_files = handle_files(doc)
-        for file in uploaded_files:
-            fieldname = file.get("fieldname")
-            doc.update(
-                {
-                    f"{fieldname}": file.get("file_url"),
-                }
-            )
         doc.save(ignore_permissions=ignore_perms)
-        delete_duplicated_or_after_error(uploaded_files)
+        # Link uploaded files to the updated document and update field values
+        for file in uploaded_files:
+            if file.get("name"):
+                frappe.db.set_value(
+                    "File",
+                    file.get("name"),
+                    {
+                        "attached_to_doctype": doctype,
+                        "attached_to_name": doc.name,
+                    },
+                    update_modified=False,
+                )
+                # Update the document field with the file URL
+                fieldname = file.get("fieldname")
+                frappe.db.set_value(
+                    doctype,
+                    doc.name,
+                    fieldname,
+                    file.get("file_url"),
+                    update_modified=False,
+                )
         # check for child table doctype
         if doc.get("parenttype"):
             frappe.get_doc(doc.parenttype, doc.parent).save()
