@@ -110,7 +110,15 @@ class UserDashboardResource(BaseResource):
                 )
 
                 leave_balance = get_leave_balance_map(name)
-
+            final_balance = []
+            for k, val in leave_balance.items():
+                val.update(
+                    {
+                        "leave_type_label": _(k),
+                        "leave_type_name": k,
+                    }
+                )
+                final_balance.append(val)
             data.update(employee)
             data.update(
                 {
@@ -124,7 +132,7 @@ class UserDashboardResource(BaseResource):
                     "custodies": custodies,
                     "checkin_status": checkin_status,
                     "employee_shift": employee_shift,
-                    "leave_balance": leave_balance,
+                    "leave_balance": final_balance,
                 }
             )
             return data, _("User Info")
