@@ -1,0 +1,30 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-01-22 15:55:46.992660",
+  "name": "Re-Open",
+  "workflow_action_name": "Re-Open"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-01-22 16:17:16.566926",
+  "name": "Start",
+  "workflow_action_name": "Start"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-05-20 04:47:31.320817",
+  "name": "Review",
+  "workflow_action_name": "Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-05-20 04:47:31.318177",
+  "name": "Approve",
+  "workflow_action_name": "Approve"
+ }
+]

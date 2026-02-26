@@ -154,10 +154,10 @@ override_doctype_class = {
 # Hook on document methods and events
 
 doc_events = {
-    "*": {
-        # Workflow tracking handled by client-side JS
-    },
     "Employee": {"after_insert": "common.overrides.employee.after_insert"},
+    "Task": {
+        "on_update": "common.events.task.on_update",
+    },
 }
 
 # Additional Timeline Content
@@ -165,7 +165,7 @@ doc_events = {
 # Add custom content to form timeline
 
 additional_timeline_content = {
-    "*": ["common.overrides.form_load.get_workflow_actions_timeline_content"]
+    "*": ["common.overrides.form_load.get_workflow_actions_timeline_content"],
 }
 
 # Scheduled Tasks
@@ -267,4 +267,29 @@ before_request = ["common.api.utils.request.before_request"]
 
 website_route_rules = [
     {"from_route": "/hr-services/<path:app_path>", "to_route": "hr_service"},
+]
+
+
+fixtures = [
+    {"dt": "Workflow", "filters": [["name", "in", ["Task"]]]},
+    {
+        "dt": "Workflow State",
+        "filters": [
+            [
+                "name",
+                "in",
+                ["Open", "In Progress", "Completed", "Pending Review", "Re-Open"],
+            ]
+        ],
+    },
+    {
+        "dt": "Workflow Action Master",
+        "filters": [
+            [
+                "name",
+                "in",
+                ["Start", "Review", "Approve", "Re-Open"],
+            ]
+        ],
+    },
 ]
