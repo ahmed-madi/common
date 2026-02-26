@@ -56,7 +56,7 @@ $(document).on("click", ".journey-avatar-click", function (e) {
 // but the main timeline will now use workflow_state_card.
 
 // Function to apply status classes to timeline items
-const refresh_workflow_styles = () => {
+var refresh_workflow_styles = function () {
     $(".journey-state-card").each(function () {
         const $card = $(this);
         const status = $card.data("status");
