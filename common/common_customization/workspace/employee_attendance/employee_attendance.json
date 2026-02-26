@@ -5,7 +5,7 @@
    "label": "Attendance Count"
   }
  ],
- "content": "[{\"id\":\"fZPhyB8oeh\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Employee Attendance</span>\",\"col\":12}},{\"id\":\"Bs4g-Yh2dj\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Attendance Count\",\"col\":12}},{\"id\":\"UqAQnOOCZE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Shift Request\",\"col\":3}},{\"id\":\"lX0zIRaIIX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Check-in/out\",\"col\":3}},{\"id\":\"Qzc2O8BI44\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Attendance Request\",\"col\":3}},{\"id\":\"sIf4qRVs4X\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5Y-eqVXdzs\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Attendance\",\"col\":4}},{\"id\":\"5aXhkECaIA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Attendance Requests\",\"col\":4}},{\"id\":\"NOARuelgtj\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Employee Checkin\",\"col\":4}}]",
+ "content": "[{\"id\":\"fZPhyB8oeh\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Employee Attendance</span>\",\"col\":12}},{\"id\":\"Bs4g-Yh2dj\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Attendance Count\",\"col\":12}},{\"id\":\"ghgY1TKt8P\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Type\",\"col\":3}},{\"id\":\"TwZjJRssaY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Location\",\"col\":3}},{\"id\":\"c67ZANfUIm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment\",\"col\":3}},{\"id\":\"21fxZE5E_I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shift Assignment Tool\",\"col\":3}},{\"id\":\"UqAQnOOCZE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Shift Request\",\"col\":3}},{\"id\":\"lX0zIRaIIX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Check-in/out\",\"col\":3}},{\"id\":\"Qzc2O8BI44\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Attendance Request\",\"col\":3}},{\"id\":\"sIf4qRVs4X\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5Y-eqVXdzs\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Attendance\",\"col\":4}},{\"id\":\"5aXhkECaIA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Attendance Requests\",\"col\":4}},{\"id\":\"NOARuelgtj\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Employee Checkin\",\"col\":4}}]",
  "creation": "2025-04-13 13:35:50.256036",
  "custom_blocks": [],
  "docstatus": 0,
@@ -18,7 +18,7 @@
  "is_hidden": 0,
  "label": "Employee Attendance",
  "links": [],
- "modified": "2025-06-26 09:40:51.233052",
+ "modified": "2026-02-17 13:47:53.526779",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Attendance",
@@ -48,10 +48,41 @@
  "shortcuts": [
   {
    "color": "Grey",
+   "doc_view": "List",
+   "label": "Shift Type",
+   "link_to": "Shift Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Shift Assignment",
+   "link_to": "Shift Assignment",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
    "doc_view": "New",
    "label": "Add Shift Request",
    "link_to": "Shift Request",
    "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Shift Location",
+   "link_to": "Shift Location",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Shift Assignment Tool",
+   "link_to": "Shift Assignment Tool",
    "type": "DocType"
   },
   {

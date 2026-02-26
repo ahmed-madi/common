@@ -1,0 +1,32 @@
+{
+ "content": null,
+ "creation": "2026-02-26 12:23:16.847572",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-02-26 12:25:36.881034",
+ "modified_by": "Administrator",
+ "module": "HR Support",
+ "name": "attendance-viewer",
+ "owner": "Administrator",
+ "page_name": "attendance-viewer",
+ "roles": [
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "HR Specialist"
+  },
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "Employee Self Service"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Employee Attendance"
+}

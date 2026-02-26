@@ -7,9 +7,9 @@
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
- "icon": "reply-all",
+ "icon": "palm-tree",
  "idx": 0,
- "indicator_color": "green",
+ "indicator_color": "",
  "is_hidden": 0,
  "label": "Employee Leaves",
  "links": [
@@ -170,7 +170,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-11-13 11:36:13.672015",
+ "modified": "2026-02-17 13:26:04.753167",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Employee Leaves",
@@ -219,6 +219,7 @@
    "doc_view": "List",
    "label": "Leave Balance (Report)",
    "link_to": "Employee Leave Balance",
+   "report_ref_doctype": "Employee",
    "type": "Report"
   },
   {

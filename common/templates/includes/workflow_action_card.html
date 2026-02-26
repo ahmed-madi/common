@@ -1,0 +1,23 @@
+<div class="workflow-action-card" style="border-left: 3px solid var(--primary); padding: 12px 15px; background: #f8f9fa; border-radius: 4px;">
+ <div style="display: flex; justify-content: space-between; align-items: center;">
+  <div>
+   <div style="font-weight: 600; color: var(--text-color); font-size: 13px; margin-bottom: 4px;">
+    <i class="fa fa-bolt" style="margin-right: 6px; color: var(--primary);"></i>
+    {{ _("Available Action") }}
+   </div>
+   <div style="font-size: 12px; color: #666;">
+    <strong>{{ action_label }}</strong>
+    <i class="fa fa-long-arrow-right" style="margin: 0 8px; color: #999;"></i>
+    <span class="label label-info" style="font-weight: normal; padding: 3px 8px;">{{ next_state_label }}</span>
+   </div>
+  </div>
+  <button 
+   class="btn btn-primary btn-sm workflow-action-btn" 
+   data-action="{{ action_name }}"
+   data-doctype="{{ doctype }}"
+   data-docname="{{ docname }}"
+   style="margin-left: 15px;">
+   {{ action_label }}
+  </button>
+ </div>
+</div>

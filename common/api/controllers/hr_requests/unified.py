@@ -108,6 +108,9 @@ REQUEST_CONFIG = {
             "creation as from_date",
         ],
     },
+    "General Request": {
+        "extra_fields": ["attachment"],
+    },
 }
 
 REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())
@@ -201,14 +204,14 @@ def get_valid_request_fields(
             else:
                 filters[date_field] = request_date
 
-    status_field = (
-        frappe.db.get_value(
-            "Workflow",
-            {"is_active": 1, "document_type": doctype},
-            "workflow_state_field",
-        )
-        or "status"
-    )
+    wf = frappe.get_all("Workflow", {"document_type": doctype, "is_active": 1})
+    if wf:
+        wf = frappe.get_doc("Workflow", wf[0])
+    else:
+        wf = None
+
+    status_field = wf.workflow_state_field if wf else "status"
+
     base_fields.append(f"{status_field} as status")
     base_fields.append("docstatus")
     base_fields.extend(["modified", "creation"])
@@ -216,7 +219,7 @@ def get_valid_request_fields(
     if status and isinstance(status, str):
         filters[status_field] = status
 
-    return base_fields, filters
+    return base_fields, filters, wf
 
 
 def custom_document_list(
@@ -225,7 +228,7 @@ def custom_document_list(
     """
     Fetch documents with pagination
     """
-    args = frappe.request.args
+    args = frappe.request.args or frappe.form_dict
     if limit_page_length is None:
         limit_page_length = cint(args.get("limit_page_length", args.get("limit", 20)))
 
@@ -282,8 +285,7 @@ class UnifiedRequestResource(BaseResource):
     def list(cls):
         @safe_api
         def _list():
-            args = frappe.request.args
-
+            args = frappe.request.args or frappe.form_dict
             doctypes = (
                 [args.get("doctype")]
                 if args.get("doctype") in REQUEST_CONFIG
@@ -307,9 +309,10 @@ class UnifiedRequestResource(BaseResource):
             errors = []
             total_count = 0
             has_success = False
+            workflows = {}
 
             for doctype in doctypes:
-                fields, filters = get_valid_request_fields(
+                fields, filters, wf = get_valid_request_fields(
                     doctype,
                     employee,
                     request_date,
@@ -318,6 +321,7 @@ class UnifiedRequestResource(BaseResource):
                     from_date,
                     to_date,
                 )
+                workflows[doctype] = wf
 
                 is_valid, code, result = custom_document_list(
                     doctype, fields, filters, limit_start=0, limit_page_length=999999
@@ -378,7 +382,8 @@ class UnifiedRequestResource(BaseResource):
             ]:
                 order_by = "modified"
 
-            reverse = args.get("order", "").upper() == "DESC"
+            order = args.get("order", "DESC").upper()
+            reverse = order == "DESC"
 
             try:
                 from frappe.utils import cstr
@@ -396,10 +401,12 @@ class UnifiedRequestResource(BaseResource):
             formatted_data = []
             for row in final_data:
                 dt = row.get("doctype")
+                wf = workflows.get(dt)
                 # Use format_response_data to add perms, wf, and format fields
                 formatted_row = format_response_data(
                     dt,
                     [row],
+                    wf=wf,
                     add_perms=cls.add_perms,
                     add_wf=cls.add_wf,
                     is_for_list=True,
@@ -441,3 +448,10 @@ class UnifiedRequestStatusResource(BaseResource):
 
         _list.__name__ = "employee_requests_state_list"
         return _list
+
+
+@frappe.whitelist()
+def get_unified_request_list():
+    _list = UnifiedRequestResource.list()()
+    print(_list)
+    return _list

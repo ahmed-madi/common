@@ -14,13 +14,13 @@ class WorkflowHandler:
     def can_handle(self, doc, meta, wf, permissions):
         """
         Check if this handler can process the document
-        
+
         Args:
             doc: Frappe document instance
             meta: Document meta information
             wf: Workflow object (can be None)
             permissions: Document permissions dict
-            
+
         Returns:
             bool: True if this handler can process the document
         """
@@ -29,29 +29,31 @@ class WorkflowHandler:
     def get_workflow_data(self, doc, meta, wf, permissions, roles):
         """
         Get workflow data for the document
-        
+
         Args:
             doc: Frappe document instance
             meta: Document meta information
             wf: Workflow object
             permissions: Document permissions dict
             roles: User roles list
-            
+
         Returns:
             dict: Workflow data with state_field and actions
         """
         raise NotImplementedError
 
-    def _create_action(self, action_label, action_value, next_state_label, next_state_value):
+    def _create_action(
+        self, action_label, action_value, next_state_label, next_state_value
+    ):
         """
         Helper to create standardized action structure
-        
+
         Args:
             action_label: Display label for the action
             action_value: Value for the action
             next_state_label: Display label for next state
             next_state_value: Value for next state
-            
+
         Returns:
             dict: Formatted action object
         """
@@ -79,12 +81,19 @@ class DefaultWorkflowHandler(WorkflowHandler):
         actions = []
         state_field = wf.workflow_state_field
         current_state = doc.get(state_field)
-        
+
+        seen_actions = set()
         for transition in wf.transitions:
             # Check if transition is valid for current state and user role
             if current_state != transition.state:
                 continue
-            if transition.allowed not in roles and frappe.session.user != "Administrator":
+            if (
+                transition.allowed not in roles
+                and frappe.session.user != "Administrator"
+            ):
+                continue
+
+            if transition.action in seen_actions:
                 continue
 
             actions.append(
@@ -95,6 +104,7 @@ class DefaultWorkflowHandler(WorkflowHandler):
                     next_state_value=transition.next_state,
                 )
             )
+            seen_actions.add(transition.action)
 
         return {
             "state_field": state_field,
@@ -107,11 +117,7 @@ class StatusBasedWorkflowHandler(WorkflowHandler):
 
     def can_handle(self, doc, meta, wf, permissions):
         """Check if document is submittable with status field"""
-        return (
-            wf is None
-            and cint(meta.is_submittable) == 1
-            and hasattr(doc, "status")
-        )
+        return wf is None and cint(meta.is_submittable) == 1 and hasattr(doc, "status")
 
     def get_workflow_data(self, doc, meta, wf, permissions, roles):
         """Get workflow actions based on status and docstatus"""
@@ -124,20 +130,22 @@ class StatusBasedWorkflowHandler(WorkflowHandler):
             and doc.docstatus == 0
             and cint(permissions.get("submit")) == 1
         ):
-            actions.extend([
-                self._create_action(
-                    action_label="Approve",
-                    action_value="Approve",
-                    next_state_label="Approved",
-                    next_state_value="Approved",
-                ),
-                self._create_action(
-                    action_label="Reject",
-                    action_value="Reject",
-                    next_state_label="Rejected",
-                    next_state_value="Rejected",
-                ),
-            ])
+            actions.extend(
+                [
+                    self._create_action(
+                        action_label="Approve",
+                        action_value="Approve",
+                        next_state_label="Approved",
+                        next_state_value="Approved",
+                    ),
+                    self._create_action(
+                        action_label="Reject",
+                        action_value="Reject",
+                        next_state_label="Rejected",
+                        next_state_value="Rejected",
+                    ),
+                ]
+            )
 
         # Submitted state - can cancel
         elif doc.docstatus == 1 and cint(permissions.get("cancel")) == 1:
@@ -162,9 +170,7 @@ class DocstatusWorkflowHandler(WorkflowHandler):
     def can_handle(self, doc, meta, wf, permissions):
         """Check if document is submittable without status field"""
         return (
-            wf is None
-            and cint(meta.is_submittable) == 1
-            and not hasattr(doc, "status")
+            wf is None and cint(meta.is_submittable) == 1 and not hasattr(doc, "status")
         )
 
     def get_workflow_data(self, doc, meta, wf, permissions, roles):
@@ -233,14 +239,14 @@ class WorkflowActionManager:
     def get_workflow_data(self, doc, meta, wf, permissions, roles):
         """
         Get workflow data using appropriate handler
-        
+
         Args:
             doc: Frappe document instance
             meta: Document meta information
             wf: Workflow object (can be None)
             permissions: Document permissions dict
             roles: User roles list
-            
+
         Returns:
             dict: Workflow data with state_field and actions
         """

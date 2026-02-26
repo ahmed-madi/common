@@ -28,7 +28,7 @@ app_license = "mit"
 app_include_css = [
     "/assets/common/css/common-style3.css",
 ]
-# app_include_js = "/assets/common/js/common.js"
+app_include_js = "/assets/common/js/form_timeline_workflow.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/common/css/common.css"
@@ -46,6 +46,9 @@ app_include_css = [
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Employee": "public/js/employee.js",
+}
 doctype_list_js = {
     "Attendance": "public/js/attendance_list.js",
     "Project": "public/js/project.js",
@@ -56,7 +59,7 @@ doctype_list_js = {
 # Svg Icons
 # ------------------
 # include app icons in desk
-# app_include_icons = "common/public/icons.svg"
+app_include_icons = ["common/icons/palm_tree.svg"]
 
 # Home Pages
 # ----------
@@ -151,9 +154,18 @@ override_doctype_class = {
 # Hook on document methods and events
 
 doc_events = {
+    "Employee": {"after_insert": "common.overrides.employee.after_insert"},
     "Task": {
         "on_update": "common.events.task.on_update",
-    }
+    },
+}
+
+# Additional Timeline Content
+# ---------------------------
+# Add custom content to form timeline
+
+additional_timeline_content = {
+    "*": ["common.overrides.form_load.get_workflow_actions_timeline_content"],
 }
 
 # Scheduled Tasks
