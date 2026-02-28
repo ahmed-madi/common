@@ -70,7 +70,8 @@ class EmployeeResource(BaseResource):
                 details = allocation.get(annual_leave, {})
                 leave_map.append(
                     {
-                        "leave_type": annual_leave,
+                        "leave_type_name": annual_leave,
+                        "leave_type_label": _(annual_leave),
                         "allocated_leaves": details.get("total_leaves", 0.0),
                         "balance_leaves": details.get("remaining_leaves", 0.0),
                         "expired_leaves": details.get("expired_leaves", 0.0),
@@ -84,7 +85,8 @@ class EmployeeResource(BaseResource):
             for leave_type, details in allocation.items():
                 leave_map.append(
                     {
-                        "leave_type": leave_type,
+                        "leave_type_name": leave_type,
+                        "leave_type_label": _(leave_type),
                         "allocated_leaves": details.get("total_leaves", 0.0),
                         "balance_leaves": details.get("remaining_leaves", 0.0),
                         "expired_leaves": details.get("expired_leaves", 0.0),
