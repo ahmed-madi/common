@@ -154,7 +154,8 @@ class LeaveSuspension(BaseHRDocument):
                 description=self.reason,
             )
         )
-        allocation.insert(ignore_permissions=True)
+        allocation.flags.ignore_permissions = True
+        allocation.insert()
         allocation.submit()
         return allocation
 
