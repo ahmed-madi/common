@@ -2,6 +2,7 @@ from werkzeug.routing import Rule
 
 import frappe
 from frappe import _
+from frappe.utils import getdate
 from hrms.hr.doctype.shift_assignment.shift_assignment import get_employee_shift
 
 from common.api.utils.resource import BaseResource
@@ -37,12 +38,11 @@ class UserDashboardResource(BaseResource):
             last_salary_slip = {}
             salary_slip_list = []
             employee_shift = {}
-            leave_balance = {}
 
+            final_balance = []
             if employee and employee.get("name"):
                 name = employee.get("name")
                 # Import here to avoid circular dependencies if any, matching old code
-                from hrms.api import get_leave_balance_map
 
                 certifications = frappe.db.sql(
                     """
@@ -108,17 +108,26 @@ class UserDashboardResource(BaseResource):
                 employee_shift = get_employee_shift(
                     name, consider_default_shift=True, next_shift_direction="reverse"
                 )
-
-                leave_balance = get_leave_balance_map(name)
-            final_balance = []
-            for k, val in leave_balance.items():
-                val.update(
-                    {
-                        "leave_type_label": _(k),
-                        "leave_type_name": k,
-                    }
+                from hrms.hr.doctype.leave_application.leave_application import (
+                    get_leave_details,
                 )
-                final_balance.append(val)
+
+                date = getdate()
+                leave_details = get_leave_details(employee.name, date)
+                allocation = leave_details["leave_allocation"]
+                for leave_type, details in allocation.items():
+                    final_balance.append(
+                        {
+                            "leave_type_name": leave_type,
+                            "leave_type_label": _(leave_type),
+                            "allocated_leaves": details.get("total_leaves", 0.0),
+                            "balance_leaves": details.get("remaining_leaves", 0.0),
+                            "expired_leaves": details.get("expired_leaves", 0.0),
+                            "leaves_pending_approval": details.get(
+                                "leaves_pending_approval", 0.0
+                            ),
+                        }
+                    )
             data.update(employee)
             data.update(
                 {
