@@ -109,7 +109,8 @@ REQUEST_CONFIG = {
         ],
     },
     "General Request": {
-        "extra_fields": ["attachment"],
+        "extra_fields": ["attachment", "request_date"],
+        "date_filter_field": "request_date",
     },
 }
 

@@ -2,11 +2,49 @@ from werkzeug.routing import Rule
 
 import frappe
 from frappe import _
+from frappe.utils import getdate
+from frappe.permissions import get_role_permissions
 from hrms.hr.doctype.shift_assignment.shift_assignment import get_employee_shift
 
 from common.api.utils.resource import BaseResource
 from common.api.utils.decorators import safe_api
 from common.utils.hr import get_employee_from_user, get_last_checkin_status
+
+
+def get_handled_api_doctypes_permissions():
+    from common.api.utils.resource import BaseResource
+
+    handled_doctypes = {}
+
+    def get_subclasses(cls):
+        for subclass in cls.__subclasses__():
+            if getattr(subclass, "doctype", None) and frappe.db.exists(
+                "DocType", subclass.doctype
+            ):
+                url_prefix = getattr(subclass, "url_prefix", "/hr-common")
+                if url_prefix and url_prefix.startswith("/"):
+                    url_prefix = url_prefix[1:]
+                if not url_prefix:
+                    url_prefix = "common"
+
+                resource_name = getattr(subclass, "resource_name", None)
+                if not resource_name:
+                    resource_name = subclass.doctype.lower().replace(" ", "-")
+
+                if url_prefix not in handled_doctypes:
+                    handled_doctypes[url_prefix] = {}
+                perms = get_role_permissions(subclass.doctype)
+                perms.update(
+                    {
+                        "doctype": subclass.doctype,
+                    }
+                )
+                handled_doctypes[url_prefix][resource_name] = perms
+
+            get_subclasses(subclass)
+
+    get_subclasses(BaseResource)
+    return handled_doctypes
 
 
 class UserDashboardResource(BaseResource):
@@ -37,12 +75,11 @@ class UserDashboardResource(BaseResource):
             last_salary_slip = {}
             salary_slip_list = []
             employee_shift = {}
-            leave_balance = {}
 
+            final_balance = []
             if employee and employee.get("name"):
                 name = employee.get("name")
                 # Import here to avoid circular dependencies if any, matching old code
-                from hrms.api import get_leave_balance_map
 
                 certifications = frappe.db.sql(
                     """
@@ -108,17 +145,26 @@ class UserDashboardResource(BaseResource):
                 employee_shift = get_employee_shift(
                     name, consider_default_shift=True, next_shift_direction="reverse"
                 )
-
-                leave_balance = get_leave_balance_map(name)
-            final_balance = []
-            for k, val in leave_balance.items():
-                val.update(
-                    {
-                        "leave_type_label": _(k),
-                        "leave_type_name": k,
-                    }
+                from hrms.hr.doctype.leave_application.leave_application import (
+                    get_leave_details,
                 )
-                final_balance.append(val)
+
+                date = getdate()
+                leave_details = get_leave_details(employee.name, date)
+                allocation = leave_details["leave_allocation"]
+                for leave_type, details in allocation.items():
+                    final_balance.append(
+                        {
+                            "leave_type_name": leave_type,
+                            "leave_type_label": _(leave_type),
+                            "allocated_leaves": details.get("total_leaves", 0.0),
+                            "balance_leaves": details.get("remaining_leaves", 0.0),
+                            "expired_leaves": details.get("expired_leaves", 0.0),
+                            "leaves_pending_approval": details.get(
+                                "leaves_pending_approval", 0.0
+                            ),
+                        }
+                    )
             data.update(employee)
             data.update(
                 {
@@ -133,6 +179,7 @@ class UserDashboardResource(BaseResource):
                     "checkin_status": checkin_status,
                     "employee_shift": employee_shift,
                     "leave_balance": final_balance,
+                    "permissions": get_handled_api_doctypes_permissions(),
                 }
             )
             return data, _("User Info")

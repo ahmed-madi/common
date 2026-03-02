@@ -73,6 +73,7 @@ class CancelLeaveApplication(BaseHRDocument):
         if self.status != "Approved":
             return
         leave = frappe.get_doc("Leave Application", self.leave_application)
+        leave.flags.ignore_permissions = True
         leave.cancel()
         leave.add_comment(
             text="Cancelled by employee in {}".format(
