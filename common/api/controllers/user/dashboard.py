@@ -11,9 +11,9 @@ from common.api.utils.decorators import safe_api
 from common.utils.hr import get_employee_from_user, get_last_checkin_status
 
 
-def get_handled_api_doctypes_permissions():
-    from common.api.utils.resource import BaseResource
-
+def get_handled_api_doctypes_permissions(
+    perm="create", skip_for_url_prefix=["user", "employee", "common", "company"]
+):
     handled_doctypes = {}
 
     def get_subclasses(cls):
@@ -27,19 +27,19 @@ def get_handled_api_doctypes_permissions():
                 if not url_prefix:
                     url_prefix = "common"
 
+                if url_prefix in skip_for_url_prefix:
+                    get_subclasses(subclass)
+                    continue
+
                 resource_name = getattr(subclass, "resource_name", None)
                 if not resource_name:
                     resource_name = subclass.doctype.lower().replace(" ", "-")
 
-                if url_prefix not in handled_doctypes:
-                    handled_doctypes[url_prefix] = {}
                 perms = get_role_permissions(subclass.doctype)
-                perms.update(
-                    {
-                        "doctype": subclass.doctype,
-                    }
-                )
-                handled_doctypes[url_prefix][resource_name] = perms
+                if not handled_doctypes.get(url_prefix):
+                    handled_doctypes[url_prefix] = []
+                if perms.get(perm) == 1:
+                    handled_doctypes[url_prefix].append(resource_name)
 
             get_subclasses(subclass)
 
@@ -180,6 +180,10 @@ class UserDashboardResource(BaseResource):
                     "employee_shift": employee_shift,
                     "leave_balance": final_balance,
                     "permissions": get_handled_api_doctypes_permissions(),
+                    "read_permissions": get_handled_api_doctypes_permissions("read"),
+                    "select_permissions": get_handled_api_doctypes_permissions(
+                        "select"
+                    ),
                 }
             )
             return data, _("User Info")
