@@ -11,9 +11,9 @@ from common.api.utils.decorators import safe_api
 from common.utils.hr import get_employee_from_user, get_last_checkin_status
 
 
-def get_handled_api_doctypes_permissions(perm="create"):
-    from common.api.utils.resource import BaseResource
-
+def get_handled_api_doctypes_permissions(
+    perm="create", skip_for_url_prefix=["user", "employee", "common", "company"]
+):
     handled_doctypes = {}
 
     def get_subclasses(cls):
@@ -27,7 +27,7 @@ def get_handled_api_doctypes_permissions(perm="create"):
                 if not url_prefix:
                     url_prefix = "common"
 
-                if url_prefix in ["user", "employee", "common", "company"]:
+                if url_prefix in skip_for_url_prefix:
                     get_subclasses(subclass)
                     continue
 
@@ -181,6 +181,9 @@ class UserDashboardResource(BaseResource):
                     "leave_balance": final_balance,
                     "permissions": get_handled_api_doctypes_permissions(),
                     "read_permissions": get_handled_api_doctypes_permissions("read"),
+                    "select_permissions": get_handled_api_doctypes_permissions(
+                        "select"
+                    ),
                 }
             )
             return data, _("User Info")
