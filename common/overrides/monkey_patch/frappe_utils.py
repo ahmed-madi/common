@@ -19,4 +19,5 @@ def bold(text):
 
 def patch_frappe_utils():
     frappe.utils.data.get_link_to_form = get_link_to_form
+    frappe.utils.get_link_to_form = get_link_to_form
     frappe.bold = bold

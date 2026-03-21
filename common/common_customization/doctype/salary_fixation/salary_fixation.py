@@ -13,7 +13,7 @@ class SalaryFixation(BaseHRDocument):
         self.validate_backdate_restriction(
             "restrict_backdated_sfx", "sfx_w_roles", self.effective_date
         )
-        # self.validate_salary_mode()
+        self.validate_salary_mode()
 
     def validate_salary_mode(self):
         salary_mode_details = frappe.db.get_values(
