@@ -5,6 +5,7 @@ from common.api.utils import (
     format_data,
     upload_file,
     sanitize_html,
+    update_files_to_doc,
 )
 from common.api.utils.request_data import setup_request_data
 from common.api.utils.response_data import format_response_data
@@ -171,28 +172,11 @@ def create_doc(
         else:
             doc = frappe.new_doc(doctype)
         uploaded_files = handle_files(doc)
+        update_files_to_doc(doctype, doc, uploaded_files)
         doc.save()
         # Link uploaded files to the newly created document and update field values
-        for file in uploaded_files:
-            if file.get("name"):
-                frappe.db.set_value(
-                    "File",
-                    file.get("name"),
-                    {
-                        "attached_to_doctype": doctype,
-                        "attached_to_name": doc.name,
-                    },
-                    update_modified=False,
-                )
-                # Update the document field with the file URL
-                fieldname = file.get("fieldname")
-                frappe.db.set_value(
-                    doctype,
-                    doc.name,
-                    fieldname,
-                    file.get("file_url"),
-                    update_modified=False,
-                )
+        update_files_to_doc(doctype, doc, uploaded_files)
+
         msg = _("{} created").format(_(doctype))
         doc = get_doc(doctype, doc.name, add_perms=add_perms, add_wf=add_wf)
         return build_success_response(201, msg, doc)
@@ -431,28 +415,11 @@ def update_doc(
                 new_data = data
             doc.update(new_data)
         uploaded_files = handle_files(doc)
+        update_files_to_doc(doctype, doc, uploaded_files)
         doc.save(ignore_permissions=ignore_perms)
         # Link uploaded files to the updated document and update field values
-        for file in uploaded_files:
-            if file.get("name"):
-                frappe.db.set_value(
-                    "File",
-                    file.get("name"),
-                    {
-                        "attached_to_doctype": doctype,
-                        "attached_to_name": doc.name,
-                    },
-                    update_modified=False,
-                )
-                # Update the document field with the file URL
-                fieldname = file.get("fieldname")
-                frappe.db.set_value(
-                    doctype,
-                    doc.name,
-                    fieldname,
-                    file.get("file_url"),
-                    update_modified=False,
-                )
+        update_files_to_doc(doctype, doc, uploaded_files)
+
         # check for child table doctype
         if doc.get("parenttype"):
             frappe.get_doc(doc.parenttype, doc.parent).save()
