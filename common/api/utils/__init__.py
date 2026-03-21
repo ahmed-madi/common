@@ -142,3 +142,62 @@ def sanitize_html(html_content):
         tag.attrs.clear()
 
     return str(soup)
+
+
+def update_files_to_doc(doctype: str, doc: "frappe.model.document.Document", uploaded_files: list):
+    """
+    Updates file attachments for a document.
+    Handles:
+    1. Setting field values in the doc object (mandatory for new docs before save).
+    2. Linking File records to the document (after save).
+    3. Deleting old File records for the same field to avoid duplicates/sidebar clutter.
+    """
+    for file in uploaded_files:
+        fieldname = file.get("fieldname")
+        file_url = file.get("file_url")
+        file_name = file.get("name")
+
+        if not fieldname or not file_url:
+            continue
+
+        # 1. Update the document object/database field
+        if hasattr(doc, "set"):
+            doc.set(fieldname, file_url)
+
+        # 2. Link the File record to the document if it has a name
+        if doc.name and not doc.name.startswith("New "):
+            frappe.db.set_value(
+                "File",
+                file_name,
+                {
+                    "attached_to_doctype": doctype,
+                    "attached_to_name": doc.name,
+                    "attached_to_field": fieldname,
+                },
+                update_modified=False,
+            )
+
+            # 3. Handle Duplicate Records (Delete old attachments for this field)
+            # Find files attached to this doctype, name, and field, but NOT the one we just uploaded
+            old_files = frappe.get_all(
+                "File",
+                filters={
+                    "attached_to_doctype": doctype,
+                    "attached_to_name": doc.name,
+                    "attached_to_field": fieldname,
+                    "name": ["!=", file_name],
+                },
+                pluck="name",
+            )
+
+            for old_file in old_files:
+                frappe.delete_doc("File", old_file, ignore_missing=True)
+
+            # 4. Final sync to DB if doc is already saved (just in case set_value is needed)
+            frappe.db.set_value(
+                doctype,
+                doc.name,
+                fieldname,
+                file_url,
+                update_modified=False,
+            )
