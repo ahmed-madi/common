@@ -8,6 +8,11 @@ from lending.loan_management.doctype.loan_application.loan_application import (
 
 
 class LoanApplication(BaseLoanApplication):
+    def before_validate(self):
+        self.employee = None
+        if self.applicant_type == "Employee":
+            self.employee = self.applicant
+
     def validate(self):
         if hasattr(super(), "validate"):
             super().validate()

@@ -17,3 +17,4 @@ common.patches.v2.remove_workflow_html_fields
 common.patches.v2.update_leave_workspace_icon
 common.patches.v1.remove_task_property_setter
 common.patches.v1.remove_task_custom_field
+common.patches.v2.update_loans
