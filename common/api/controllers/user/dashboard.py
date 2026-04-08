@@ -75,10 +75,16 @@ class UserDashboardResource(BaseResource):
             last_salary_slip = {}
             salary_slip_list = []
             employee_shift = {}
+            direct_manager = {}
+
 
             final_balance = []
             if employee and employee.get("name"):
                 name = employee.get("name")
+                reports_to = employee.get("reports_to")
+                if reports_to:
+                    direct_manager = frappe.db.get_values("Employee", reports_to, ["name", "employee_name", "department", "designation", "image"], as_dict=True)[0]
+                
                 # Import here to avoid circular dependencies if any, matching old code
 
                 certifications = frappe.db.sql(
@@ -168,6 +174,7 @@ class UserDashboardResource(BaseResource):
             data.update(employee)
             data.update(
                 {
+                    "direct_manager": direct_manager,
                     "certifications": certifications,
                     "achievements": achievements,
                     "last_salary_structure_assignment": last_salary_structure_assignment,
