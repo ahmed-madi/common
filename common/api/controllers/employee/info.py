@@ -1,7 +1,9 @@
+import frappe
 from frappe import _
 from common.api.utils.resource import BaseResource
 from common.api.utils.endpoints import document_list, update_doc, get_doc
 from common.api.utils.decorators import safe_api
+from common.utils.hr import get_employee_shift
 from werkzeug.routing import Rule
 
 
@@ -127,6 +129,21 @@ class OtherEmployeeInfoResource(BaseResource):
                 ignore_perms=True,
                 fields=cls.fields,
             )
+            # doc_1 = {}
+            # for f in cls.fields:
+            #     doc_1[f] = doc.get(f)
+
+            reports_to = doc.get("reports_to")
+            # doc_1["reports_to"] = reports_to
+            direct_manager = {}
+            if reports_to.get("value"):
+                direct_manager = frappe.db.get_values("Employee", reports_to.get("value"), ["name", "employee_name", "department", "designation", "image"], as_dict=True)[0]
+
+            doc["direct_manager"] = direct_manager
+            doc["employee_shift"] = get_employee_shift(
+                    employee, consider_default_shift=True, next_shift_direction="reverse"
+                )
+
             msg = _("{} data fetched").format(_(cls.doctype))
             return doc, msg
 

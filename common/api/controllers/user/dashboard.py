@@ -4,7 +4,7 @@ import frappe
 from frappe import _
 from frappe.utils import getdate
 from frappe.permissions import get_role_permissions
-from hrms.hr.doctype.shift_assignment.shift_assignment import get_employee_shift
+from common.utils.hr import get_employee_shift
 
 from common.api.utils.resource import BaseResource
 from common.api.utils.decorators import safe_api
