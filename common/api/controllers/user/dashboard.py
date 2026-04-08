@@ -76,7 +76,7 @@ class UserDashboardResource(BaseResource):
             salary_slip_list = []
             employee_shift = {}
             direct_manager = {}
-
+            geolocation_tracking = frappe.db.get_single_value("HR Settings", "allow_geolocation_tracking")
 
             final_balance = []
             if employee and employee.get("name"):
@@ -191,6 +191,7 @@ class UserDashboardResource(BaseResource):
                     "select_permissions": get_handled_api_doctypes_permissions(
                         "select"
                     ),
+                    "geolocation_tracking": geolocation_tracking,
                 }
             )
             return data, _("User Info")
