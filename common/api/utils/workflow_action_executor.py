@@ -46,7 +46,7 @@ class WorkflowActionExecutionManager:
             return self._apply_workflow(doc, action_value)
 
         if cint(meta.is_submittable):
-            return self._direct_action(doc, action_value)
+            return self._direct_action(doc, action_value, next_state_value)
 
         return {
             "success": False,
@@ -130,17 +130,59 @@ class WorkflowActionExecutionManager:
                 "error": str(e),
             }
 
-    def _direct_action(self, doc, action_value):
+    def _get_status_field_options(self, doc):
+        meta = frappe.get_meta(doc.doctype)
+        status_field = meta.get_field("status")
+        status_options = (
+            [o.strip() for o in status_field.options.split("\n")]
+            if status_field and status_field.options
+            else []
+        )
+        return status_field, status_options
+
+    def _direct_action(self, doc, action_value, next_state_value):
         """Submit or cancel a submittable doc that has no active workflow."""
         try:
             doc.reload()
 
-            if action_value == "Submit":
-                doc.submit()
-                message = _("Document submitted successfully")
+            if action_value in ("Approve", "Reject"):
+                meta = frappe.get_meta(doc.doctype)
+                status_field = meta.get_field("status")
+                status_options = (
+                    [o.strip() for o in status_field.options.split("\n")]
+                    if status_field and status_field.options
+                    else []
+                )
+                if (
+                    status_field
+                    and next_state_value
+                    and next_state_value in status_options
+                ):
+                    docstatus = cint(doc.docstatus)
+                    if docstatus != 0:
+                        state = _("submitted") if docstatus == 1 else _("cancelled")
+                        return {
+                            "success": False,
+                            "message": _("Cannot perform action '{0}': document is already {1}").format(action_value, state),
+                        }
+                    doc.status = next_state_value
+                    doc.save(ignore_permissions=False)
+                    doc.submit()
+                    message = _("Document {0} successfully").format(next_state_value.lower())
+                elif action_value == "Approve":
+                    doc.submit()
+                    message = _("Document approved successfully")
+                else:
+                    doc.cancel()
+                    message = _("Document rejected successfully")
             elif action_value == "Cancel":
+                if cint(doc.docstatus) != 1:
+                    return {
+                        "success": False,
+                        "message": _("Only submitted documents can be cancelled"),
+                    }
                 doc.cancel()
-                message = _("Document canceled successfully")
+                message = _("Document cancelled successfully")
             else:
                 return {
                     "success": False,
