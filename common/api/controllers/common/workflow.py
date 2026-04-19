@@ -41,14 +41,18 @@ class WorkflowActionResource(BaseResource):
             )
 
             if not result.get("success"):
-                from frappe import ValidationError
-
-                raise ValidationError(result.get("message", _("Unknown error")))
+                error_detail = result.get("error", "")
+                message = result.get("message", _("Unknown error"))
+                full_message = f"{message}: {error_detail}" if error_detail and error_detail != message else message
+                raise frappe.ValidationError(full_message)
 
             # Get updated document with permissions and workflow
-            updated_doc = get_doc(
-                doctype=doctype, name=docname, add_perms=True, add_wf=True
-            )
+            try:
+                updated_doc = get_doc(doctype=doctype, name=docname, add_perms=True, add_wf=True)
+            except Exception as e:
+                raise frappe.ValidationError(
+                    _("Action applied but failed to fetch updated document: {0}").format(str(e))
+                )
 
             return updated_doc, result.get("message")
 

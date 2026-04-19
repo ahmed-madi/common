@@ -73,43 +73,42 @@ class DefaultWorkflowHandler(WorkflowHandler):
     """Handler for Frappe's standard workflow system"""
 
     def can_handle(self, doc, meta, wf, permissions):
-        """Check if document has a standard Frappe workflow"""
         return wf is not None
 
     def get_workflow_data(self, doc, meta, wf, permissions, roles):
-        """Get workflow actions from Frappe workflow transitions"""
-        actions = []
+        """
+        Get allowed workflow actions using frappe.model.workflow.get_transitions.
+
+        get_transitions filters by:
+          1. Current workflow state (transition.state == current_state)
+          2. User roles (transition.allowed in frappe.get_roles())
+          3. Transition conditions (is_transition_condition_satisfied)
+        """
+        from frappe.model.workflow import WorkflowStateError, get_transitions
+
         state_field = wf.workflow_state_field
-        current_state = doc.get(state_field)
 
-        seen_actions = set()
-        for transition in wf.transitions:
-            # Check if transition is valid for current state and user role
-            if current_state != transition.state:
-                continue
-            if (
-                transition.allowed not in roles
-                and frappe.session.user != "Administrator"
-            ):
-                continue
+        try:
+            transitions = get_transitions(doc, wf)
+        except WorkflowStateError:
+            return {"state_field": state_field, "actions": []}
 
-            if transition.action in seen_actions:
+        seen = set()
+        actions = []
+        for t in transitions:
+            if t["action"] in seen:
                 continue
-
             actions.append(
                 self._create_action(
-                    action_label=transition.action,
-                    action_value=transition.action,
-                    next_state_label=transition.next_state,
-                    next_state_value=transition.next_state,
+                    action_label=t["action"],
+                    action_value=t["action"],
+                    next_state_label=t["next_state"],
+                    next_state_value=t["next_state"],
                 )
             )
-            seen_actions.add(transition.action)
+            seen.add(t["action"])
 
-        return {
-            "state_field": state_field,
-            "actions": actions,
-        }
+        return {"state_field": state_field, "actions": actions}
 
 
 class StatusBasedWorkflowHandler(WorkflowHandler):
