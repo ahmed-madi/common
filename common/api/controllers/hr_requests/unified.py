@@ -127,7 +127,8 @@ REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())
 #     "Employee Expense Request"
 
 DOC_STATUS = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
-
+FORCE_FILTER_EMPLOYEE_MOBILE = True
+FORCE_FILTER_EMPLOYEE_WEB = True
 
 def get_request_config(doctype):
     return REQUEST_CONFIG.get(doctype, {})
@@ -292,8 +293,26 @@ class UnifiedRequestResource(BaseResource):
                 if args.get("doctype") in REQUEST_CONFIG
                 else list(REQUEST_CONFIG.keys())
             )
+            is_mobile = frappe.flags.get("api_call", False)
+            employee = None
+            if (FORCE_FILTER_EMPLOYEE_MOBILE and is_mobile) or FORCE_FILTER_EMPLOYEE_WEB:
+                user = frappe.session.user
+                # is_admin = user == "Administrator" or "System Manager" in frappe.get_roles(user)
+                is_admin = user == "Administrator"
+                # Mobile flow: always restrict to the current user's employee
+                if not is_admin:
+                    employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+                    if not employee:
+                        return {
+                            "data_list": [],
+                            "page": 1,
+                            "perPage": 0,
+                            "totalCount": 0,
+                            "pageCount": 0,
+                        }, "No Employee linked to current user"
+            else:
+                employee = args.get("employee")
 
-            employee = args.get("employee")
             request_date = args.get("request_date") or args.get("date")
             from_date = args.get("from_date")
             to_date = args.get("to_date")
@@ -454,5 +473,4 @@ class UnifiedRequestStatusResource(BaseResource):
 @frappe.whitelist()
 def get_unified_request_list():
     _list = UnifiedRequestResource.list()()
-    print(_list)
     return _list
