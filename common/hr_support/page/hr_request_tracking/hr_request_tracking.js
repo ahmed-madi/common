@@ -16,7 +16,6 @@ class HRRequestTracking {
         this.container = $(wrapper).find('.layout-main-section');
 
         this.filters = {
-            tab: 'all',
             employee: '',
             doctype: '',
             from_date: '',
@@ -24,6 +23,7 @@ class HRRequestTracking {
             page: 1,
             limit: 12
         };
+        this.default_employee = '';
 
         this.request_doctypes = [
             "Compensatory Leave Request", "Leave Application", "Visa Application",
@@ -42,7 +42,7 @@ class HRRequestTracking {
         this.render_skeleton();
         this.init_filters();
         this.bind_events();
-        this.fetch_data();
+        this.set_default_employee();
     }
 
     render_skeleton() {
@@ -50,10 +50,6 @@ class HRRequestTracking {
 			<div id="hr-request-tracking-container" class="hr-container">
 				<div class="hr-header">
 					<h2 class="hr-title">HR Request Tracking</h2>
-					<div class="hr-tabs">
-						<button class="hr-tab active" data-tab="all">All Requests</button>
-						<button class="hr-tab" data-tab="mine">My Requests</button>
-					</div>
 				</div>
 
 				<div class="hr-filters">
@@ -201,39 +197,49 @@ class HRRequestTracking {
         this.order_direction_filter.set_value('DESC');
     }
 
+    set_default_employee() {
+        const me = this;
+        const boot_employee = frappe.boot.user_info?.[frappe.session.user]?.employee;
+        if (boot_employee) {
+            this.default_employee = boot_employee;
+            this.filters.employee = boot_employee;
+            this.employee_filter.set_value(boot_employee);
+            this.fetch_data();
+        } else {
+            frappe.db.get_value('Employee', { user_id: frappe.session.user }, 'name').then(r => {
+                if (r && r.message && r.message.name) {
+                    me.default_employee = r.message.name;
+                    me.filters.employee = r.message.name;
+                    me.employee_filter.set_value(r.message.name);
+                }
+                me.fetch_data();
+            });
+        }
+    }
+
     bind_events() {
         const me = this;
 
-        this.container.find('.hr-tab').on('click', function () {
-            me.container.find('.hr-tab').removeClass('active');
-            $(this).addClass('active');
-            me.filters.tab = $(this).data('tab');
-            me.filters.page = 1;
-
-            // If "My Requests", hide employee filter
-            if (me.filters.tab === 'mine') {
-                me.container.find('#employee-filter-container').hide();
-            } else {
-                me.container.find('#employee-filter-container').show();
-            }
-
-            me.fetch_data();
-        });
-
         this.container.find('#btn-apply-filters').on('click', () => {
+            me.filters.employee = me.employee_filter.get_value();
+            me.filters.doctype = me.doctype_filter.get_value();
+            me.filters.from_date = me.from_date_filter.get_value();
+            me.filters.to_date = me.to_date_filter.get_value();
+            me.filters.order_by = me.order_by_filter.get_value();
+            me.filters.order = me.order_direction_filter.get_value();
             me.filters.page = 1;
             me.fetch_data();
         });
 
         this.container.find('#btn-reset-filters').on('click', () => {
-            me.employee_filter.set_value('');
+            me.employee_filter.set_value(me.default_employee);
             me.doctype_filter.set_value('');
             me.from_date_filter.set_value('');
             me.to_date_filter.set_value('');
             me.order_by_filter.set_value('modified');
             me.order_direction_filter.set_value('DESC');
 
-            me.filters.employee = '';
+            me.filters.employee = me.default_employee;
             me.filters.doctype = '';
             me.filters.from_date = '';
             me.filters.to_date = '';
@@ -261,31 +267,11 @@ class HRRequestTracking {
             doctype: this.filters.doctype,
             from_date: this.filters.from_date,
             to_date: this.filters.to_date,
-            order: 'DESC',
-            order_by: 'modified'
+            order: this.filters.order || 'DESC',
+            order_by: this.filters.order_by || 'modified'
         };
 
-        if (this.filters.tab === 'mine') {
-            // For "My Requests", we need to get the employee ID of current user
-            // We can let the backend handle it if we pass a flag, or get it here.
-            // UnifiedRequestResource already has 'employee' filter.
-            // Let's assume backend will handle permission/filtering if tab is 'mine'
-            // Actually, let's just use the current user's employee if it exists.
-            if (frappe.boot.user_info[frappe.session.user] && frappe.boot.user_info[frappe.session.user].employee) {
-                api_params.employee = frappe.boot.user_info[frappe.session.user].employee;
-            } else {
-                // We'll try to fetch it if not in boot
-                frappe.db.get_value('Employee', { user_id: frappe.session.user }, 'name').then(r => {
-                    if (r && r.message) {
-                        api_params.employee = r.message.name;
-                        me.execute_fetch(api_params);
-                    } else {
-                        me.render_empty('No Employee record found for your user.');
-                    }
-                });
-                return;
-            }
-        } else if (this.filters.employee) {
+        if (this.filters.employee) {
             api_params.employee = this.filters.employee;
         }
 
