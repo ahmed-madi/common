@@ -107,6 +107,10 @@ REQUEST_CONFIG = {
             "expenses_type",
             "creation as from_date",
         ],
+        "extra_fields": [
+            "employee",
+            "employee_name",
+        ]
     },
     "General Request": {
         "extra_fields": ["attachment", "request_date"],
@@ -128,7 +132,7 @@ REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())
 
 DOC_STATUS = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
 FORCE_FILTER_EMPLOYEE_MOBILE = True
-FORCE_FILTER_EMPLOYEE_WEB = True
+FORCE_FILTER_EMPLOYEE_WEB = False
 
 def get_request_config(doctype):
     return REQUEST_CONFIG.get(doctype, {})
