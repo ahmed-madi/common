@@ -1,14 +1,16 @@
-import frappe
 import secrets
-import requests
 import urllib.parse
+
+import frappe
 from frappe.utils import get_url
+from frappe.utils.oauth import get_info_via_oauth
+
 from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 
 
 # ---------------------------------------------------------------------------
-# Provider helpers
+# Provider helpers  (used only by get_oauth_url to build the authorization URL)
 # ---------------------------------------------------------------------------
 
 def _match(provider_name, *keywords):
@@ -17,7 +19,7 @@ def _match(provider_name, *keywords):
 
 
 def _is_microsoft(name):
-    return _match(name, "microsoft", "office 365", "office365", "azure", "entra")
+    return _match(name, "microsoft", "office 365", "office_365", "office365", "azure", "entra")
 
 
 def _is_google(name):
@@ -55,78 +57,13 @@ def _get_scope(slk):
     return "openid profile email"
 
 
-def _get_token_url(slk):
-    """Return the token exchange endpoint, preferring the configured field."""
-    if slk.access_token_url:
-        return slk.access_token_url
-    name = slk.provider_name
-    if _is_microsoft(name):
-        tenant = getattr(slk, "tenant_id", None) or "common"
-        return f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"
-    if _is_google(name):
-        return "https://oauth2.googleapis.com/token"
-    if _is_facebook(name):
-        return "https://graph.facebook.com/v12.0/oauth/access_token"
-    base = slk.base_url or ""
-    return f"{base}/token"
-
-
-def _get_user_info_url(slk):
-    """Return the user-info endpoint, preferring the configured field."""
-    if slk.api_endpoint:
-        return slk.api_endpoint
-    name = slk.provider_name
-    if _is_microsoft(name):
-        return "https://graph.microsoft.com/v1.0/me"
-    if _is_google(name):
-        return "https://www.googleapis.com/oauth2/v2/userinfo"
-    if _is_facebook(name):
-        return None  # Facebook needs the token embedded in the URL
-    base = slk.base_url or ""
-    return f"{base}/userinfo"
-
-
-def _fetch_user_info(slk, access_token):
-    """Fetch user info from the provider and return (user_data, email)."""
-    name = slk.provider_name
-
-    if _is_facebook(name):
-        url = f"https://graph.facebook.com/me?fields=id,email&access_token={access_token}"
-        resp = requests.get(url, timeout=10)
-    else:
-        url = _get_user_info_url(slk)
-        if not url:
-            return {}, None
-        resp = requests.get(url, headers={"Authorization": f"Bearer {access_token}"}, timeout=10)
-
-    if resp.status_code != 200:
-        frappe.log_error(
-            title="OAuth User Info Failed",
-            message=f"Provider {name} user-info returned {resp.status_code}: {resp.text}",
-        )
-        return {}, None
-
-    user_data = resp.json()
-
-    # Microsoft returns email in `mail` or `userPrincipalName`
-    if _is_microsoft(name):
-        email = user_data.get("mail") or user_data.get("userPrincipalName")
-    else:
-        email = user_data.get("email") or user_data.get("mail")
-
-    return user_data, email
-
-
 # ---------------------------------------------------------------------------
 # API endpoints
 # ---------------------------------------------------------------------------
 
 @frappe.whitelist(allow_guest=True, methods=["GET"])
 def get_providers():
-    """
-    Return all enabled Social Login Key providers.
-    Mobile clients call this to build the "Login with …" button list.
-    """
+    """Return all enabled Social Login Key providers."""
     try:
         providers = frappe.get_all(
             "Social Login Key",
@@ -139,10 +76,7 @@ def get_providers():
             data={"providers": providers},
         )
     except Exception as e:
-        frappe.log_error(
-            title="Get Social Providers Failed",
-            message=f"{str(e)}\n\n{frappe.get_traceback()}",
-        )
+        frappe.log_error(title="Get Social Providers Failed", message=f"{str(e)}\n\n{frappe.get_traceback()}")
         return build_error_response(500, "Failed to retrieve social login providers", str(e))
 
 
@@ -150,9 +84,8 @@ def get_providers():
 def get_oauth_url(provider):
     """
     Generate an OAuth 2.0 authorization URL for the given Social Login Key name.
-
-    The mobile app opens this URL in a browser/webview, then calls
-    /callback with the authorization code it receives.
+    The mobile app opens this URL in a browser/webview, then calls /callback
+    with the authorization code it receives.
     """
     try:
         slk = frappe.get_doc("Social Login Key", provider)
@@ -168,7 +101,6 @@ def get_oauth_url(provider):
                 "Set the 'Authorize URL' field on the Social Login Key",
             )
 
-        # One-time CSRF state token
         state = secrets.token_urlsafe(32)
         frappe.cache().set_value(
             f"oauth_state_{state}",
@@ -189,7 +121,6 @@ def get_oauth_url(provider):
             "state": state,
         }
 
-        # Microsoft requires response_mode=query for mobile flows
         if _is_microsoft(slk.provider_name):
             params["response_mode"] = "query"
 
@@ -221,12 +152,11 @@ def handle_oauth_callback(code, state, provider=None):
     """
     Exchange an OAuth authorization code for app JWT tokens.
 
-    Flow:
-      1. Validate the CSRF state token (one-time, expires in 10 min).
-      2. Exchange the code for an OAuth access token via the provider.
-      3. Fetch the user's email from the provider's user-info endpoint.
-      4. Verify the user exists and has an active Employee record.
-      5. Issue app-level JWT access + refresh tokens.
+    Uses frappe.utils.oauth.get_info_via_oauth to handle the token exchange
+    and user-info fetch (the same utility Frappe's own login_via_oauth2 /
+    login_via_oauth2_id_token uses internally).  We skip login_oauth_user —
+    which would create a cookie-based web session — and issue JWT tokens
+    instead.
     """
     try:
         # --- CSRF validation ---
@@ -237,51 +167,19 @@ def handle_oauth_callback(code, state, provider=None):
         provider = provider or cached_state.get("provider")
         frappe.cache().delete_value(f"oauth_state_{state}")  # one-time use
 
-        # --- Load provider config ---
         slk = frappe.get_doc("Social Login Key", provider)
 
-        token_url = _get_token_url(slk)
-        if not token_url:
-            return build_error_response(
-                400,
-                f"Token URL not configured for provider '{provider}'",
-                "Set the 'Access Token URL' field on the Social Login Key",
-            )
+        # --- Use Frappe's OAuth utility for token exchange + user-info ---
+        # id_token=True for Microsoft/Office 365: the email lives in the JWT
+        # id_token returned by the token endpoint, no Graph API call needed.
+        use_id_token = _is_microsoft(slk.provider_name)
+        info = get_info_via_oauth(provider, code, id_token=use_id_token)
 
-        redirect_uri = (
-            slk.redirect_url
-            or f"{get_url()}/api/method/frappe.integrations.oauth2_logins.login_via_oauth2"
-        )
-
-        # --- Exchange authorization code for access token ---
-        token_resp = requests.post(
-            token_url,
-            data={
-                "client_id": slk.client_id,
-                "client_secret": slk.get_password("client_secret"),
-                "code": code,
-                "redirect_uri": redirect_uri,
-                "grant_type": "authorization_code",
-            },
-            timeout=15,
-        )
-
-        if token_resp.status_code != 200:
-            frappe.log_error(
-                title="OAuth Token Exchange Failed",
-                message=f"Provider {provider} returned {token_resp.status_code}: {token_resp.text}",
-            )
-            return build_error_response(400, "Failed to authenticate with OAuth provider", token_resp.text)
-
-        oauth_access_token = token_resp.json().get("access_token")
-
-        # --- Fetch user info and extract email ---
-        _user_data, email = _fetch_user_info(slk, oauth_access_token)
-
+        email = info.get("email")
         if not email:
             return build_error_response(400, "Email not provided by OAuth provider", "Email is required for login")
 
-        # --- Validate user exists ---
+        # --- Validate user ---
         user = frappe.db.exists("User", email)
         if not user:
             frappe.log_error(
@@ -304,7 +202,7 @@ def handle_oauth_callback(code, state, provider=None):
                 )
                 return build_error_response(409, "Invalid employee account", "No employee record found for this user")
 
-        # --- Issue JWT tokens ---
+        # --- Issue JWT tokens (no Frappe session created) ---
         tokens = prepare_token(user_doc)
         frappe.db.commit()
 
