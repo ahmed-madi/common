@@ -7,6 +7,9 @@ from common.api.utils.response import build_error_response
 WHITELIST_PATHS = [
     "/api/v1/user/auth/login",
     "/api/v1/user/auth/refresh-token",
+    "/api/v1/user/auth/social/providers",
+    "/api/v1/user/auth/social/oauth-url",
+    "/api/v1/user/auth/social/callback",
 ]
 
 
