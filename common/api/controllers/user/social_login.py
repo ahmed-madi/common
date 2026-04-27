@@ -121,7 +121,7 @@ def _fetch_user_info(slk, access_token):
 # API endpoints
 # ---------------------------------------------------------------------------
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True, methods=["GET"])
 def get_providers():
     """
     Return all enabled Social Login Key providers.
@@ -146,7 +146,7 @@ def get_providers():
         return build_error_response(500, "Failed to retrieve social login providers", str(e))
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True, methods=["GET"])
 def get_oauth_url(provider):
     """
     Generate an OAuth 2.0 authorization URL for the given Social Login Key name.
@@ -216,7 +216,7 @@ def get_oauth_url(provider):
         return build_error_response(500, "Failed to generate OAuth URL", str(e))
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True, methods=["POST"])
 def handle_oauth_callback(code, state, provider=None):
     """
     Exchange an OAuth authorization code for app JWT tokens.
