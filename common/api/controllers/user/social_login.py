@@ -1,9 +1,17 @@
+import json
 import secrets
 import urllib.parse
 
 import frappe
 from frappe.utils import get_url
 from frappe.utils.oauth import get_info_via_oauth
+
+
+def _decoder_compat(b):
+    # rauth may return bytes or str depending on the version/provider
+    if isinstance(b, bytes):
+        return json.loads(b.decode("utf-8"))
+    return json.loads(b)
 
 from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
@@ -169,7 +177,7 @@ def handle_oauth_callback(code, state, provider=None):
         # id_token=True for Microsoft/Office 365: the email lives in the JWT
         # id_token returned by the token endpoint, no Graph API call needed.
         use_id_token = _is_microsoft(slk.provider_name)
-        info = get_info_via_oauth(provider, code, id_token=use_id_token)
+        info = get_info_via_oauth(provider, code, decoder=_decoder_compat, id_token=use_id_token)
 
         email = info.get("email")
         if not email:
