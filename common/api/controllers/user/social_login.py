@@ -47,7 +47,7 @@ def _get_authorize_url(slk):
 
 def _get_scope(slk):
     """Return OAuth scopes, preferring the configured field."""
-    if slk.scope:
+    if slk.get("scope"):
         return slk.scope
     name = slk.provider_name
     if _is_microsoft(name):
