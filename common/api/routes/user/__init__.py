@@ -40,7 +40,7 @@ user_rules = [
     Rule("/user/auth/social/providers", methods=["GET"], endpoint=get_social_providers),
     Rule("/user/auth/social/oauth-url", methods=["GET"], endpoint=get_oauth_url),
     Rule(
-        "/user/auth/social/callback", methods=["POST"], endpoint=handle_oauth_callback
+        "/user/auth/social/callback", methods=["GET", "POST"], endpoint=handle_oauth_callback
     ),
 ]
 

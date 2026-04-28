@@ -108,11 +108,7 @@ def get_oauth_url(provider):
             expires_in_sec=600,
         )
 
-        redirect_uri = (
-            slk.redirect_url
-            or f"{get_url()}/api/method/frappe.integrations.oauth2_logins.login_via_oauth2"
-        )
-
+        redirect_uri = "/api/method/common.api.controllers.user.social_login.handle_oauth_callback"
         params = {
             "client_id": slk.client_id,
             "redirect_uri": redirect_uri,
@@ -147,7 +143,7 @@ def get_oauth_url(provider):
         return build_error_response(500, "Failed to generate OAuth URL", str(e))
 
 
-@frappe.whitelist(allow_guest=True, methods=["POST"])
+@frappe.whitelist(allow_guest=True, methods=["GET", "POST"])
 def handle_oauth_callback(code, state, provider=None):
     """
     Exchange an OAuth authorization code for app JWT tokens.
