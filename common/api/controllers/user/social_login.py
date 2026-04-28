@@ -6,15 +6,15 @@ import frappe
 from frappe.utils import get_url
 from frappe.utils.oauth import get_info_via_oauth
 
+from common.api.utils.jwt import prepare_token
+from common.api.utils.response import build_success_response, build_error_response
+
 
 def _decoder_compat(b):
     # rauth may return bytes or str depending on the version/provider
     if isinstance(b, bytes):
         return json.loads(b.decode("utf-8"))
     return json.loads(b)
-
-from common.api.utils.jwt import prepare_token
-from common.api.utils.response import build_success_response, build_error_response
 
 
 # ---------------------------------------------------------------------------
@@ -116,7 +116,9 @@ def get_oauth_url(provider):
             expires_in_sec=600,
         )
 
-        redirect_uri = "/api/method/common.api.controllers.user.social_login.handle_oauth_callback"
+        our_callback = "/api/method/common.api.controllers.user.social_login.handle_oauth_callback"
+        # redirect_uri = get_url(slk.redirect_url if slk.redirect_url else our_callback)
+        redirect_uri = get_url(our_callback)
         params = {
             "client_id": slk.client_id,
             "redirect_uri": redirect_uri,
