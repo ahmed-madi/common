@@ -93,7 +93,7 @@ def get_providers():
         providers = frappe.get_all(
             "Social Login Key",
             filters={"enable_social_login": 1},
-            fields=["name", "provider_name", "icon"],
+            fields=["name", "provider_name", "icon", "custom_color as color"],
         )
         return build_success_response(
             status_code=200,
