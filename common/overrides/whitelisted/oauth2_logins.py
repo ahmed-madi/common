@@ -1,30 +1,22 @@
 import frappe
-from frappe.utils import get_url
 
 from common.api.controllers.user.social_login import _exchange_code_for_user_info, _get_email
 from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 
 
-@frappe.whitelist(allow_guest=True)
-def login_via_office365(code: str, state: str):
-    cached = frappe.cache().get_value(f"oauth_state_{state}")
-
-    if not cached:
-        # Login was not initiated via our API — fall back to Frappe's standard flow.
-        from frappe.utils.oauth import login_via_oauth2_id_token
-        from frappe.integrations.oauth2_logins import decoder_compat
-        return login_via_oauth2_id_token("office_365", code, state, decoder=decoder_compat)
+def _our_jwt_flow(cached: dict, code: str):
+    """Issue JWT tokens and redirect (or return JSON) after a successful OAuth exchange."""
+    import urllib.parse
 
     provider = cached["provider"]
     redirect_uri = cached["redirect_uri"]
     success_redirect_url = cached.get("success_redirect_url")
-    frappe.cache().delete_value(f"oauth_state_{state}")
 
     try:
         info = _exchange_code_for_user_info(provider, code, redirect_uri)
     except Exception as e:
-        frappe.log_error(title="Office365 Token Exchange Failed", message=f"{str(e)}\n\n{frappe.get_traceback()}")
+        frappe.log_error(title="Social Login Token Exchange Failed", message=f"{str(e)}\n\n{frappe.get_traceback()}")
         return build_error_response(500, "Failed to exchange authorization code", str(e))
 
     email = _get_email(info)
@@ -57,7 +49,6 @@ def login_via_office365(code: str, state: str):
     frappe.db.commit()
 
     if success_redirect_url:
-        import urllib.parse
         fragment = urllib.parse.urlencode({
             "access_token": tokens["access_token"],
             "refresh_token": tokens["refresh_token"],
@@ -81,3 +72,102 @@ def login_via_office365(code: str, state: str):
             "refresh_token": tokens["refresh_token"],
         },
     )
+
+
+def _handle_callback(code: str, state: str, frappe_fallback):
+    """
+    Central dispatcher for all provider callback overrides.
+
+    If the state is in our Redis cache the login was initiated via our API →
+    run our JWT flow. Otherwise fall back to Frappe's original handler so that
+    Frappe's own web-based social login keeps working.
+    """
+    cached = frappe.cache().get_value(f"oauth_state_{state}")
+    if not cached:
+        return frappe_fallback()
+
+    frappe.cache().delete_value(f"oauth_state_{state}")
+    return _our_jwt_flow(cached, code)
+
+
+# ---------------------------------------------------------------------------
+# One override per Frappe built-in handler, each delegating to _handle_callback.
+# The fallback lambda calls Frappe's original function directly (not the override)
+# to avoid infinite recursion.
+# ---------------------------------------------------------------------------
+
+@frappe.whitelist(allow_guest=True)
+def login_via_google(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("google", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_github(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("github", code, state))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_facebook(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("facebook", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_frappe(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("frappe", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_office365(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2_id_token
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2_id_token("office_365", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_salesforce(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("salesforce", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_fairlogin(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("fairlogin", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_keycloak(code: str, state: str):
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+    return _handle_callback(code, state,
+        lambda: login_via_oauth2("keycloak", code, state, decoder=decoder_compat))
+
+
+@frappe.whitelist(allow_guest=True)
+def custom(code: str, state: str):
+    """Override for user-added providers routed via /api/method/frappe.integrations.oauth2_logins.custom/<provider>."""
+    from frappe.utils.oauth import login_via_oauth2
+    from frappe.integrations.oauth2_logins import decoder_compat
+
+    def frappe_fallback():
+        path = frappe.request.path[1:].split("/")
+        if len(path) == 4 and path[3] and frappe.db.exists("Social Login Key", path[3]):
+            login_via_oauth2(path[3], code, state, decoder=decoder_compat)
+
+    return _handle_callback(code, state, frappe_fallback)

@@ -199,7 +199,15 @@ additional_timeline_content = {
 #
 override_whitelisted_methods = {
     "frappe.core.doctype.user.user.impersonate": "common.overrides.whitelisted.user.impersonate",
+    "frappe.integrations.oauth2_logins.login_via_google": "common.overrides.whitelisted.oauth2_logins.login_via_google",
+    "frappe.integrations.oauth2_logins.login_via_github": "common.overrides.whitelisted.oauth2_logins.login_via_github",
+    "frappe.integrations.oauth2_logins.login_via_facebook": "common.overrides.whitelisted.oauth2_logins.login_via_facebook",
+    "frappe.integrations.oauth2_logins.login_via_frappe": "common.overrides.whitelisted.oauth2_logins.login_via_frappe",
     "frappe.integrations.oauth2_logins.login_via_office365": "common.overrides.whitelisted.oauth2_logins.login_via_office365",
+    "frappe.integrations.oauth2_logins.login_via_salesforce": "common.overrides.whitelisted.oauth2_logins.login_via_salesforce",
+    "frappe.integrations.oauth2_logins.login_via_fairlogin": "common.overrides.whitelisted.oauth2_logins.login_via_fairlogin",
+    "frappe.integrations.oauth2_logins.login_via_keycloak": "common.overrides.whitelisted.oauth2_logins.login_via_keycloak",
+    "frappe.integrations.oauth2_logins.custom": "common.overrides.whitelisted.oauth2_logins.custom",
 }
 #
 # each overriding function accepts a `data` argument;
