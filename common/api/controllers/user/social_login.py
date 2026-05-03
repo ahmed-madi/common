@@ -1,3 +1,4 @@
+import base64
 import json
 import secrets
 import urllib.parse
@@ -13,6 +14,14 @@ from common.api.utils.response import build_success_response, build_error_respon
 # Path to this module's callback — used as the redirect_uri in every OAuth flow.
 # Must be registered as an allowed redirect in each OAuth provider's app settings.
 _CALLBACK_PATH = "/api/method/common.api.controllers.user.social_login.handle_oauth_callback"
+
+# If slk.redirect_url points to one of these built-in Frappe handlers, ignore it and
+# route through our callback instead. Frappe's handlers expect a different state format
+# (base64-encoded JSON) that is incompatible with our state scheme.
+_FRAPPE_BUILTIN_OAUTH_HANDLERS = (
+    "frappe.integrations.oauth2_logins",
+    "frappe.www.login",
+)
 
 
 def _decoder_compat(b):
@@ -126,10 +135,11 @@ def get_oauth_url(provider: str):
                 "Set the 'Authorize URL' field on the Social Login Key",
             )
 
-        # Prefer the redirect_url configured on the Social Login Key (registered with the
-        # OAuth provider, supports mobile deep links like myapp://oauth/callback).
-        # Fall back to our server-side callback only when none is configured.
-        if slk.redirect_url:
+        _use_slk_redirect = (
+            slk.redirect_url
+            and not any(h in slk.redirect_url for h in _FRAPPE_BUILTIN_OAUTH_HANDLERS)
+        )
+        if _use_slk_redirect:
             _parsed = urllib.parse.urlparse(slk.redirect_url)
             redirect_uri = (
                 slk.redirect_url if (_parsed.scheme and _parsed.netloc) else get_url(slk.redirect_url)
@@ -137,7 +147,9 @@ def get_oauth_url(provider: str):
         else:
             redirect_uri = get_url(_CALLBACK_PATH)
 
-        state = secrets.token_urlsafe(32)
+        # Use standard padded base64 so the state survives base64.b64decode if it ever
+        # reaches a Frappe built-in handler (e.g. during misconfiguration).
+        state = base64.b64encode(secrets.token_bytes(32)).decode()
 
         # Store provider + redirect_uri so handle_oauth_callback can use them without
         # re-deriving, and so the redirect_uri passed to the token exchange is identical.
