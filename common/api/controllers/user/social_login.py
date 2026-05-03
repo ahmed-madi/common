@@ -11,17 +11,9 @@ from common.api.utils.jwt import prepare_token
 from common.api.utils.response import build_success_response, build_error_response
 
 
-# Path to this module's callback — used as the redirect_uri in every OAuth flow.
-# Must be registered as an allowed redirect in each OAuth provider's app settings.
+# Path to this module's callback — used as the redirect_uri when the Social Login Key
+# has no redirect_url configured (e.g. non-Microsoft providers).
 _CALLBACK_PATH = "/api/method/common.api.controllers.user.social_login.handle_oauth_callback"
-
-# If slk.redirect_url points to one of these built-in Frappe handlers, ignore it and
-# route through our callback instead. Frappe's handlers expect a different state format
-# (base64-encoded JSON) that is incompatible with our state scheme.
-_FRAPPE_BUILTIN_OAUTH_HANDLERS = (
-    "frappe.integrations.oauth2_logins",
-    "frappe.www.login",
-)
 
 
 def _decoder_compat(b):
@@ -60,8 +52,8 @@ def _exchange_code_for_user_info(provider: str, code: str, redirect_uri: str) ->
     Exchange an OAuth authorization code for user info.
 
     Mirrors Frappe's get_info_via_oauth but accepts redirect_uri explicitly so it
-    matches the URI we sent in the authorization request (our mobile callback), not
-    the one stored in the Social Login Key document (Frappe's web callback).
+    matches the URI we sent in the authorization request, not the one stored in the
+    Social Login Key document.
     """
     import jwt as pyjwt
 
@@ -115,12 +107,14 @@ def get_providers():
 
 
 @frappe.whitelist(allow_guest=True, methods=["GET"])
-def get_oauth_url(provider: str):
+def get_oauth_url(provider: str, success_redirect_url: str = None):
     """
     Generate an OAuth 2.0 authorization URL for the given Social Login Key name.
 
-    The mobile app opens this URL in a browser/webview. After the user authenticates,
-    the provider redirects to handle_oauth_callback with `code` and `state` parameters.
+    success_redirect_url: where to redirect the browser after a successful login.
+    For web/React apps, pass window.location.href. The override handler will append
+    tokens as a URL fragment (#access_token=...&refresh_token=...).
+    For mobile apps that intercept the callback themselves, omit this parameter.
     """
     try:
         slk = frappe.get_doc("Social Login Key", provider)
@@ -135,11 +129,10 @@ def get_oauth_url(provider: str):
                 "Set the 'Authorize URL' field on the Social Login Key",
             )
 
-        _use_slk_redirect = (
-            slk.redirect_url
-            and not any(h in slk.redirect_url for h in _FRAPPE_BUILTIN_OAUTH_HANDLERS)
-        )
-        if _use_slk_redirect:
+        # Use redirect_url from the Social Login Key as-is — this is the URI registered
+        # with the OAuth provider (e.g. Azure). Fall back to our server-side callback
+        # for providers where no redirect_url is configured.
+        if slk.redirect_url:
             _parsed = urllib.parse.urlparse(slk.redirect_url)
             redirect_uri = (
                 slk.redirect_url if (_parsed.scheme and _parsed.netloc) else get_url(slk.redirect_url)
@@ -147,15 +140,17 @@ def get_oauth_url(provider: str):
         else:
             redirect_uri = get_url(_CALLBACK_PATH)
 
-        # Use standard padded base64 so the state survives base64.b64decode if it ever
-        # reaches a Frappe built-in handler (e.g. during misconfiguration).
+        # Standard padded base64 — survives base64.b64decode in Frappe's handlers.
         state = base64.b64encode(secrets.token_bytes(32)).decode()
 
-        # Store provider + redirect_uri so handle_oauth_callback can use them without
-        # re-deriving, and so the redirect_uri passed to the token exchange is identical.
         frappe.cache().set_value(
             f"oauth_state_{state}",
-            {"provider": provider, "redirect_uri": redirect_uri, "timestamp": frappe.utils.now()},
+            {
+                "provider": provider,
+                "redirect_uri": redirect_uri,
+                "success_redirect_url": success_redirect_url,
+                "timestamp": frappe.utils.now(),
+            },
             expires_in_sec=600,
         )
 
@@ -180,8 +175,6 @@ def get_oauth_url(provider: str):
         if _is_microsoft(slk.provider_name):
             params["response_mode"] = "query"
 
-        # For providers with custom_base_url (e.g. Keycloak, self-hosted Frappe),
-        # resolve the authorize_url relative to base_url.
         authorize_url = build_oauth_url(slk.base_url, slk.authorize_url) if slk.custom_base_url else slk.authorize_url
 
         authorization_url = f"{authorize_url}?{urllib.parse.urlencode(params)}"
@@ -217,7 +210,6 @@ def handle_oauth_callback(code: str, state: str, provider: str = None):
     same redirect_uri that was sent in the authorization request, then returns JWT tokens.
     """
     try:
-        # --- CSRF / state validation ---
         cached = frappe.cache().get_value(f"oauth_state_{state}")
         if not cached:
             return build_error_response(400, "Invalid or expired state token", "CSRF validation failed")
@@ -226,14 +218,12 @@ def handle_oauth_callback(code: str, state: str, provider: str = None):
         redirect_uri = cached.get("redirect_uri") or get_url(_CALLBACK_PATH)
         frappe.cache().delete_value(f"oauth_state_{state}")  # one-time use
 
-        # --- Token exchange + user-info fetch ---
         info = _exchange_code_for_user_info(provider, code, redirect_uri)
 
         email = _get_email(info)
         if not email:
             return build_error_response(400, "Email not provided by OAuth provider", "Email is required for login")
 
-        # --- Verify user exists and is active ---
         user = frappe.db.exists("User", email)
         if not user:
             frappe.log_error(
@@ -256,7 +246,6 @@ def handle_oauth_callback(code: str, state: str, provider: str = None):
                 )
                 return build_error_response(409, "Invalid employee account", "No employee record found for this user")
 
-        # --- Issue JWT tokens (no Frappe web session created) ---
         tokens = prepare_token(user_doc)
         frappe.db.commit()
 

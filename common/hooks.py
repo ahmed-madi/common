@@ -198,7 +198,8 @@ additional_timeline_content = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-    "frappe.core.doctype.user.user.impersonate": "common.overrides.whitelisted.user.impersonate"
+    "frappe.core.doctype.user.user.impersonate": "common.overrides.whitelisted.user.impersonate",
+    "frappe.integrations.oauth2_logins.login_via_office365": "common.overrides.whitelisted.oauth2_logins.login_via_office365",
 }
 #
 # each overriding function accepts a `data` argument;
