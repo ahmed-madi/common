@@ -157,7 +157,7 @@ def document_list(
 
 def create_doc(
     doctype: str,
-    default_data={},
+    default_data: dict = {},
     add_perms=True,
     add_wf=True,
 ):
@@ -173,6 +173,7 @@ def create_doc(
             doc = frappe.new_doc(doctype)
         uploaded_files = handle_files(doc)
         update_files_to_doc(doctype, doc, uploaded_files)
+        doc.update(default_data)
         doc.save()
         # Link uploaded files to the newly created document and update field values
         update_files_to_doc(doctype, doc, uploaded_files)
