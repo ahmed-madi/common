@@ -221,9 +221,9 @@ class EndofServiceAward(Document):
     def get_payable_amount(self):
         """The net amount payable to the employee.
 
-        Built from the same month components the journal entry posts, and
-        clamped exactly the way `total` is, so the journal entry, the bank entry
-        and the `total` field can never disagree.
+        Built from the same components used for the bank entry, and clamped
+        exactly the way `total` is, so the bank entry and the `total` field can
+        never disagree.
         """
         entitlements = (
             flt(self.total_month_basic)
