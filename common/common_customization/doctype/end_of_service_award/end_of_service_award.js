@@ -3,6 +3,174 @@
 
 cur_frm.add_fetch("employee", "date_of_joining", "work_start_date");
 
+const PROBATION_REASON = "End of the contract during the probation period";
+const CONTRACT_END_REASON =
+  "Expiration the contract, agreement between the parties to terminate the contract," +
+  " or termination the contract by the company";
+const RESIGNATION_REASON =
+  "Employee resignation before the end of the contract period";
+
+// Each of the last month's totals and the day value it is derived from.
+const MONTH_COMPONENTS = [
+  ["total_month_salary", "day_value"],
+  ["total_month_basic", "basic_day_value"],
+  ["total_month_housing", "housing_day_value"],
+  ["total_month_transportation", "transportation_day_value"],
+  ["total_month_other", "other_day_value"],
+];
+
+function is_probation(frm) {
+  return frm.doc.reason === PROBATION_REASON;
+}
+
+// Number of unpaid days in the last month of service. Mirrors
+// EndofServiceAward.calculate_days_number so the form and the server can never
+// land on a different number - including for a service length of exactly 30
+// days, where the form used to set 0 and the server the day of the end date.
+async function set_days_number(frm) {
+  if (!frm.doc.end_date || !frm.doc.work_start_date) {
+    return;
+  }
+
+  const diff_days =
+    frappe.datetime.get_diff(frm.doc.end_date, frm.doc.work_start_date) + 1;
+  const days_number =
+    diff_days < 30
+      ? diff_days
+      : frappe.datetime.str_to_obj(frm.doc.end_date).getDate();
+
+  await frm.set_value("days_number", cint(days_number));
+}
+
+async function calculate_month_totals(frm) {
+  // When the last month's salary has already been paid, every component is
+  // zeroed - the journal and bank entries post from the components, not from
+  // total_month_salary alone.
+  if (cint(frm.doc.salary_is_already_taken)) {
+    for (const [total_field] of MONTH_COMPONENTS) {
+      await frm.set_value(total_field, 0);
+    }
+    return;
+  }
+
+  const days_number = flt(frm.doc.days_number);
+  for (const [total_field, day_value_field] of MONTH_COMPONENTS) {
+    await frm.set_value(
+      total_field,
+      flt(days_number * flt(frm.doc[day_value_field]), 2)
+    );
+  }
+}
+
+async function calculate_leave_cost(frm) {
+  await frm.set_value(
+    "leave_total_cost",
+    flt(flt(frm.doc.leave_number) * flt(frm.doc.leave_cost), 2)
+  );
+}
+
+async function calculate_ticket_cost(frm) {
+  await frm.set_value(
+    "ticket_total_cost",
+    flt(flt(frm.doc.ticket_number) * flt(frm.doc.ticket_cost), 2)
+  );
+}
+
+async function calculate_total_earning(frm) {
+  const total = (frm.doc.end_of_service_award_earning || []).reduce(
+    (sum, row) => sum + flt(row.earning),
+    0
+  );
+  await frm.set_value("total_earning", flt(total, 2));
+}
+
+async function calculate_total_deduction(frm) {
+  const total = (frm.doc.end_of_service_award_deduction || []).reduce(
+    (sum, row) => sum + flt(row.deduction),
+    0
+  );
+  await frm.set_value("total_deduction", flt(total, 2));
+}
+
+async function calculate_award(frm) {
+  if (!frm.doc.reason) {
+    await frm.set_value("award", 0);
+    return;
+  }
+
+  const salary = flt(frm.doc.salary);
+  const years =
+    cint(frm.doc.years) + cint(frm.doc.months) / 12 + cint(frm.doc.days) / 360;
+  let result = 0;
+
+  if (frm.doc.reason === CONTRACT_END_REASON) {
+    let first_period = 0;
+    let second_period = 0;
+    if (years > 5) {
+      first_period = 5;
+      second_period = years - 5;
+    } else {
+      first_period = years;
+    }
+    result = first_period * salary * 0.5 + second_period * salary;
+  } else if (frm.doc.reason === RESIGNATION_REASON) {
+    if (years < 2) {
+      result = 0;
+    } else if (years <= 5) {
+      result = (1 / 6) * salary * years;
+    } else if (years <= 10) {
+      result = (1 / 3) * salary * 5 + (2 / 3) * salary * (years - 5);
+    } else {
+      result = 0.5 * salary * 5 + salary * (years - 5);
+    }
+  } else {
+    if (years <= 5) {
+      result = 0.5 * salary * years;
+    } else {
+      result = 0.5 * salary * 5 + salary * (years - 5);
+    }
+  }
+
+  // flt rather than Math.round, so the form rounds exactly the way flt() does
+  // on the server.
+  await frm.set_value("award", flt(result, 2));
+}
+
+async function calculate_total_award(frm) {
+  let totals =
+    flt(frm.doc.ticket_total_cost) +
+    flt(frm.doc.total_month_salary) +
+    flt(frm.doc.leave_total_cost) +
+    flt(frm.doc.total_earning);
+
+  // No end of service award is due during the probation period.
+  if (!is_probation(frm)) {
+    totals += flt(frm.doc.award);
+  }
+
+  const total_deduction = flt(frm.doc.total_deduction);
+  await frm.set_value(
+    "total",
+    totals >= total_deduction ? flt(totals - total_deduction, 2) : 0
+  );
+}
+
+// The one recalculation chain, in the same order as the server's validate().
+// Every step is awaited, so no total is ever computed from a value that a
+// previous step has not finished writing yet.
+async function recalculate(frm, { refetch_dates = false } = {}) {
+  if (refetch_dates) {
+    await set_days_number(frm);
+  }
+  await calculate_month_totals(frm);
+  await calculate_leave_cost(frm);
+  await calculate_ticket_cost(frm);
+  await calculate_total_earning(frm);
+  await calculate_total_deduction(frm);
+  await calculate_award(frm);
+  await calculate_total_award(frm);
+}
+
 frappe.ui.form.on("End of Service Award", {
   onload: function (frm) {
     frm.set_query("group_deductions_in", function (doc) {
@@ -93,50 +261,146 @@ frappe.ui.form.on("End of Service Award", {
       });
     }
   },
-  salary_is_already_taken(frm) {
-    if (frm.doc.salary_is_already_taken) {
-      frm.set_value("total_month_salary", 0);
-      // frm.toggle_enable("total_month_salary", false);
-    } else {
-      // frm.toggle_enable("total_month_salary", true);
-      frm.set_value(
-        "total_month_salary",
-        flt(frm.doc.days_number) * flt(frm.doc.day_value)
+
+  validate: function (frm) {
+    return recalculate(frm);
+  },
+
+  employee: async function (frm) {
+    if (!frm.doc.employee) {
+      return;
+    }
+
+    const data = await frappe.call({
+      method: "get_salary",
+      doc: frm.doc,
+      args: { employee: frm.doc.employee },
+    });
+
+    if (data && data.message) {
+      await frm.set_value("salary", data.message[0]);
+      await frm.set_value("day_value", data.message[1]);
+      await frm.set_value("leave_cost", data.message[1]);
+      await frm.set_value("basic", data.message[2]);
+      await frm.set_value("basic_day_value", data.message[3]);
+      await frm.set_value("housing_allowance", data.message[4]);
+      await frm.set_value("housing_day_value", data.message[5]);
+      await frm.set_value("transportation_allowance", data.message[6]);
+      await frm.set_value("transportation_day_value", data.message[7]);
+      // Other allowances are excluded from the award -temporarily-, so both the
+      // allowance and its day value are forced to zero. Leaving the day value
+      // populated used to leak the allowance into the journal entries while the
+      // total ignored it.
+      await frm.set_value("other_allowance", 0);
+      await frm.set_value("other_day_value", 0);
+      await frm.set_value("salary_structure", data.message[10]);
+    }
+
+    // work_start_date is fetched from the employee, so the service duration has
+    // to be recomputed here too - the award is derived from years/months/days.
+    await frm.trigger("get_days_months_years");
+    await frm.trigger("get_leave_balance");
+    await recalculate(frm, { refetch_dates: true });
+  },
+
+  end_date: async function (frm) {
+    await frm.trigger("get_days_months_years");
+    await frm.trigger("get_leave_balance");
+    await recalculate(frm, { refetch_dates: true });
+  },
+
+  work_start_date: async function (frm) {
+    await frm.trigger("get_days_months_years");
+    await frm.trigger("get_leave_balance");
+    await recalculate(frm, { refetch_dates: true });
+  },
+
+  // days_number stays editable so it can be overridden; changing it cascades
+  // into every total that depends on it. It no longer resets
+  // salary_is_already_taken - that used to silently wipe the user's choice.
+  days_number: async function (frm) {
+    await recalculate(frm);
+  },
+
+  salary_is_already_taken: async function (frm) {
+    await recalculate(frm);
+  },
+
+  leave_number: async function (frm) {
+    await recalculate(frm);
+  },
+
+  ticket_number: async function (frm) {
+    await recalculate(frm);
+  },
+
+  ticket_cost: async function (frm) {
+    await recalculate(frm);
+  },
+
+  reason: async function (frm) {
+    await calculate_award(frm);
+    await calculate_total_award(frm);
+  },
+
+  get_days_months_years: function (frm) {
+    const fields = ["years", "months", "days"];
+    if (!frm.doc.end_date || !frm.doc.work_start_date) {
+      return Promise.all(fields.map((field) => frm.set_value(field, 0)));
+    }
+
+    if (frm.doc.end_date < frm.doc.work_start_date) {
+      return Promise.all(fields.map((field) => frm.set_value(field, 0))).then(
+        () => {
+          frappe.throw(
+            __("End date must be greater than or equal to the work start date")
+          );
+        }
       );
     }
-  },
-  days_number(frm) {
-    const days_number = cint(frm.doc.days_number);
-    frm.set_value("days_number", days_number).then(() => {
-      frm.trigger("recalculate_totals_in_salary").then(() => {
-        frm.trigger("calculate_total_award");
-      });
-    });
-  },
-  recalculate_totals_in_salary(frm) {
-    frm.set_value("salary_is_already_taken", 0);
-    frm.set_value(
-      "total_month_salary",
-      frm.doc.days_number * frm.doc.day_value
-    );
 
-    frm.set_value(
-      "total_month_basic",
-      frm.doc.days_number * frm.doc.basic_day_value
-    );
-    frm.set_value(
-      "total_month_housing",
-      frm.doc.days_number * frm.doc.housing_day_value
-    );
-    frm.set_value(
-      "total_month_transportation",
-      frm.doc.days_number * frm.doc.transportation_day_value
-    );
-    frm.set_value(
-      "total_month_other",
-      frm.doc.days_number * frm.doc.other_day_value
-    );
+    return frappe
+      .call({
+        method: "get_days_months_years",
+        doc: frm.doc,
+        args: {
+          end_date: frm.doc.end_date,
+          work_start_date: frm.doc.work_start_date,
+        },
+        freeze: true,
+      })
+      .then((data) => {
+        const values = (data && data.message) || [0, 0, 0];
+        return Promise.all(
+          fields.map((field, idx) => frm.set_value(field, values[idx]))
+        );
+      });
   },
+
+  get_leave_balance: function (frm) {
+    if (!(frm.doc.employee && frm.doc.work_start_date && frm.doc.end_date)) {
+      return frm.set_value("leave_number", 0);
+    }
+
+    return frappe
+      .call({
+        method: "get_leave_balance",
+        doc: frm.doc,
+        args: {
+          employee: frm.doc.employee,
+          work_start_date: frm.doc.work_start_date,
+          end_date: frm.doc.end_date,
+        },
+        freeze: true,
+      })
+      .then((data) => frm.set_value("leave_number", flt(data && data.message)));
+  },
+
+  notice_month: function (frm) {
+    frm.set_df_property("notice_month_start", "reqd", frm.doc.notice_month);
+    frm.set_df_property("notice_month_end", "reqd", frm.doc.notice_month);
+  },
+
   before_workflow_action(frm) {
     return new Promise((resolve, reject) => {
       if (
@@ -184,400 +448,26 @@ frappe.ui.form.on("End of Service Award", {
       }
     });
   },
-  notice_month: function (frm) {
-    frm.set_df_property("notice_month_start", "reqd", frm.doc.notice_month);
-    frm.set_df_property("notice_month_end", "reqd", frm.doc.notice_month);
-  },
-
-  employee: function (frm) {
-    if (frm.doc.employee) {
-      frappe.call({
-        method: "get_salary",
-        doc: frm.doc,
-        args: { employee: frm.doc.employee },
-        callback: async function (data) {
-          if (data) {
-            await frm.set_value("salary", data.message[0]);
-            await frm.set_value("day_value", data.message[1]);
-            await frm.set_value("leave_cost", data.message[1]);
-
-            await frm.trigger("get_leave_balance");
-            await frm.set_value(
-              "leave_total_cost",
-              Math.round(frm.doc.leave_number * frm.doc.leave_cost)
-            );
-            await frm.set_value("basic", data.message[2]);
-            await frm.set_value("basic_day_value", data.message[3]);
-            await frm.set_value("housing_allowance", data.message[4]);
-            await frm.set_value("housing_day_value", data.message[5]);
-            await frm.set_value("transportation_allowance", data.message[6]);
-            await frm.set_value("transportation_day_value", data.message[7]);
-            await frm.set_value(
-              "other_allowance",
-              0 /*data.message[8] -temporarily set as zero- */
-            );
-            await frm.set_value("other_day_value", data.message[9]);
-            await frm.set_value("salary_structure", data.message[10]);
-          }
-          await frm.trigger("get_award");
-          await frm.trigger("calculate_total_award");
-        },
-      });
-    }
-
-    if (frm.doc.employee && frm.doc.end_date) {
-      var end_resignation_date = new Date(frm.doc.end_date);
-
-      var date1 = new Date(frm.doc.work_start_date);
-      var date2 = new Date(frm.doc.end_date);
-      var diffTime = date2.getTime() - date1.getTime();
-      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-      if (diffDays < 30) {
-        frm.set_value("days_number", diffDays);
-      } else if (diffDays == 30) {
-        frm.set_value("days_number", 0);
-      } else {
-        frm.set_value("days_number", end_resignation_date.getDate());
-      }
-      frm.set_value("salary_is_already_taken", 0);
-      frm.set_value(
-        "total_month_salary",
-        frm.doc.days_number * frm.doc.day_value
-      );
-
-      frm.set_value(
-        "total_month_basic",
-        frm.doc.days_number * frm.doc.basic_day_value
-      );
-      frm.set_value(
-        "total_month_housing",
-        frm.doc.days_number * frm.doc.housing_day_value
-      );
-      frm.set_value(
-        "total_month_transportation",
-        frm.doc.days_number * frm.doc.transportation_day_value
-      );
-      frm.set_value(
-        "total_month_other",
-        frm.doc.days_number * frm.doc.other_day_value
-      );
-      frm.trigger("calculate_total_award");
-    }
-  },
-
-  total_month_salary(frm) {
-    frm.trigger("calculate_total_award");
-  },
-  leave_total_cost(frm) {
-    frm.trigger("calculate_total_award");
-  },
-  ticket_total_cost(frm) {
-    frm.trigger("calculate_total_award");
-  },
-  reason(frm) {
-    frm.trigger("calculate_total_award");
-  },
-  end_date: async function (frm) {
-    await frm.trigger("get_leave_balance");
-    await frm.trigger("get_days_months_years");
-
-    if (frm.doc.employee && frm.doc.end_date) {
-      var end_resignation_date = new Date(frm.doc.end_date);
-
-      var date1 = new Date(frm.doc.work_start_date);
-      var date2 = new Date(frm.doc.end_date);
-      var diffTime = Math.abs(date2 - date1);
-      var diffDays = Math.ceil(diffTime / (1000 * 3600 * 24)) + 1;
-
-      if (diffDays < 30) {
-        await frm.set_value("days_number", diffDays);
-      } else if (diffDays == 30) {
-        frm.set_value("days_number", 0);
-      } else {
-        await frm.set_value("days_number", end_resignation_date.getDate());
-      }
-
-      await frm.set_value("salary_is_already_taken", 0);
-      await frm.set_value(
-        "total_month_salary",
-        frm.doc.days_number * frm.doc.day_value
-      );
-      await frm.set_value(
-        "total_month_basic",
-        frm.doc.days_number * frm.doc.basic_day_value
-      );
-      await frm.set_value(
-        "total_month_housing",
-        frm.doc.days_number * frm.doc.housing_day_value
-      );
-      await frm.set_value(
-        "total_month_transportation",
-        frm.doc.days_number * frm.doc.transportation_day_value
-      );
-      await frm.set_value(
-        "total_month_other",
-        frm.doc.days_number * frm.doc.other_day_value
-      );
-      await frm.trigger("calculate_total_award");
-    }
-  },
-  work_start_date(frm) {
-    frm.trigger("get_days_months_years");
-  },
-  get_days_months_years(frm) {
-    const fields = ["years", "months", "days"];
-    if (!frm.doc.end_date || !frm.doc.work_start_date) {
-      fields.forEach((field) => frm.set_value(field, 0));
-      frm.trigger("get_award");
-      return;
-    }
-    if (frm.doc.end_date < frm.doc.work_start_date) {
-      fields.forEach((field) => frm.set_value(field, 0));
-      frm.trigger("get_award");
-      frappe.throw("تاريخ نهاية العمل يجب أن يكون أكبر من تاريخ بداية العمل");
-    } else {
-      frappe.call({
-        method: "get_days_months_years",
-        doc: frm.doc,
-        args: {
-          end_date: frm.doc.end_date,
-          work_start_date: frm.doc.work_start_date,
-        },
-        freeze: true,
-        callback: function (data) {
-          if (data) {
-            fields.forEach((field, idx) =>
-              frm.set_value(field, data.message[idx])
-            );
-          } else {
-            fields.forEach((field) => frm.set_value(field, 0));
-          }
-          frm.trigger("get_award");
-        },
-      });
-    }
-  },
-
-  validate: function (frm) {
-    frm.trigger("calculate_total_deduction");
-    frm.trigger("calculate_total_earning");
-    frm.trigger("get_award");
-    frm.trigger("calculate_total_award");
-  },
-
-  get_award: function (frm) {
-    var result = 0;
-    frm.set_value("award", 0);
-    if (!frm.doc.reason) {
-      frappe.show_alert(
-        {
-          message: __("أرجو اختيار سبب نهاية الخدمة"),
-          indicator: "red",
-        },
-        5
-      );
-      frm.trigger("calculate_total_award");
-      return;
-    }
-    const salary = flt(frm.doc.salary);
-    var years =
-      cint(frm.doc.years) +
-      cint(frm.doc.months) / 12 +
-      cint(frm.doc.days) / 360;
-
-    if (!frm.doc.reason) {
-      frappe.show_alert(
-        {
-          message: __("أرجو اختيار سبب نهاية الخدمة"),
-          indicator: "red",
-        },
-        5
-      );
-      frm.trigger("calculate_total_award");
-      frm.set_value("award", 0);
-    } else {
-      if (
-        frm.doc.reason ==
-        "Expiration the contract, agreement between the parties to terminate the contract, or termination the contract by the company"
-      ) {
-        // frm.set_value('award', "");
-        var firstPeriod,
-          secondPeriod = 0;
-        // set periods
-        if (years > 5) {
-          firstPeriod = 5;
-          secondPeriod = years - 5;
-        } else {
-          firstPeriod = years;
-        }
-        // calculate
-        result = firstPeriod * salary * 0.5 + secondPeriod * salary;
-        frm.set_value("award", Math.round(result * 100) / 100);
-      } else {
-        if (frm.doc.reason == "") {
-          frm.set_value("award", 0);
-        } else if (frm.doc.reason == "Employee resignation before the end of the contract period") {
-          if (years < 2) {
-            result = 0;
-          } else if (years <= 5) {
-            result = (1 / 6) * salary * years;
-          } else if (years <= 10) {
-            result = (1 / 3) * salary * 5 + (2 / 3) * salary * (years - 5);
-          } else {
-            result = 0.5 * salary * 5 + salary * (years - 5);
-          }
-          if (typeof result === "number") {
-            frm.set_value("award", Math.round(result * 100) / 100);
-          } else {
-            frm.set_value("award", Math.round(result * 100) / 100);
-          }
-        } else {
-          if (years <= 5) {
-            result = 0.5 * salary * years;
-          } else {
-            result = 0.5 * salary * 5 + salary * (years - 5);
-          }
-          if (typeof result === "number") {
-            frm.set_value("award", Math.round(result * 100) / 100);
-          } else {
-            frm.set_value("award", Math.round(result * 100) / 100);
-          }
-        }
-      }
-    }
-    frm.trigger("calculate_total_award");
-  },
-
-  // Done!
-  after_save(frm) {
-    frm.trigger("calculate_total_award");
-  },
-
-  get_leave_balance(frm) {
-    frm.set_value("leave_number", 0);
-    frm.set_value("leave_total_cost", 0);
-    if (frm.doc.employee && frm.doc.work_start_date && frm.doc.end_date) {
-      frappe.call({
-        method: "get_leave_balance",
-        doc: frm.doc,
-        args: {
-          employee: frm.doc.employee,
-          work_start_date: frm.doc.work_start_date,
-          end_date: frm.doc.end_date,
-        },
-        freeze: true,
-        callback: function (data) {
-          if (data) {
-            frm.set_value("leave_number", data.message);
-            frm
-              .set_value(
-                "leave_total_cost",
-                Math.round(data.message * frm.doc.leave_cost)
-              )
-              .then(() => {
-                frm.trigger("calculate_total_award");
-              });
-          }
-          frm.trigger("calculate_total_award");
-        },
-      });
-    } else {
-      frm.trigger("calculate_total_award");
-    }
-  },
-  leave_number(frm) {
-    frm.set_value(
-      "leave_total_cost",
-      Math.round(flt(frm.doc.leave_number) * flt(frm.doc.leave_cost))
-    );
-    frm.trigger("calculate_total_award");
-  },
-  ticket_number(frm) {
-    frm.trigger("calculate_total_ticket_cost");
-  },
-  ticket_cost(frm) {
-    frm.trigger("calculate_total_ticket_cost");
-  },
-  calculate_total_deduction(frm) {
-    const total = (frm.doc.end_of_service_award_deduction || []).reduce(
-      (prev, curr) => parseFloat(curr.deduction) + prev,
-      0
-    );
-    frm.set_value("total_deduction", total);
-  },
-
-  calculate_total_salary(frm) {},
-  calculate_total_earning(frm) {
-    const total = (frm.doc.end_of_service_award_earning || []).reduce(
-      (prev, curr) => parseFloat(curr.earning) + prev,
-      0
-    );
-    frm.set_value("total_earning", total);
-  },
-
-  calculate_total_ticket_cost(frm) {
-    if (frm.doc.ticket_number && frm.doc.ticket_cost) {
-      frm.set_value(
-        "ticket_total_cost",
-        frm.doc.ticket_number * frm.doc.ticket_cost
-      );
-    } else {
-      frm.set_value("ticket_total_cost", 0);
-    }
-    frm.trigger("calculate_total_award");
-  },
-  calculate_total_award(frm) {
-    if (frm.doc.reason === "End of the contract during the probation period") {
-      const totals =
-        flt(frm.doc.ticket_total_cost) +
-        (frm.doc.salary_is_already_taken == 1
-          ? 0
-          : flt(frm.doc.total_month_salary)) +
-        flt(frm.doc.leave_total_cost) +
-        flt(frm.doc.total_earning);
-
-      frm.set_value(
-        "total",
-        totals >= flt(frm.doc.total_deduction)
-          ? totals - flt(frm.doc.total_deduction)
-          : 0
-      );
-    } else {
-      const totals =
-        flt(frm.doc.award) +
-        flt(frm.doc.ticket_total_cost) +
-        flt(frm.doc.total_month_salary) +
-        flt(frm.doc.leave_total_cost) +
-        flt(frm.doc.total_earning);
-
-      frm.set_value(
-        "total",
-        totals >= flt(frm.doc.total_deduction)
-          ? totals - flt(frm.doc.total_deduction)
-          : 0
-      );
-    }
-  },
 });
 
 frappe.ui.form.on("End of Service Award Deduction", {
-  deduction(frm, cdt, cdn) {
-    frm.trigger("calculate_total_deduction");
-    frm.trigger("calculate_total_award");
+  deduction(frm) {
+    return calculate_total_deduction(frm).then(() =>
+      calculate_total_award(frm)
+    );
   },
-  end_of_service_award_deduction_remove(frm, cdt, cdn) {
-    frm.trigger("calculate_total_deduction");
-    frm.trigger("calculate_total_award");
+  end_of_service_award_deduction_remove(frm) {
+    return calculate_total_deduction(frm).then(() =>
+      calculate_total_award(frm)
+    );
   },
 });
+
 frappe.ui.form.on("End of Service Award Earning", {
-  earning(frm, cdt, cdn) {
-    frm.trigger("calculate_total_earning");
-    frm.trigger("calculate_total_award");
+  earning(frm) {
+    return calculate_total_earning(frm).then(() => calculate_total_award(frm));
   },
-  end_of_service_award_earning_remove(frm, cdt, cdn) {
-    frm.trigger("calculate_total_earning");
-    frm.trigger("calculate_total_award");
+  end_of_service_award_earning_remove(frm) {
+    return calculate_total_earning(frm).then(() => calculate_total_award(frm));
   },
 });

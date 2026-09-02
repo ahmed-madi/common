@@ -155,6 +155,7 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Award",
+   "read_only": 1,
    "reqd": 1,
    "width": "250"
   },
@@ -186,18 +187,19 @@
   {
    "default": "0",
    "fieldname": "days_number",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Days Number"
   },
   {
    "default": "0",
    "fieldname": "leave_number",
-   "fieldtype": "Data",
-   "label": "Leave Balance"
+   "fieldtype": "Float",
+   "label": "Leave Balance",
+   "precision": "3"
   },
   {
    "fieldname": "ticket_number",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Ticket Number"
   },
   {
@@ -240,13 +242,15 @@
    "default": "0",
    "fieldname": "leave_total_cost",
    "fieldtype": "Currency",
-   "label": "Leave Total Cost"
+   "label": "Leave Total Cost",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "ticket_total_cost",
    "fieldtype": "Currency",
-   "label": "Ticket Total Cost"
+   "label": "Ticket Total Cost",
+   "read_only": 1
   },
   {
    "fieldname": "total_award",
@@ -334,8 +338,9 @@
    "options": "End of Service Award Deduction"
   },
   {
+   "default": "0",
    "fieldname": "total_deduction",
-   "fieldtype": "Data",
+   "fieldtype": "Currency",
    "label": "Total Deduction",
    "read_only": 1
   },
@@ -351,8 +356,9 @@
    "options": "End of Service Award Earning"
   },
   {
+   "default": "0",
    "fieldname": "total_earning",
-   "fieldtype": "Data",
+   "fieldtype": "Currency",
    "label": "Total Earning",
    "read_only": 1
   },

@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-import math
 from frappe.utils import (
     cint,
     date_diff,
@@ -23,101 +22,171 @@ from frappe.desk.doctype.notification_log.notification_log import (
 )
 
 
+PROBATION_REASON = "End of the contract during the probation period"
+CONTRACT_END_REASON = (
+    "Expiration the contract, agreement between the parties to terminate the contract,"
+    " or termination the contract by the company"
+)
+RESIGNATION_REASON = "Employee resignation before the end of the contract period"
+
+
 class EndofServiceAward(Document):
     def validate(self):
-        if self.end_date and self.work_start_date:
-            years, months, days = self.get_days_months_years(
-                self.end_date, self.work_start_date
-            )
-            self.years = years
-            self.months = months
-            self.days = days
-            diffDays = date_diff(self.end_date, self.work_start_date) + 1
-            if diffDays < 30:
-                if not self.days_number:
-                    self.days_number = diffDays
-            else:
-                if not self.days_number:
-                    self.days_number = getdate(self.end_date).day
-
-        if self.employee:
-            (
-                total_salary,
-                total_day_value,
-                basic,
-                basic_day_value,
-                housing_allowance,
-                housing_day_value,
-                transportation_allowance,
-                transportation_day_value,
-                other_allowance,
-                other_day_value,
-                salary_structure,
-            ) = self.get_salary(self.employee)
-
-            self.salary_structure = salary_structure
-            self.salary = total_salary
-            self.day_value = total_day_value  # total day value
-            self.leave_cost = total_day_value
-            self.basic = basic
-            self.basic_day_value = basic_day_value
-            self.total_month_basic = flt(self.days_number) * flt(self.basic_day_value)
-            self.housing_allowance = housing_allowance
-            self.housing_day_value = housing_day_value
-            self.total_month_housing = flt(self.days_number) * flt(
-                self.housing_day_value
-            )
-            self.transportation_allowance = transportation_allowance
-            self.transportation_day_value = transportation_day_value
-            self.total_month_transportation = flt(self.days_number) * flt(
-                self.transportation_day_value
-            )
-            self.other_allowance = 0  # other_allowance -temporarily set as zero-
-            self.other_day_value = other_day_value
-            self.total_month_other = flt(self.days_number) * flt(self.other_day_value)
-
-        if (
-            self.employee
-            and self.work_start_date
-            and self.end_date
-            and not self.leave_number
-        ):
-            self.leave_number = self.get_leave_balance(
-                self.employee, self.work_start_date, self.end_date
-            )
-
-        self.total_month_salary = 0
-        if cint(self.salary_is_already_taken) == 0:
-            self.total_month_salary = flt(self.days_number) * flt(self.day_value)
-
+        # Single recalculation chain. Every total is derived on each save so the
+        # server always agrees with what the form shows, no matter how the doc
+        # was saved (UI, API, data import or a workflow transition).
+        self.validate_dates()
+        self.calculate_service_duration()
+        self.calculate_days_number()
+        self.calculate_salary_details()
+        self.calculate_month_totals()
+        self.calculate_leave_cost()
+        self.calculate_ticket_cost()
         self.calculate_total_earning()
         self.calculate_total_deduction()
-
-        if not self.leave_total_cost:
-            self.leave_total_cost = flt(self.leave_number) * flt(self.leave_cost)
-
         self.get_award()
         self.calculate_total_award()
 
+    def validate_dates(self):
+        if not (self.end_date and self.work_start_date):
+            return
+
+        if getdate(self.end_date) < getdate(self.work_start_date):
+            frappe.throw(
+                _("End date must be greater than or equal to the work start date")
+            )
+
+    def calculate_service_duration(self):
+        if not (self.end_date and self.work_start_date):
+            self.years = self.months = self.days = 0
+            return
+
+        self.years, self.months, self.days = self.get_days_months_years(
+            self.end_date, self.work_start_date
+        )
+
+    def dates_changed(self):
+        """True when the employee or either service date differs from the saved doc."""
+        previous = self.get_doc_before_save()
+        if not previous:
+            return True
+
+        return any(
+            self.get(field) != previous.get(field)
+            for field in ("employee", "work_start_date", "end_date")
+        )
+
+    def calculate_days_number(self):
+        """Number of unpaid days in the last month of service.
+
+        Auto-filled whenever the employee or the service dates change, so it can
+        never stay stale after a date edit, while still allowing a manual
+        override to survive later saves that leave the dates alone.
+        """
+        if not (self.end_date and self.work_start_date):
+            return
+
+        if not self.dates_changed() and flt(self.days_number):
+            return
+
+        diff_days = date_diff(self.end_date, self.work_start_date) + 1
+        if diff_days < 30:
+            self.days_number = diff_days
+        else:
+            self.days_number = getdate(self.end_date).day
+
+    def calculate_salary_details(self):
+        if not self.employee:
+            return
+
+        (
+            total_salary,
+            total_day_value,
+            basic,
+            basic_day_value,
+            housing_allowance,
+            housing_day_value,
+            transportation_allowance,
+            transportation_day_value,
+            other_allowance,
+            other_day_value,
+            salary_structure,
+        ) = self.get_salary(self.employee)
+
+        self.salary_structure = salary_structure
+        self.salary = total_salary
+        self.day_value = total_day_value  # total day value
+        self.leave_cost = total_day_value
+        self.basic = basic
+        self.basic_day_value = basic_day_value
+        self.housing_allowance = housing_allowance
+        self.housing_day_value = housing_day_value
+        self.transportation_allowance = transportation_allowance
+        self.transportation_day_value = transportation_day_value
+        # Other allowances are excluded from the award entirely -temporarily-,
+        # so every field derived from them is forced to zero. Keeping the day
+        # value non-zero used to leak the allowance into the journal entries
+        # while `total` ignored it.
+        self.other_allowance = 0
+        self.other_day_value = 0
+
+    def calculate_month_totals(self):
+        """Last month's unpaid salary, per component.
+
+        When the last month's salary has already been paid, every component is
+        zeroed - not just `total_month_salary` - because the journal and bank
+        entries post from the individual components.
+        """
+        if cint(self.salary_is_already_taken):
+            self.total_month_salary = 0
+            self.total_month_basic = 0
+            self.total_month_housing = 0
+            self.total_month_transportation = 0
+            self.total_month_other = 0
+            return
+
+        days_number = flt(self.days_number)
+        self.total_month_salary = flt(days_number * flt(self.day_value), 2)
+        self.total_month_basic = flt(days_number * flt(self.basic_day_value), 2)
+        self.total_month_housing = flt(days_number * flt(self.housing_day_value), 2)
+        self.total_month_transportation = flt(
+            days_number * flt(self.transportation_day_value), 2
+        )
+        self.total_month_other = flt(days_number * flt(self.other_day_value), 2)
+
+    def calculate_leave_cost(self):
+        """Leave balance and its cost.
+
+        The balance is refetched whenever the employee or the service dates
+        change; otherwise a manually entered balance is kept. The cost is always
+        derived, so it can never drift from the balance times the day value.
+        """
+        if self.employee and self.work_start_date and self.end_date:
+            if self.dates_changed() or not flt(self.leave_number):
+                self.leave_number = self.get_leave_balance(
+                    self.employee, self.work_start_date, self.end_date
+                )
+
+        self.leave_total_cost = flt(flt(self.leave_number) * flt(self.leave_cost), 2)
+
+    def calculate_ticket_cost(self):
+        self.ticket_total_cost = flt(flt(self.ticket_number) * flt(self.ticket_cost), 2)
+
     def get_award(self):
         self.award = 0
+        if not self.reason:
+            return
         salary = flt(self.salary)
         years = cint(self.years) + cint(self.months) / 12 + cint(self.days) / 360
-
-        if (
-            self.reason
-            == "Expiration the contract, agreement between the parties to terminate the contract, or termination the contract by the company"
-        ):
-            firstPeriod = secondPeriod = 0
+        if self.reason == CONTRACT_END_REASON:
+            first_period = second_period = 0
             if years > 5:
-                firstPeriod = 5
-                secondPeriod = years - 5
+                first_period = 5
+                second_period = years - 5
             else:
-                firstPeriod = years
-            result = firstPeriod * salary * 0.5 + secondPeriod * salary
-            self.award = round(result * 100) / 100
-        elif self.reason == "Employee resignation before the end of the contract period":
-            result = 0
+                first_period = years
+            result = first_period * salary * 0.5 + second_period * salary
+        elif self.reason == RESIGNATION_REASON:
             if years < 2:
                 result = 0
             elif years <= 5:
@@ -126,56 +195,77 @@ class EndofServiceAward(Document):
                 result = (1 / 3) * salary * 5 + (2 / 3) * salary * (years - 5)
             else:
                 result = 0.5 * salary * 5 + salary * (years - 5)
-            self.award = round(result * 100) / 100
         else:
-            result = 0
             if years <= 5:
                 result = 0.5 * salary * years
             else:
                 result = 0.5 * salary * 5 + salary * (years - 5)
-            self.award = round(result * 100) / 100
+
+        self.award = flt(result, 2)
+
+    def is_probation(self):
+        return self.reason == PROBATION_REASON
+
+    def get_component_share(self, component_amount):
+        """A component's share of the last month's salary, as a percentage.
+
+        Returns 0 when there is no last month's salary to apportion, instead of
+        raising ZeroDivisionError.
+        """
+        total_month_salary = flt(self.total_month_salary)
+        if not total_month_salary:
+            return 0
+
+        return flt((flt(component_amount) * 100) / total_month_salary)
+
+    def get_payable_amount(self):
+        """The net amount payable to the employee.
+
+        Built from the same components used for the bank entry, and clamped
+        exactly the way `total` is, so the bank entry and the `total` field can
+        never disagree.
+        """
+        entitlements = (
+            flt(self.total_month_basic)
+            + flt(self.total_month_housing)
+            + flt(self.total_month_transportation)
+            + flt(self.total_month_other)
+            + flt(self.leave_total_cost)
+            + flt(self.ticket_total_cost)
+            + flt(self.total_earning)
+        )
+        if not self.is_probation():
+            entitlements += flt(self.award)
+
+        total_deduction = flt(self.total_deduction)
+        if entitlements < total_deduction:
+            return 0
+
+        return flt(entitlements - total_deduction, 2)
 
     def calculate_total_award(self):
-        if self.reason == "End of the contract during the probation period":
-            totals = (
-                flt(self.ticket_total_cost)
-                + flt(self.total_month_salary)
-                + flt(self.leave_total_cost)
-                + flt(self.total_earning)
-            )
-            self.total = (
-                totals - flt(self.total_deduction)
-                if totals >= flt(self.total_deduction)
-                else 0
-            )
-        else:
-            totals = (
-                flt(self.award)
-                + flt(self.ticket_total_cost)
-                + flt(self.total_month_salary)
-                + flt(self.leave_total_cost)
-                + flt(self.total_earning)
-            )
-            self.total = (
-                totals - flt(self.total_deduction)
-                if totals >= flt(self.total_deduction)
-                else 0
-            )
+        totals = (
+            flt(self.ticket_total_cost)
+            + flt(self.total_month_salary)
+            + flt(self.leave_total_cost)
+            + flt(self.total_earning)
+        )
+        # No end of service award is due during the probation period.
+        if not self.is_probation():
+            totals += flt(self.award)
+
+        total_deduction = flt(self.total_deduction)
+        self.total = (
+            flt(totals - total_deduction, 2) if totals >= total_deduction else 0
+        )
 
     def calculate_total_deduction(self):
-        self.total_deduction = 0
-        if not self.end_of_service_award_deduction:
-            return
-        for row in self.end_of_service_award_deduction or []:
-            self.total_deduction += flt(row.get("deduction", 0))
+        rows = self.end_of_service_award_deduction or []
+        self.total_deduction = flt(sum(flt(row.deduction) for row in rows), 2)
 
     def calculate_total_earning(self):
-        self.total_earning = 0
-        if not self.end_of_service_award_earning:
-            return
-
-        for row in self.end_of_service_award_earning or []:
-            self.total_earning += flt(row.get("earning", 0))
+        rows = self.end_of_service_award_earning or []
+        self.total_earning = flt(sum(flt(row.earning) for row in rows), 2)
 
     @frappe.whitelist()
     def get_salary(self, employee):
@@ -242,15 +332,28 @@ class EndofServiceAward(Document):
 
             # total_salary += amount  # removed because they want the total salary be the sum of three main components
 
+        basic_day_value = flt(basic_salary / 30, 2)
+        housing_day_value = flt(housing_allowance / 30, 2)
+        transportation_day_value = flt(transportation_allowance / 30, 2)
+
+        # The total day value is the sum of the component day values, not the
+        # total rounded on its own. Rounding each one separately used to leave
+        # `total_month_salary` a few cents away from the sum of the month
+        # components, which in turn made the journal entry component shares add
+        # up to slightly more or less than 100%.
+        total_day_value = flt(
+            basic_day_value + housing_day_value + transportation_day_value, 2
+        )
+
         return (
             total_salary,
-            flt(total_salary / 30, 2),
+            total_day_value,
             basic_salary,
-            flt(basic_salary / 30, 2),
+            basic_day_value,
             housing_allowance,
-            flt(housing_allowance / 30, 2),
+            housing_day_value,
             transportation_allowance,
-            flt(transportation_allowance / 30, 2),
+            transportation_day_value,
             other_allowances,
             flt(other_allowances / 30, 2),
             salary_structure,
@@ -453,9 +556,7 @@ class EndofServiceAward(Document):
             account_type = frappe.get_cached_value("Account", account, "account_type")
 
             amt = flt(self.total_month_basic)
-            per_cent = flt(
-                (flt(self.total_month_basic) * 100) / flt(self.total_month_salary)
-            )
+            per_cent = self.get_component_share(self.total_month_basic)
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -492,9 +593,7 @@ class EndofServiceAward(Document):
             account_type = frappe.get_cached_value("Account", account, "account_type")
 
             amt = flt(self.total_month_housing)
-            per_cent = flt(
-                (flt(self.total_month_housing) * 100) / flt(self.total_month_salary)
-            )
+            per_cent = self.get_component_share(self.total_month_housing)
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -531,10 +630,7 @@ class EndofServiceAward(Document):
             account_type = frappe.get_cached_value("Account", account, "account_type")
 
             amt = flt(self.total_month_transportation)
-            per_cent = flt(
-                (flt(self.total_month_transportation) * 100)
-                / flt(self.total_month_salary)
-            )
+            per_cent = self.get_component_share(self.total_month_transportation)
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -569,9 +665,7 @@ class EndofServiceAward(Document):
             )
 
             amt = flt(self.total_month_other)
-            per_cent = flt(
-                (flt(self.total_month_other) * 100) / flt(self.total_month_salary)
-            )
+            per_cent = self.get_component_share(self.total_month_other)
             if not group_earnings_in:
                 amt += flt((per_cent * flt(self.total_earning)) / 100)
             if not group_deductions_in:
@@ -626,7 +720,38 @@ class EndofServiceAward(Document):
                 )
             paid_amt += amt
 
-        if flt(self.award, 2) != 0:
+        # The ticket cost is part of `total`, so it has to be posted too or the
+        # journal entry and the bank entry would never reconcile. There is no
+        # dedicated setting for it yet, so it falls back to the vacation expense
+        # account - the same catch-all this method already uses - and will pick
+        # up a `custom_ticket_expense` account automatically if one is added.
+        if flt(self.ticket_total_cost, 2) != 0:
+            ticket_account = settings.get("custom_ticket_expense") or leave_account
+            if not ticket_account:
+                frappe.throw(
+                    _("Please set account for Vacation Expense in {0}").format(
+                        get_link_to_form("Accounts Settings", "Accounts Settings")
+                    )
+                )
+            account_type = frappe.get_cached_value(
+                "Account", ticket_account, "account_type"
+            )
+            row = {
+                "account": ticket_account,
+                "debit_in_account_currency": flt(self.ticket_total_cost),
+                "reference_type": "End of Service Award",
+                "reference_name": self.name,
+                "cost_center": cost_center,
+            }
+            if account_type in ["Receivable", "Payable"]:
+                row.update({"party_type": "Employee", "party": self.employee})
+            jv.append(
+                "accounts",
+                row,
+            )
+            paid_amt += flt(self.ticket_total_cost)
+
+        if flt(self.award, 2) != 0 and not self.is_probation():
             if not end_of_service_account:
                 frappe.throw(
                     _("Please set account for End of Service Award in {0}").format(
@@ -715,15 +840,11 @@ class EndofServiceAward(Document):
         jv.posting_date = nowdate()
         jv.voucher_type = "Bank Entry"
 
-        paid_amt = 0
-        paid_amt += flt(self.total_month_basic)
-        paid_amt += flt(self.total_month_housing)
-        paid_amt += flt(self.total_month_transportation)
-        paid_amt += flt(self.total_month_other)
-        paid_amt += flt(self.leave_total_cost)
-        paid_amt += flt(self.award)
-        paid_amt -= flt(self.total_deduction)
-        paid_amt += flt(self.total_earning)
+        # Derived from the same components the journal entry posts, so the two
+        # entries and the `total` field always reconcile. The month components
+        # are already zeroed when the last month's salary was paid, the award is
+        # excluded during probation, and the ticket cost is included.
+        paid_amt = self.get_payable_amount()
         cost_center = self.get_cost_center_for_employee()
         if paid_amt == 0:
             frappe.throw(_("Both Total Debit and Total Credit values cannot be zero"))
@@ -877,68 +998,6 @@ class EndofServiceAward(Document):
 
     def get_money_words(self, amount, lang="en"):
         return money_in_words(amount, lang=lang)
-
-
-@frappe.whitelist()
-def get_award(start_date, end_date, salary, toc, reason):
-    start = start_date
-    end = end_date
-    ret_dict = {}
-
-    if not reason:
-        ret_dict["award"] = 0
-        return ret_dict
-
-    if getdate(end) < getdate(start):
-        frappe.throw("تاريخ نهاية العمل يجب أن يكون أكبر من تاريخ بداية العمل")
-    else:
-        diffDays = date_diff(end, start)
-        years = math.floor(diffDays / 360)
-        daysrem = diffDays - (years * 360)
-        months = math.floor(daysrem / 30)
-        days = math.ceil(daysrem - (months * 30))
-        ret_dict = {"days": days, "months": months, "years": years, "award": 0}
-    years = flt(years) + (flt(months) / 12) + (flt(days) / 360)
-    if not reason:
-        return
-    else:
-        if "كفالة فقط" in toc:
-            if reason == "":
-                ret_dict["award"] = 0
-            else:
-                firstPeriod = 0
-                secondPeriod = 0
-                if years > 5:
-                    firstPeriod = 5
-                    secondPeriod = years - 5
-                else:
-                    firstPeriod = years
-                result = (firstPeriod * salary * 0.5) + (secondPeriod * salary)
-                ret_dict["award"] = result
-        else:
-
-            if reason == "فسخ العقد":
-                ret_dict["award"] = 0
-            elif reason == "استقالة الموظف قبل انتهاء مدة العقد":
-                if years < 2:
-                    result = 0
-                elif years <= 5:
-                    result = (1.0 / 6.0) * salary * years
-                elif years <= 10:
-                    result = ((1.0 / 3.0) * salary * 5) + (
-                        (2.0 / 3.0) * salary * (years - 5)
-                    )
-                else:
-                    result = (0.5 * salary * 5) + (salary * (years - 5))
-                ret_dict["award"] = result
-            else:
-                if years <= 5:
-                    result = 0.5 * salary * years
-                else:
-                    result = (0.5 * salary * 5) + salary * (years - 5)
-                ret_dict["award"] = result
-
-    return ret_dict
 
 
 def get_end_of_service_jv_entries(end_of_service_name, voucher_type, docstatus):
