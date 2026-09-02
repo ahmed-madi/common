@@ -174,9 +174,10 @@ class EndofServiceAward(Document):
 
     def get_award(self):
         self.award = 0
+        if not self.reason:
+            return
         salary = flt(self.salary)
         years = cint(self.years) + cint(self.months) / 12 + cint(self.days) / 360
-
         if self.reason == CONTRACT_END_REASON:
             first_period = second_period = 0
             if years > 5:
