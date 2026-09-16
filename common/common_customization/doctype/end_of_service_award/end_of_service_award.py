@@ -305,14 +305,14 @@ class EndofServiceAward(Document):
         housing_components = []
         transportation_components = []
         for c in frappe.db.sql(
-            "SELECT salary_component, parentfield from `tabCustom Salary Component`",
+            "SELECT salary_component, type, parentfield from `tabHR Salary Component`",
             as_dict=True,
         ):
-            if c.parentfield == "custom_basic_components":
+            if c.type == "Basic":
                 basic_components.append(c.salary_component)
-            elif c.parentfield == "custom_housing_allowance_components":
+            elif c.type == "Housing Allowance":
                 housing_components.append(c.salary_component)
-            elif c.parentfield == "custom_transportation_allowance_components":
+            elif c.type == "Transportation Allowance":
                 transportation_components.append(c.salary_component)
         for detail in salary_details:
             component = detail.get("salary_component")
