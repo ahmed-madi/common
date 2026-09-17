@@ -165,3 +165,112 @@ class TestEndofServiceAward(FrappeTestCase):
         award = make_award(CONTRACT_END_REASON)
 
         self.assertEqual(set(FORMULA_VARIABLES), set(award.get_formula_context()))
+
+    def make_reason(self, title, **kwargs):
+        reason = frappe.get_doc(
+            {
+                "doctype": "End of Service Award Reason",
+                "title": title,
+                "amount_based_on_formula": 1,
+                **kwargs,
+            }
+        ).insert()
+        self.addCleanup(reason.delete)
+
+        return reason
+
+    def test_a_met_condition_lets_the_formula_run(self):
+        reason = self.make_reason(
+            "_Test Condition Met", condition="years >= 2", formula="salary * years"
+        )
+
+        award = make_award(reason.name, salary=6000, years=4)
+        award.get_award()
+
+        self.assertEqual(award.award, 24000)
+
+    def test_an_unmet_condition_pays_nothing(self):
+        reason = self.make_reason(
+            "_Test Condition Unmet", condition="years >= 2", formula="salary * years"
+        )
+
+        award = make_award(reason.name, salary=6000, years=1, months=11)
+        award.get_award()
+
+        self.assertEqual(award.award, 0)
+
+    def test_an_unmet_condition_skips_the_formula_entirely(self):
+        """The formula may assume the condition holds, so it must not run when
+        it does not - here it would raise ZeroDivisionError if it did."""
+        reason = self.make_reason(
+            "_Test Condition Guards Formula",
+            condition="years >= 2",
+            formula="salary / (years - 2)",
+        )
+
+        award = make_award(reason.name, salary=6000, years=0)
+        award.get_award()
+
+        self.assertEqual(award.award, 0)
+
+    def test_no_condition_means_the_formula_always_runs(self):
+        reason = self.make_reason("_Test No Condition", formula="salary * 2")
+
+        award = make_award(reason.name, salary=6000, years=0)
+        award.get_award()
+
+        self.assertEqual(award.award, 12000)
+
+    def test_a_condition_may_read_any_award_field(self):
+        reason = self.make_reason(
+            "_Test Condition On Doc",
+            condition="doc.salary_is_already_taken == 0",
+            formula="salary",
+        )
+
+        award = make_award(reason.name, salary=6000, years=4)
+        award.salary_is_already_taken = 1
+        award.get_award()
+
+        self.assertEqual(award.award, 0)
+
+    def test_a_broken_condition_says_it_was_the_condition(self):
+        reason = self.make_reason(
+            "_Test Broken Condition", condition="yeers >= 2", formula="salary"
+        )
+
+        award = make_award(reason.name, salary=6000, years=4)
+        with self.assertRaises(frappe.ValidationError) as caught:
+            award.get_award()
+
+        message = str(caught.exception)
+        self.assertIn(reason.name, message)
+        self.assertIn("condition", message)
+
+    def test_a_reason_without_a_company_suits_any_company(self):
+        reason = self.make_reason("_Test Shared Reason", formula="salary")
+
+        award = make_award(reason.name)
+        award.company = "_Test Company"
+        award.validate_reason_company()
+
+    def test_a_reason_may_not_be_used_by_another_company(self):
+        reason = self.make_reason(
+            "_Test Scoped Reason", formula="salary", company="_Test Company"
+        )
+
+        award = make_award(reason.name)
+        award.company = "_Test Company 1"
+        with self.assertRaises(frappe.ValidationError) as caught:
+            award.validate_reason_company()
+
+        self.assertIn(reason.name, str(caught.exception))
+
+    def test_a_reason_may_be_used_by_its_own_company(self):
+        reason = self.make_reason(
+            "_Test Own Company Reason", formula="salary", company="_Test Company"
+        )
+
+        award = make_award(reason.name)
+        award.company = "_Test Company"
+        award.validate_reason_company()

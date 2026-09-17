@@ -11,27 +11,36 @@ from frappe.model.document import Document
 
 class EndofServiceAwardReason(Document):
     def validate(self):
-        self.validate_formula()
+        self.validate_expressions()
 
-    def validate_formula(self):
-        """Reject a formula that is not a single Python expression.
+    def validate_expressions(self):
+        """Reject a condition or formula that is not a single Python expression.
 
-        Catching it here means a broken formula fails on the reason that owns
+        Catching it here means a broken expression fails on the reason that owns
         it, instead of on every End of Service Award that later selects it.
         """
         if not self.amount_based_on_formula:
+            self.condition = None
             self.formula = None
             return
 
         self.amount = 0
 
-        try:
-            ast.parse(self.formula, mode="eval")
-        except SyntaxError as e:
-            frappe.throw(
-                _("Formula is not a valid Python expression: {0}").format(e.msg),
-                title=_("Invalid Formula"),
-            )
+        # The condition is optional; a reason with none always pays out.
+        for fieldname in ("condition", "formula"):
+            expression = self.get(fieldname)
+            if not expression:
+                continue
+
+            try:
+                ast.parse(expression, mode="eval")
+            except SyntaxError as e:
+                frappe.throw(
+                    _("{0} is not a valid Python expression: {1}").format(
+                        _(self.meta.get_label(fieldname)), e.msg
+                    ),
+                    title=_("Invalid Expression"),
+                )
 
 
 @frappe.whitelist()
@@ -67,3 +76,29 @@ def get_formula_help():
             if df.fieldtype not in no_value_fields
         ],
     }
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_reasons_for_company(doctype, txt, searchfield, start, page_len, filters):
+    """The reasons on offer to one company.
+
+    A reason with no company is a shared rule and belongs to all of them. That
+    has to be an or_filter rather than `company in (x, "")` - an unset Link is
+    NULL, and NULL matches nothing in an IN list.
+    """
+    company = (filters or {}).get("company")
+
+    return frappe.get_all(
+        "End of Service Award Reason",
+        fields=["name"],
+        filters=[[searchfield, "like", f"%{txt}%"]] if txt else [],
+        or_filters=[
+            ["company", "=", company],
+            ["company", "is", "not set"],
+        ],
+        order_by="name",
+        start=start,
+        page_length=page_len,
+        as_list=True,
+    )

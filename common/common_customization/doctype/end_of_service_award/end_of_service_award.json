@@ -8,6 +8,7 @@
   "employee",
   "employee_name",
   "department",
+  "company",
   "type_of_contract",
   "salary",
   "worked_days",
@@ -473,6 +474,16 @@
    "hidden": 1,
    "label": "Exclude Award from Total",
    "read_only": 1
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,

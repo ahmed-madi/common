@@ -37,9 +37,10 @@ function render_formula_help(help) {
 
   return `
     <p>${__(
-      "A single Python expression, evaluated against the End of Service Award. For example:"
+      "The condition and the formula are each a single Python expression, evaluated against the End of Service Award. The condition is optional; when it is false the award is zero and the formula is never evaluated, so the formula can be written as if the condition always holds."
     )}</p>
-    <pre>(0.5 * salary * 5 + salary * (years - 5)) if years &gt; 5 else (0.5 * salary * years)</pre>
+    <pre>${__("Condition")}:  years &gt;= 2
+${__("Formula")}:    (1 / 6) * salary * years</pre>
 
     <h5>${__("Variables")}</h5>
     <table class="table table-bordered table-sm">

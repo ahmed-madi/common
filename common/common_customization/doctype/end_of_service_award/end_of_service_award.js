@@ -12,6 +12,25 @@ const MONTH_COMPONENTS = [
   ["total_month_other", "other_day_value"],
 ];
 
+// A reason scoped to one company cannot be used by another. Clearing it beats
+// leaving a value on the form that validate() is going to reject.
+async function clear_reason_from_another_company(frm) {
+  if (!frm.doc.reason) {
+    return;
+  }
+
+  const reason_company = await frappe.db.get_value(
+    "End of Service Award Reason",
+    frm.doc.reason,
+    "company"
+  );
+  const company = (reason_company.message || {}).company;
+
+  if (company && company !== frm.doc.company) {
+    await frm.set_value("reason", null);
+  }
+}
+
 // Some reasons - the probation period among them - have their award calculated
 // and shown, but not paid. The flag is fetched from the selected reason.
 function award_is_excluded(frm) {
@@ -151,6 +170,18 @@ async function recalculate(frm, { refetch_dates = false } = {}) {
 
 frappe.ui.form.on("End of Service Award", {
   onload: function (frm) {
+    // Only reasons that apply to the employee's company. A reason with no
+    // company is a shared rule and is offered to all of them.
+    frm.set_query("reason", function (doc) {
+      return {
+        query:
+          "common.common_customization.doctype.end_of_service_award_reason.end_of_service_award_reason.get_reasons_for_company",
+        filters: {
+          company: doc.company,
+        },
+      };
+    });
+
     frm.set_query("group_deductions_in", function (doc) {
       return {
         filters: {
@@ -273,6 +304,11 @@ frappe.ui.form.on("End of Service Award", {
       await frm.set_value("other_day_value", 0);
       await frm.set_value("salary_structure", data.message[10]);
     }
+
+    // The new employee may work for another company, which the reason on the
+    // form is not necessarily available to. Dropping it here is kinder than
+    // letting the save fail on it.
+    await clear_reason_from_another_company(frm);
 
     // work_start_date is fetched from the employee, so the service duration has
     // to be recomputed here too - the award is derived from years/months/days.

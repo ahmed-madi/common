@@ -7,10 +7,12 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "company",
   "exclude_award_from_total",
   "calculation_section",
   "amount_based_on_formula",
   "amount",
+  "condition",
   "formula",
   "help_section",
   "formula_help"
@@ -23,6 +25,15 @@
    "label": "Title",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "description": "Leave empty to offer this reason to every company. Set it to restrict the reason to one company - useful when companies sit in different countries.",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company"
   },
   {
    "default": "0",
@@ -47,6 +58,14 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount"
+  },
+  {
+   "depends_on": "eval:doc.amount_based_on_formula",
+   "description": "Optional. When it evaluates to false the award is zero and the formula is never evaluated.",
+   "fieldname": "condition",
+   "fieldtype": "Code",
+   "label": "Condition",
+   "options": "PythonExpression"
   },
   {
    "depends_on": "eval:doc.amount_based_on_formula",

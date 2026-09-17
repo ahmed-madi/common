@@ -56,6 +56,7 @@ class EndofServiceAward(Document):
         # server always agrees with what the form shows, no matter how the doc
         # was saved (UI, API, data import or a workflow transition).
         self.validate_dates()
+        self.validate_reason_company()
         self.calculate_service_duration()
         self.calculate_days_number()
         self.calculate_salary_details()
@@ -66,6 +67,32 @@ class EndofServiceAward(Document):
         self.calculate_total_deduction()
         self.get_award()
         self.calculate_total_award()
+
+    def validate_reason_company(self):
+        """A reason tied to a company may only be used by that company.
+
+        End of service rules follow the law of the country the company is in, so
+        a reason written for one company must not be picked for an employee of
+        another. A reason with no company is a shared rule and fits any of them.
+        """
+        if not self.reason:
+            return
+
+        reason_company = frappe.db.get_value(
+            "End of Service Award Reason", self.reason, "company"
+        )
+        if not reason_company or reason_company == self.company:
+            return
+
+        frappe.throw(
+            _("Reason {0} belongs to company {1}, but {2} works for {3}.").format(
+                frappe.bold(self.reason),
+                frappe.bold(reason_company),
+                frappe.bold(self.employee_name or self.employee),
+                frappe.bold(self.company),
+            ),
+            title=_("Reason Not Available"),
+        )
 
     def validate_dates(self):
         if not (self.end_date and self.work_start_date):
@@ -212,30 +239,40 @@ class EndofServiceAward(Document):
             self.award = flt(reason.amount, 2)
             return
 
-        self.award = flt(self.eval_formula(reason), 2)
+        # A reason may be conditional - length of service, contract type, and so
+        # on. Nothing is owed when the condition does not hold, and the formula
+        # is not evaluated at all, so it can be written as if it always does.
+        if reason.condition and not self.eval_expression(reason, "condition"):
+            return
 
-    def eval_formula(self, reason):
-        """Evaluate a reason's formula against this award.
+        self.award = flt(self.eval_expression(reason, "formula"), 2)
 
-        Errors name the reason and its formula - without that, a typo surfaces
-        as a bare NameError on whatever award happens to be saved next.
+    def eval_expression(self, reason, fieldname):
+        """Evaluate a reason's condition or formula against this award.
+
+        Errors name the reason, the expression and which of the two it was -
+        without that, a typo surfaces as a bare NameError on whatever award
+        happens to be saved next.
         """
+        expression = reason.get(fieldname)
+
         try:
             # safe_eval writes its own builtins into the globals it is handed,
             # so it gets a copy rather than the shared module-level dict.
             return frappe.safe_eval(
-                reason.formula, FORMULA_GLOBALS.copy(), self.get_formula_context()
+                expression, FORMULA_GLOBALS.copy(), self.get_formula_context()
             )
         except Exception as e:
             frappe.throw(
                 _(
-                    "Error evaluating the formula of reason {0}: {1}<br><pre>{2}</pre>"
+                    "Error evaluating the {0} of reason {1}: {2}<br><pre>{3}</pre>"
                 ).format(
+                    _(reason.meta.get_label(fieldname)).lower(),
                     get_link_to_form("End of Service Award Reason", reason.name),
                     e,
-                    reason.formula,
+                    expression,
                 ),
-                title=_("Invalid Formula"),
+                title=_("Invalid Expression"),
             )
 
     def get_formula_context(self):
