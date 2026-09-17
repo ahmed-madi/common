@@ -3,14 +3,6 @@
 
 cur_frm.add_fetch("employee", "date_of_joining", "work_start_date");
 
-const PROBATION_REASON = "End of the contract during the probation period";
-const CONTRACT_END_REASON =
-  "Expiration the contract, agreement between the parties to terminate the contract," +
-  " or termination the contract by the company";
-const CONTRACT_END_REASON2 = "Termination of the contract by the employer for an unlawful reason";
-const RESIGNATION_REASON =
-  "Employee resignation before the end of the contract period";
-
 // Each of the last month's totals and the day value it is derived from.
 const MONTH_COMPONENTS = [
   ["total_month_salary", "day_value"],
@@ -20,8 +12,10 @@ const MONTH_COMPONENTS = [
   ["total_month_other", "other_day_value"],
 ];
 
-function is_probation(frm) {
-  return frm.doc.reason === PROBATION_REASON;
+// Some reasons - the probation period among them - have their award calculated
+// and shown, but not paid. The flag is fetched from the selected reason.
+function award_is_excluded(frm) {
+  return cint(frm.doc.exclude_award_from_total) === 1;
 }
 
 // Number of unpaid days in the last month of service. Mirrors
@@ -93,48 +87,30 @@ async function calculate_total_deduction(frm) {
   await frm.set_value("total_deduction", flt(total, 2));
 }
 
+// The award comes from the formula on the selected reason, which is Python and
+// so can only be evaluated on the server. The form no longer mirrors the math -
+// there is one implementation, and it is the one that saves.
 async function calculate_award(frm) {
   if (!frm.doc.reason) {
     await frm.set_value("award", 0);
+    await frm.set_value("exclude_award_from_total", 0);
     return;
   }
 
-  const salary = flt(frm.doc.salary);
-  const years =
-    cint(frm.doc.years) + cint(frm.doc.months) / 12 + cint(frm.doc.days) / 360;
-  let result = 0;
+  const { message } = await frappe.call({
+    doc: frm.doc,
+    method: "evaluate_award",
+  });
 
-  if (frm.doc.reason === CONTRACT_END_REASON || frm.doc.reason === CONTRACT_END_REASON2) {
-    let first_period = 0;
-    let second_period = 0;
-    if (years > 5) {
-      first_period = 5;
-      second_period = years - 5;
-    } else {
-      first_period = years;
-    }
-    result = first_period * salary * 0.5 + second_period * salary;
-  } else if (frm.doc.reason === RESIGNATION_REASON) {
-    if (years < 2) {
-      result = 0;
-    } else if (years <= 5) {
-      result = (1 / 6) * salary * years;
-    } else if (years <= 10) {
-      result = (1 / 3) * salary * 5 + (2 / 3) * salary * (years - 5);
-    } else {
-      result = 0.5 * salary * 5 + salary * (years - 5);
-    }
-  } else {
-    if (years <= 5) {
-      result = 0.5 * salary * years;
-    } else {
-      result = 0.5 * salary * 5 + salary * (years - 5);
-    }
+  if (!message) {
+    return;
   }
 
-  // flt rather than Math.round, so the form rounds exactly the way flt() does
-  // on the server.
-  await frm.set_value("award", flt(result, 2));
+  await frm.set_value("award", flt(message.award, 2));
+  await frm.set_value(
+    "exclude_award_from_total",
+    cint(message.exclude_award_from_total)
+  );
 }
 
 async function calculate_total_award(frm) {
@@ -144,8 +120,9 @@ async function calculate_total_award(frm) {
     flt(frm.doc.leave_total_cost) +
     flt(frm.doc.total_earning);
 
-  // No end of service award is due during the probation period.
-  if (!is_probation(frm)) {
+  // Some reasons - the probation period among them - have the award shown
+  // but not paid.
+  if (!award_is_excluded(frm)) {
     totals += flt(frm.doc.award);
   }
 

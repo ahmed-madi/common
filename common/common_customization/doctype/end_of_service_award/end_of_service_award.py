@@ -2,35 +2,52 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+
 import frappe
+from dateutil import relativedelta
 from frappe import _
+from frappe.desk.doctype.notification_log.notification_log import (
+    enqueue_create_notification,
+)
 from frappe.model.document import Document
 from frappe.utils import (
     cint,
     date_diff,
     flt,
-    getdate,
-    get_link_to_form,
-    nowdate,
     get_defaults,
+    get_link_to_form,
+    getdate,
     now_datetime,
+    nowdate,
 )
 
-from dateutil import relativedelta
-from frappe.desk.doctype.notification_log.notification_log import (
-    enqueue_create_notification,
-)
+# Helpers a reason's formula may call, on top of the award's own values.
+FORMULA_GLOBALS = {
+    "abs": abs,
+    "cint": cint,
+    "date_diff": date_diff,
+    "flt": flt,
+    "getdate": getdate,
+    "max": max,
+    "min": min,
+    "round": round,
+}
 
-
-PROBATION_REASON = "End of the contract during the probation period"
-CONTRACT_END_REASON = (
-    "Expiration the contract, agreement between the parties to terminate the contract,"
-    " or termination the contract by the company"
-)
-CONTRACT_END_REASON2 = (
-    "Termination of the contract by the employer for an unlawful reason"
-)
-RESIGNATION_REASON = "Employee resignation before the end of the contract period"
+# What each name in get_formula_context() means, for the help shown on End of
+# Service Award Reason. Kept next to the context itself - and tied to it by a
+# test - so the documented variables cannot drift from the passed ones.
+FORMULA_VARIABLES = {
+    "salary": "Total monthly salary",
+    "basic": "Basic salary",
+    "housing_allowance": "Housing allowance",
+    "transportation_allowance": "Transportation allowance",
+    "other_allowance": "Other allowances",
+    "years": "Length of service in years, as a fraction (years + months / 12 + days / 360)",
+    "years_int": "Length of service, whole years only",
+    "months": "Length of service, the months left over after the whole years",
+    "days": "Length of service, the days left over after the whole months",
+    "doc": "The whole End of Service Award - every field listed below, as doc.fieldname",
+}
 
 
 class EndofServiceAward(Document):
@@ -176,38 +193,82 @@ class EndofServiceAward(Document):
         self.ticket_total_cost = flt(flt(self.ticket_number) * flt(self.ticket_cost), 2)
 
     def get_award(self):
+        """The award itself, from the formula (or fixed amount) on the reason.
+
+        Every reason carries its own rule, so adding one is a matter of creating
+        an End of Service Award Reason - no code change.
+        """
         self.award = 0
         if not self.reason:
+            self.exclude_award_from_total = 0
             return
-        salary = flt(self.salary)
+
+        reason = frappe.get_cached_doc("End of Service Award Reason", self.reason)
+        # Kept in step with the reason on every save, so the form and the
+        # totals below never read a stale flag off a fetched field.
+        self.exclude_award_from_total = cint(reason.exclude_award_from_total)
+
+        if not reason.amount_based_on_formula:
+            self.award = flt(reason.amount, 2)
+            return
+
+        self.award = flt(self.eval_formula(reason), 2)
+
+    def eval_formula(self, reason):
+        """Evaluate a reason's formula against this award.
+
+        Errors name the reason and its formula - without that, a typo surfaces
+        as a bare NameError on whatever award happens to be saved next.
+        """
+        try:
+            # safe_eval writes its own builtins into the globals it is handed,
+            # so it gets a copy rather than the shared module-level dict.
+            return frappe.safe_eval(
+                reason.formula, FORMULA_GLOBALS.copy(), self.get_formula_context()
+            )
+        except Exception as e:
+            frappe.throw(
+                _(
+                    "Error evaluating the formula of reason {0}: {1}<br><pre>{2}</pre>"
+                ).format(
+                    get_link_to_form("End of Service Award Reason", reason.name),
+                    e,
+                    reason.formula,
+                ),
+                title=_("Invalid Formula"),
+            )
+
+    def get_formula_context(self):
+        """The values a reason's formula may be written against."""
         years = cint(self.years) + cint(self.months) / 12 + cint(self.days) / 360
-        if self.reason == CONTRACT_END_REASON:
-            first_period = second_period = 0
-            if years > 5:
-                first_period = 5
-                second_period = years - 5
-            else:
-                first_period = years
-            result = first_period * salary * 0.5 + second_period * salary
-        elif self.reason == RESIGNATION_REASON:
-            if years < 2:
-                result = 0
-            elif years <= 5:
-                result = (1 / 6) * salary * years
-            elif years <= 10:
-                result = (1 / 3) * salary * 5 + (2 / 3) * salary * (years - 5)
-            else:
-                result = 0.5 * salary * 5 + salary * (years - 5)
-        else:
-            if years <= 5:
-                result = 0.5 * salary * years
-            else:
-                result = 0.5 * salary * 5 + salary * (years - 5)
 
-        self.award = flt(result, 2)
+        return {
+            # A plain dict, not the Document - a formula has no business
+            # reaching the controller's methods.
+            "doc": frappe._dict(self.as_dict()),
+            "salary": flt(self.salary),
+            "basic": flt(self.basic),
+            "housing_allowance": flt(self.housing_allowance),
+            "transportation_allowance": flt(self.transportation_allowance),
+            "other_allowance": flt(self.other_allowance),
+            "years": years,
+            "years_int": cint(self.years),
+            "months": cint(self.months),
+            "days": cint(self.days),
+        }
 
-    def is_probation(self):
-        return self.reason == PROBATION_REASON
+    @frappe.whitelist()
+    def evaluate_award(self):
+        """The award for the form, which cannot run a Python formula itself."""
+        self.get_award()
+
+        return {
+            "award": flt(self.award),
+            "exclude_award_from_total": cint(self.exclude_award_from_total),
+        }
+
+    def award_is_excluded(self):
+        return cint(self.exclude_award_from_total)
 
     def get_component_share(self, component_amount):
         """A component's share of the last month's salary, as a percentage.
@@ -237,7 +298,7 @@ class EndofServiceAward(Document):
             + flt(self.ticket_total_cost)
             + flt(self.total_earning)
         )
-        if not self.is_probation():
+        if not self.award_is_excluded():
             entitlements += flt(self.award)
 
         total_deduction = flt(self.total_deduction)
@@ -253,8 +314,9 @@ class EndofServiceAward(Document):
             + flt(self.leave_total_cost)
             + flt(self.total_earning)
         )
-        # No end of service award is due during the probation period.
-        if not self.is_probation():
+        # Some reasons - the probation period among them - have the award shown
+        # but not paid.
+        if not self.award_is_excluded():
             totals += flt(self.award)
 
         total_deduction = flt(self.total_deduction)
@@ -296,9 +358,7 @@ class EndofServiceAward(Document):
             SELECT salary_component, amount
             FROM `tabSalary Detail`
             WHERE parent='{0}' AND parentfield='earnings' AND parenttype='Salary Slip'
-            """.format(
-                salary_slip
-            ),
+            """.format(salary_slip),
             as_dict=True,
         )
         if not salary_details:
@@ -849,7 +909,7 @@ class EndofServiceAward(Document):
             )
             paid_amt += flt(self.ticket_total_cost)
 
-        if flt(self.award, 2) != 0 and not self.is_probation():
+        if flt(self.award, 2) != 0 and not self.award_is_excluded():
             if not end_of_service_account:
                 frappe.throw(
                     _("Please set account for End of Service Award in {0}").format(
