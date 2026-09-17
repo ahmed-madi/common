@@ -7,6 +7,7 @@ const PROBATION_REASON = "End of the contract during the probation period";
 const CONTRACT_END_REASON =
   "Expiration the contract, agreement between the parties to terminate the contract," +
   " or termination the contract by the company";
+const CONTRACT_END_REASON2 = "Termination of the contract by the employer for an unlawful reason";
 const RESIGNATION_REASON =
   "Employee resignation before the end of the contract period";
 
@@ -103,7 +104,7 @@ async function calculate_award(frm) {
     cint(frm.doc.years) + cint(frm.doc.months) / 12 + cint(frm.doc.days) / 360;
   let result = 0;
 
-  if (frm.doc.reason === CONTRACT_END_REASON) {
+  if (frm.doc.reason === CONTRACT_END_REASON || frm.doc.reason === CONTRACT_END_REASON2) {
     let first_period = 0;
     let second_period = 0;
     if (years > 5) {

@@ -27,6 +27,9 @@ CONTRACT_END_REASON = (
     "Expiration the contract, agreement between the parties to terminate the contract,"
     " or termination the contract by the company"
 )
+CONTRACT_END_REASON2 = (
+    "Termination of the contract by the employer for an unlawful reason"
+)
 RESIGNATION_REASON = "Employee resignation before the end of the contract period"
 
 

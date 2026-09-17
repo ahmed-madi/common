@@ -190,6 +190,7 @@ translations = {
   "Expense Claim Type": "نوع المطالبة بالنفقات",
   "Expense Claim Type is not added in {0}": "لم تتم إضافة نوع المطالبة بالنفقات في {0}",
   "Expiration the contract, agreement between the parties to terminate the contract, or termination the contract by the company": "انتهاء العقد، أو اتفاق الطرفين على إنهاء العقد، أو إنهاء العقد من قبل الشركة",
+  "Termination of the contract by the employer for an unlawful reason": "انهاء صاحب العمل العقد لسبب غير مشروع",
   "Expiration time": "وقت انتهاء الصلاحية",
   "External": "خارجي",
   "FCM Device Token": "رمز جهاز FCM",
