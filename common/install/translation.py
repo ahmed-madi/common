@@ -343,6 +343,7 @@ translations = {
   "Please set account for Vacation Expense in {0}": "يرجى تعيين حساب لمصاريف الإجازة في {0}",
   "Please set account in Salary Component {0}": "يرجى تعيين الحساب في مكون الراتب {0}",
   "Please set salary component for Basic Salary in {0}": "الرجاء تعيين مكون الراتب للراتب الأساسي في {0}",
+  "Please set {0} in {1}": "يرجى تعيين {0} في {1}",
   "Policy Based On": "السياسة على أساس",
   "Position": "موضع",
   "Position Left": "موقف اليسار",

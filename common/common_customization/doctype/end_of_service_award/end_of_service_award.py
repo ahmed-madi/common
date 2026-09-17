@@ -381,25 +381,48 @@ class EndofServiceAward(Document):
 
         return years, months, days
 
+    def get_annual_leave_type(self):
+        """The leave type the award's leave balance is paid out from.
+
+        Configured once in Company Policy, so the award never assumes what the
+        annual leave type is named on this site.
+        """
+        leave_type = frappe.db.get_single_value("Company Policy", "annual_leave_type")
+        if not leave_type:
+            frappe.throw(
+                _("Please set {0} in {1}").format(
+                    frappe.bold(_("Annual Leave Type")),
+                    get_link_to_form("Company Policy", "Company Policy"),
+                )
+            )
+        return leave_type
+
     @frappe.whitelist()
     def get_leave_balance(self, employee, work_start_date, end_date):
         today = now_datetime().date()
         end = end_date
+        leave_type = self.get_annual_leave_type()
         total_leave_balance = frappe.db.sql(
-            """SELECT total_leaves_allocated, from_date, to_date,name
+            """SELECT total_leaves_allocated, from_date, to_date, name
                 FROM `tabLeave Allocation`
-                WHERE employee='{0}' AND leave_type='Annual Leave' ORDER BY creation DESC LIMIT 1
-                """.format(
-                employee
-            )
+                WHERE employee=%(employee)s AND leave_type=%(leave_type)s
+                AND docstatus = 1
+                ORDER BY creation DESC LIMIT 1
+                """,
+            {"employee": employee, "leave_type": leave_type},
         )
         if total_leave_balance:
             leave_days = frappe.db.sql(
                 """SELECT SUM(total_leave_days)
                 FROM `tabLeave Application`
-                WHERE employee='{0}' AND leave_type='Annual Leave' AND posting_date BETWEEN '{1}' AND '{2}'""".format(
-                    employee, total_leave_balance[0][1], total_leave_balance[0][2]
-                )
+                WHERE employee=%(employee)s AND leave_type=%(leave_type)s
+                AND posting_date BETWEEN %(from_date)s AND %(to_date)s""",
+                {
+                    "employee": employee,
+                    "leave_type": leave_type,
+                    "from_date": total_leave_balance[0][1],
+                    "to_date": total_leave_balance[0][2],
+                },
             )[0][0]
             if not leave_days:
                 leave_days = 0.0
@@ -431,6 +454,78 @@ class EndofServiceAward(Document):
             self.db_set("rejection_reason", rejection_reason)
             return "Done"
         return "Error"
+
+    def on_submit(self):
+        self.close_out_employee_records()
+
+    def close_out_employee_records(self):
+        """Retire everything the employee is still active on.
+
+        The order matters: leave allocations go before the policy assignment
+        that created them - a submitted allocation links back to the assignment
+        and frappe refuses to cancel a document that is still linked. The user
+        is disabled before the employee is saved so Employee.update_user_status
+        finds nothing left to do.
+        """
+        self.cancel_salary_structure_assignments()
+        self.cancel_leave_policy_assignments()
+        self.disable_employee_user()
+        self.set_employee_as_left()
+
+    def cancel_salary_structure_assignments(self):
+        for name in frappe.get_all(
+            "Salary Structure Assignment",
+            filters={"employee": self.employee, "docstatus": 1},
+            pluck="name",
+        ):
+            assignment = frappe.get_doc("Salary Structure Assignment", name)
+            assignment.flags.ignore_permissions = True
+            assignment.cancel()
+
+    def cancel_leave_policy_assignments(self):
+        for name in frappe.get_all(
+            "Leave Policy Assignment",
+            filters={"employee": self.employee, "docstatus": 1},
+            pluck="name",
+        ):
+            for allocation_name in frappe.get_all(
+                "Leave Allocation",
+                filters={"leave_policy_assignment": name, "docstatus": 1},
+                pluck="name",
+            ):
+                allocation = frappe.get_doc("Leave Allocation", allocation_name)
+                allocation.flags.ignore_permissions = True
+                # Cancelling the allocation also cancels its Leave Ledger
+                # Entries, so the balance is reversed with it.
+                allocation.cancel()
+
+            assignment = frappe.get_doc("Leave Policy Assignment", name)
+            assignment.flags.ignore_permissions = True
+            assignment.cancel()
+
+    def disable_employee_user(self):
+        user_id = frappe.db.get_value("Employee", self.employee, "user_id")
+        if not user_id:
+            return
+
+        if not frappe.db.get_value("User", user_id, "enabled"):
+            return
+
+        user = frappe.get_doc("User", user_id)
+        user.enabled = 0
+        user.save(ignore_permissions=True)
+
+    def set_employee_as_left(self):
+        employee = frappe.get_doc("Employee", self.employee)
+        if employee.status == "Left" and employee.relieving_date:
+            return
+
+        employee.status = "Left"
+        employee.relieving_date = self.end_date
+        # Employee.validate_status throws when active employees still report to
+        # this one - that error is left to surface, so the award is not
+        # submitted against a half retired employee.
+        employee.save(ignore_permissions=True)
 
     def on_update(self):
         prev_doc = self.get_doc_before_save() or {}
