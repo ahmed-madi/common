@@ -19,3 +19,4 @@ common.patches.v1.remove_task_property_setter
 common.patches.v1.remove_task_custom_field
 common.patches.v2.update_loans
 common.patches.v2.create_end_of_service_award_reasons
+common.patches.v2.add_saudi_award_reasons
