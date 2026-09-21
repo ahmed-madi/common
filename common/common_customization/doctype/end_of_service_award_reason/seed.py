@@ -110,3 +110,67 @@ def sync_reasons():
                 **reason,
             }
         ).insert(ignore_permissions=True)
+
+
+# The reasons above implement this country's law, so they are only seeded for a
+# company that operates under it.
+SAUDI_ARABIA = "Saudi Arabia"
+
+# A reason is named after its title, and frappe names are varchar(140). The
+# company suffix has to fit, so a long title gives way to it rather than the
+# insert failing.
+MAX_NAME_LENGTH = 140
+
+
+def scoped_title(title, abbr):
+    """A reason's title for one company, e.g. 'Employee resignation... - KSA'."""
+    suffix = f" - {abbr}"
+    return title[: MAX_NAME_LENGTH - len(suffix)] + suffix
+
+
+def get_saudi_companies():
+    # Company belongs to erpnext, which this app does not declare as required.
+    # Seeding runs at install time, where a missing table would fail the whole
+    # install rather than just skip the reasons.
+    if not frappe.db.table_exists("Company"):
+        return []
+
+    return frappe.get_all(
+        "Company", filters={"country": SAUDI_ARABIA}, fields=["name", "abbr"]
+    )
+
+
+def sync_reasons_for_company(company, abbr=None):
+    """Give one company its own copy of the reasons.
+
+    Each company carries its own set rather than sharing one, so a site can
+    change a formula for a company without changing it everywhere - and a
+    company in another country is never offered rules that do not apply to it.
+    """
+    abbr = abbr or frappe.db.get_value("Company", company, "abbr") or company
+
+    for reason in REASONS:
+        title = scoped_title(reason["title"], abbr)
+        if frappe.db.exists("End of Service Award Reason", title):
+            continue
+
+        frappe.get_doc(
+            {
+                "doctype": "End of Service Award Reason",
+                "amount_based_on_formula": 1,
+                **reason,
+                "title": title,
+                "company": company,
+            }
+        ).insert(ignore_permissions=True)
+
+
+def sync_saudi_reasons():
+    """Seed every company that operates under the Saudi Labour Law.
+
+    Called on install and whenever a company turns out to be Saudi, because a
+    fresh site has no company yet when the app is installed - the setup wizard
+    creates one afterwards.
+    """
+    for company in get_saudi_companies():
+        sync_reasons_for_company(company.name, company.abbr)

@@ -155,6 +155,10 @@ override_doctype_class = {
 
 doc_events = {
     "Employee": {"after_insert": "common.overrides.employee.after_insert"},
+    "Company": {
+        "after_insert": "common.events.company.after_insert",
+        "on_update": "common.events.company.on_update",
+    },
     "Task": {
         "on_update": "common.events.task.on_update",
     },
