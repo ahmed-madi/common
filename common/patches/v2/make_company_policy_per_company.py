@@ -46,14 +46,17 @@ def execute():
 
 def get_single_values():
     """The Single's stored settings, as a plain dict of field to value."""
-    rows = frappe.get_all(
-        "Singles",
-        filters={"doctype": DOCTYPE},
-        fields=["field", "value"],
+    rows = frappe.db.sql(
+        """
+        SELECT field, value
+        FROM `tabSingles`
+        WHERE doctype = %s
+        """,
+        (DOCTYPE,),
+        as_dict=True,
     )
 
     return {row.field: row.value for row in rows}
-
 
 def get_single_child_rows():
     """The Single's table rows, keyed by the table they belong to.
@@ -133,6 +136,18 @@ def clear_single_data():
 
     for df in meta.get_table_fields():
         if frappe.db.table_exists(df.options):
-            frappe.db.delete(df.options, {"parent": SINGLE_NAME, "parenttype": DOCTYPE})
+            frappe.db.delete(
+                df.options,
+                {
+                    "parent": SINGLE_NAME,
+                    "parenttype": DOCTYPE,
+                },
+            )
 
-    frappe.db.delete("Singles", {"doctype": DOCTYPE})
+    frappe.db.sql(
+        """
+        DELETE FROM `tabSingles`
+        WHERE doctype = %s
+        """,
+        (DOCTYPE,),
+    )
