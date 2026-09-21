@@ -35,10 +35,11 @@
   "include_basic_in_sidl",
   "include_housing_in_sidl",
   "include_transportation_in_sidl",
-  "include_travel_in_sidl",
   "include_other_in_sidl",
   "column_break_kaeu",
   "salary_component_categories",
+  "auto_send_sidl",
+  "sidl_print_formats",
   "section_break_adry",
   "max_education_allowance",
   "education_allowance_whitelist",
@@ -186,12 +187,6 @@
    "fieldname": "include_transportation_in_sidl",
    "fieldtype": "Check",
    "label": "Include Transportation Allowance"
-  },
-  {
-   "default": "0",
-   "fieldname": "include_travel_in_sidl",
-   "fieldtype": "Check",
-   "label": "Include Travel Allowance"
   },
   {
    "default": "0",
@@ -370,6 +365,21 @@
    "fieldname": "terms_and_conditions_en",
    "fieldtype": "Long Text",
    "label": "Terms and Conditions English"
+  },
+  {
+   "default": "0",
+   "description": "Email the letter to the employee automatically once the request is approved.",
+   "fieldname": "auto_send_sidl",
+   "fieldtype": "Check",
+   "label": "Send Letter Automatically on Approval"
+  },
+  {
+   "depends_on": "eval:doc.auto_send_sidl",
+   "description": "Each company prints on its own letterhead. A company missing from this table gets no automatic letter.",
+   "fieldname": "sidl_print_formats",
+   "fieldtype": "Table",
+   "label": "Print Format per Company",
+   "options": "Salary Identification Letter Print Format"
   }
  ],
  "grid_page_length": 50,

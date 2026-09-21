@@ -1,0 +1,95 @@
+{%- set ctx = get_letter_context(doc) -%}
+{%- set rtl = (doc.preferred_language or "ar")|lower in ("ar", "ar-sa", "arabic") -%}
+
+<div class="sidl" dir="{{ 'rtl' if rtl else 'ltr' }}">
+	<div class="sidl-meta">
+		<p>{{ _("Date") }}: {{ frappe.utils.formatdate(doc.request_date) }}</p>
+		<p>{{ _("Subject") }}: {{ _("Salary Identification") }}</p>
+	</div>
+
+	<div class="sidl-address">
+		<p>{{ _("To") }} / {{ doc.recipient_name or "" }}</p>
+		<p>{{ _("Respected") }}</p>
+	</div>
+
+	<p class="sidl-greeting">{{ _("Peace, mercy and blessings of God be upon you") }} .........</p>
+
+	<h4 class="sidl-heading"><u>{{ _("Salary Identification") }}</u></h4>
+
+	<table class="sidl-table">
+		<tr class="sidl-head">
+			<th colspan="2">{{ _("Employee Name") }}</th>
+			<th colspan="2">{{ _("Nationality") }}</th>
+		</tr>
+		<tr>
+			<td colspan="2">{{ doc.employee_name or "" }}</td>
+			<td colspan="2">{{ ctx.nationality }}</td>
+		</tr>
+
+		<tr class="sidl-head">
+			<th colspan="2">{{ _("National ID") }}</th>
+			<th colspan="2">{{ _("Employee Number") }}</th>
+		</tr>
+		<tr>
+			<td colspan="2">{{ ctx.national_id }}</td>
+			<td colspan="2">{{ ctx.employee_number }}</td>
+		</tr>
+
+		<tr class="sidl-head">
+			<th colspan="2">{{ _("Designation") }}</th>
+			<th colspan="2">{{ _("Date of Joining") }}</th>
+		</tr>
+		<tr>
+			<td colspan="2">{{ _(ctx.designation) }}</td>
+			<td colspan="2">{{ frappe.utils.formatdate(ctx.date_of_joining) }}</td>
+		</tr>
+
+		<tr class="sidl-head">
+			<th>{{ _("Total Salary") }}</th>
+			<th>{{ _("Basic Salary") }}</th>
+			<th colspan="2">{{ _("Allowance Details") }}</th>
+		</tr>
+		<tr>
+			<td>{{ frappe.utils.fmt_money(ctx.salary.total, currency=frappe.defaults.get_global_default("currency")) }}</td>
+			<td>{{ frappe.utils.fmt_money(ctx.salary.basic, currency=frappe.defaults.get_global_default("currency")) }}</td>
+			<td colspan="2">
+				{%- if ctx.salary.allowances -%}
+					{%- for row in ctx.salary.allowances -%}
+						{{ row.label }}: {{ frappe.utils.fmt_money(row.amount, currency=frappe.defaults.get_global_default("currency")) }}{{ "" if loop.last else " - " }}
+					{%- endfor -%}
+				{%- endif -%}
+			</td>
+		</tr>
+
+		<tr class="sidl-head">
+			<th colspan="4">{{ _("Employee Account Number") }}</th>
+		</tr>
+		<tr>
+			<td colspan="4">{{ ctx.bank_account }}</td>
+		</tr>
+	</table>
+
+	<p class="sidl-body">
+		{{ _("We would like to inform you that the employee whose details appear above is still working for us to date, and this letter has been issued at their request without any liability on the company.") }}
+	</p>
+
+	<div class="sidl-signature">
+		<p>{{ _("Job Title") }}</p>
+		<p>{{ _("Name") }}</p>
+	</div>
+</div>
+
+<style>
+	.sidl { font-size: 13px; line-height: 1.9; }
+	.sidl-meta, .sidl-address { margin-bottom: 18px; }
+	.sidl p { margin: 0 0 4px; }
+	.sidl-greeting { margin: 18px 0; }
+	.sidl-heading { margin: 22px 0 10px; font-size: 14px; }
+	.sidl-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; table-layout: fixed; }
+	.sidl-table th, .sidl-table td { border: 1px solid #000; padding: 5px 8px; text-align: center; }
+	.sidl-table tr.sidl-head th { background: #d9d9d9; font-weight: 600; }
+	.sidl-table tr:not(.sidl-head) td { height: 24px; }
+	.sidl-body { margin-bottom: 70px; text-align: justify; }
+	.sidl-signature { margin-top: 60px; }
+	.sidl-signature p { margin: 0 0 6px; }
+</style>

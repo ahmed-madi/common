@@ -82,10 +82,11 @@ app_include_icons = ["common/icons/palm_tree.svg"]
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "common.utils.jinja_methods",
-# 	"filters": "common.utils.jinja_filters"
-# }
+jinja = {
+    "methods": [
+        "common.common_customization.doctype.salary_identification_letter.letter.get_letter_context",
+    ]
+}
 
 # Installation
 # ------------
@@ -161,6 +162,20 @@ doc_events = {
     },
     "Task": {
         "on_update": "common.events.task.on_update",
+    },
+    # The Employee carries its salary and leave balance, refreshed by every
+    # document that can change either of them - on cancel as well as on submit.
+    "Salary Slip": {
+        "on_submit": "common.events.employee_snapshot.on_salary_slip_change",
+        "on_cancel": "common.events.employee_snapshot.on_salary_slip_change",
+    },
+    "Leave Application": {
+        "on_submit": "common.events.employee_snapshot.on_leave_change",
+        "on_cancel": "common.events.employee_snapshot.on_leave_change",
+    },
+    "Leave Allocation": {
+        "on_submit": "common.events.employee_snapshot.on_leave_change",
+        "on_cancel": "common.events.employee_snapshot.on_leave_change",
     },
 }
 
