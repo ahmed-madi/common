@@ -12,6 +12,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt, get_link_to_form, now_datetime
 
+from common.company_policy import get_employee_policy, get_policy
 from common.employee_snapshot import (
     CATEGORY_FIELDS,
     OTHER_FIELD,
@@ -51,7 +52,7 @@ def get_salary_breakdown(employee):
     if not any(flt(value) for value in values.values()):
         values = get_salary_snapshot(employee)
 
-    policy = frappe.get_cached_doc("Company Policy")
+    policy = get_employee_policy(employee)
 
     basic = flt(values.get(BASIC_FIELD)) if policy.get(BASIC_SWITCH) else 0
     allowances = [
@@ -111,7 +112,7 @@ def get_print_format(company):
     company. A company with no row gets no automatic letter - that is the
     switch for turning the automation off for one company.
     """
-    policy = frappe.get_cached_doc("Company Policy")
+    policy = get_policy(company)
 
     for row in policy.sidl_print_formats or []:
         if row.company == company:
@@ -137,7 +138,7 @@ def send_letter(name):
             doc,
             _("No print format is configured for {0} in {1}, so the letter was not sent.").format(
                 frappe.bold(doc.company),
-                get_link_to_form("Company Policy", "Company Policy", _("Company Policy")),
+                get_link_to_form("Company Policy", doc.company, _("Company Policy")),
             ),
         )
         return

@@ -31,7 +31,7 @@ class SalaryIdentificationLetter(BaseHRDocument):
         if self.status != "Approved" or self.letter_sent_on:
             return
 
-        if not frappe.db.get_single_value("Company Policy", "auto_send_sidl"):
+        if not self.policy_value("auto_send_sidl"):
             return
 
         frappe.enqueue(

@@ -17,6 +17,8 @@ import frappe
 from frappe import _
 from frappe.utils import flt, get_link_to_form, nowdate
 
+from common.company_policy import get_policy, get_policy_value
+
 # The categories Company Policy can classify a salary component into, and the
 # field on Employee each one totals into.
 CATEGORY_FIELDS = {
@@ -34,9 +36,17 @@ LEAVE_BALANCE_FIELD = "custom_annual_leave_balance"
 SNAPSHOT_FIELDS = [*CATEGORY_FIELDS.values(), OTHER_FIELD]
 
 
-def get_component_types():
-    """Each salary component's category, as Company Policy has it configured."""
-    policy = frappe.get_cached_doc("Company Policy")
+def get_employee_company(employee):
+    return frappe.db.get_value("Employee", employee, "company") if employee else None
+
+
+def get_component_types(company=None):
+    """Each salary component's category, as Company Policy has it configured.
+
+    Keyed by company, so two companies may classify the same component
+    differently - which is the point of a policy per company.
+    """
+    policy = get_policy(company)
 
     return {
         row.salary_component: row.type
@@ -45,13 +55,13 @@ def get_component_types():
     }
 
 
-def classify(amounts):
+def classify(amounts, company=None):
     """Total a set of component amounts into the Employee's salary fields.
 
     A component nobody has classified falls into other allowances rather than
     being dropped, so an employee's parts always add up to their whole.
     """
-    types = get_component_types()
+    types = get_component_types(company)
     totals = dict.fromkeys(SNAPSHOT_FIELDS, 0.0)
 
     for component, amount in amounts.items():
@@ -103,7 +113,9 @@ def get_salary_snapshot(employee):
     if not salary_slip:
         return dict.fromkeys(SNAPSHOT_FIELDS, 0.0)
 
-    return classify(get_salary_slip_earnings(salary_slip))
+    return classify(
+        get_salary_slip_earnings(salary_slip), get_employee_company(employee)
+    )
 
 
 def get_annual_leave_balance(employee):
@@ -114,7 +126,7 @@ def get_annual_leave_balance(employee):
     """
     from hrms.hr.doctype.leave_application.leave_application import get_leave_balance_on
 
-    leave_type = frappe.db.get_single_value("Company Policy", "annual_leave_type")
+    leave_type = get_policy_value("annual_leave_type", get_employee_company(employee))
     if not leave_type:
         return None
 
@@ -147,15 +159,15 @@ def update_employee(employee, salary=True, leave=True):
     frappe.db.set_value("Employee", employee, values, update_modified=False)
 
 
-def get_annual_leave_type():
+def get_annual_leave_type(company=None):
     """The configured annual leave type, or a linked error naming the setting."""
-    leave_type = frappe.db.get_single_value("Company Policy", "annual_leave_type")
-    if not leave_type:
+    policy = get_policy(company)
+    if not policy.annual_leave_type:
         frappe.throw(
             _("Please set {0} in {1}").format(
                 frappe.bold(_("Annual Leave Type")),
-                get_link_to_form("Company Policy", "Company Policy"),
+                get_link_to_form("Company Policy", policy.name),
             )
         )
 
-    return leave_type
+    return policy.annual_leave_type

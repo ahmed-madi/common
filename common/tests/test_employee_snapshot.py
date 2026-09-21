@@ -6,22 +6,41 @@ from frappe.tests.utils import FrappeTestCase
 
 from common import employee_snapshot
 
+COMPANY = "_Test Company"
+
 
 class TestEmployeeSnapshot(FrappeTestCase):
     def tearDown(self):
         frappe.db.rollback()
-        frappe.clear_document_cache("Company Policy", "Company Policy")
+        frappe.clear_document_cache("Company Policy", COMPANY)
+
+    def get_policy(self):
+        """This company's policy, created if the site has none for it.
+
+        Company Policy is per company now, so a test has to say which.
+        """
+        if frappe.db.exists("Company Policy", COMPANY):
+            return frappe.get_doc("Company Policy", COMPANY)
+
+        policy = frappe.new_doc("Company Policy")
+        policy.company = COMPANY
+        policy.flags.ignore_mandatory = True
+        policy.flags.ignore_validate = True
+
+        return policy.insert(ignore_permissions=True)
 
     def set_categories(self, mapping):
-        policy = frappe.get_doc("Company Policy")
+        policy = self.get_policy()
         policy.salary_component_categories = []
         for component, category in mapping.items():
             policy.append(
                 "salary_component_categories",
                 {"salary_component": component, "type": category},
             )
+        policy.flags.ignore_mandatory = True
+        policy.flags.ignore_validate = True
         policy.save(ignore_permissions=True)
-        frappe.clear_document_cache("Company Policy", "Company Policy")
+        frappe.clear_document_cache("Company Policy", COMPANY)
 
     def test_components_total_into_their_configured_category(self):
         self.set_categories(
@@ -33,7 +52,8 @@ class TestEmployeeSnapshot(FrappeTestCase):
         )
 
         totals = employee_snapshot.classify(
-            {"_Test Basic": 10000, "_Test Housing": 2500, "_Test Transport": 800}
+            {"_Test Basic": 10000, "_Test Housing": 2500, "_Test Transport": 800},
+            COMPANY,
         )
 
         self.assertEqual(totals["custom_basic_salary"], 10000)
@@ -46,7 +66,9 @@ class TestEmployeeSnapshot(FrappeTestCase):
         whole, even when nobody has categorised a component."""
         self.set_categories({"_Test Basic": "Basic"})
 
-        totals = employee_snapshot.classify({"_Test Basic": 10000, "_Test Mystery": 400})
+        totals = employee_snapshot.classify(
+            {"_Test Basic": 10000, "_Test Mystery": 400}, COMPANY
+        )
 
         self.assertEqual(totals["custom_basic_salary"], 10000)
         self.assertEqual(totals["custom_other_allowances"], 400)
@@ -56,7 +78,7 @@ class TestEmployeeSnapshot(FrappeTestCase):
         must fall into other allowances rather than vanish."""
         self.set_categories({"_Test Travel": "Travel Allowance"})
 
-        totals = employee_snapshot.classify({"_Test Travel": 600})
+        totals = employee_snapshot.classify({"_Test Travel": 600}, COMPANY)
 
         self.assertEqual(totals["custom_other_allowances"], 600)
 
@@ -65,7 +87,9 @@ class TestEmployeeSnapshot(FrappeTestCase):
             {"_Test Housing A": "Housing Allowance", "_Test Housing B": "Housing Allowance"}
         )
 
-        totals = employee_snapshot.classify({"_Test Housing A": 1500, "_Test Housing B": 700})
+        totals = employee_snapshot.classify(
+            {"_Test Housing A": 1500, "_Test Housing B": 700}, COMPANY
+        )
 
         self.assertEqual(totals["custom_housing_allowance"], 2200)
 
@@ -78,11 +102,15 @@ class TestEmployeeSnapshot(FrappeTestCase):
     def test_no_annual_leave_type_configured_gives_none_not_zero(self):
         """A missing setting is not a zero balance, and writing zero would read
         as one."""
-        frappe.db.set_single_value("Company Policy", "annual_leave_type", None)
+        self.get_policy()
+        frappe.db.set_value("Company Policy", COMPANY, "annual_leave_type", None)
+        frappe.clear_document_cache("Company Policy", COMPANY)
 
-        self.assertIsNone(
-            employee_snapshot.get_annual_leave_balance("_Test Employee")
-        )
+        employee = frappe.db.get_value("Employee", {"company": COMPANY}, "name")
+        if not employee:
+            self.skipTest(f"no employee in {COMPANY}")
+
+        self.assertIsNone(employee_snapshot.get_annual_leave_balance(employee))
 
     def test_updating_an_unknown_employee_does_nothing(self):
         employee_snapshot.update_employee("_Test Nonexistent Employee")

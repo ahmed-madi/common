@@ -1,6 +1,23 @@
 // Copyright (c) 2025, Ahmed Madi and contributors
 // For license information, please see license.txt
 
+// Company Policy is configured per company, so the limit belongs to the
+// employee's company and has to be refetched whenever the employee changes -
+// onload alone could only ever have answered for one company.
+async function set_max_wfh_days(frm) {
+  if (!frm.doc.employee) {
+    frm.max_wfh_days = 0;
+    return;
+  }
+
+  const { message } = await frappe.call({
+    method: "common.company_policy.get_value_for_employee",
+    args: { fieldname: "max_wfh_days", employee: frm.doc.employee },
+  });
+
+  frm.max_wfh_days = cint(message);
+}
+
 frappe.ui.form.on("Work From Home Request", {
     refresh(frm) {
         frm.set_query("employee", (doc) => {
@@ -12,7 +29,7 @@ frappe.ui.form.on("Work From Home Request", {
         });
     },
     async onload(frm) {
-        frm.max_wfh_days = cint(await frappe.db.get_single_value("Company Policy", "max_wfh_days"))
+        await set_max_wfh_days(frm);
     },
     from_date(frm) {
         frm.trigger("set_total_days");
@@ -20,7 +37,8 @@ frappe.ui.form.on("Work From Home Request", {
     to_date(frm) {
         frm.trigger("set_total_days");
     },
-    employee(frm) {
+    async employee(frm) {
+        await set_max_wfh_days(frm);
         frm.trigger("validate_total_days");
     },
     set_total_days(frm) {

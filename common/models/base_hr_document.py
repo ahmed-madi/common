@@ -1,10 +1,11 @@
 import frappe
 from frappe import _
-from frappe.utils import getdate, get_link_to_form, cstr, strip_html
-from frappe.model.document import Document
 from frappe.model import table_fields
-
+from frappe.model.document import Document
+from frappe.utils import cstr, get_link_to_form, getdate, strip_html
 from hrms.hr.utils import validate_active_employee
+
+from common.company_policy import get_policy, get_policy_value
 
 
 class BaseHRDocument(Document):
@@ -18,20 +19,47 @@ class BaseHRDocument(Document):
     def validate_active_employee(self):
         validate_active_employee(self.employee)
 
+    def policy_company(self):
+        """The company whose HR rules apply to this document.
+
+        Company Policy is configured per company, so every rule this document
+        obeys is its employee's company's rule. Resolved once and kept on the
+        document - it is asked for several times in a single validate().
+        """
+        if self.get("company"):
+            return self.company
+
+        if self.flags.get("policy_company") is None:
+            self.flags.policy_company = (
+                frappe.db.get_value("Employee", self.employee, "company")
+                if self.employee
+                else None
+            )
+
+        return self.flags.policy_company
+
+    def get_policy(self):
+        return get_policy(self.policy_company())
+
+    def policy_value(self, fieldname):
+        return get_policy_value(fieldname, self.policy_company())
+
     def validate_backdate_restriction(
         self, restrict_check_field, whitelist_role_field, date_to_check=None
     ):
-        restrict_backdated = frappe.db.get_single_value(
-            "Company Policy", restrict_check_field
-        )
+        policy = self.get_policy()
+        restrict_backdated = policy.get(restrict_check_field)
         if date_to_check and getdate(date_to_check) >= getdate():
             return
 
         if not restrict_backdated:
             return
+        # Scoped to this company's policy. Without the parent, every
+        # company's whitelist would answer for every other.
         whitelist_role = frappe.get_all(
             "Company Policy Whitelist Role",
             filters={
+                "parent": policy.name,
                 "parenttype": "Company Policy",
                 "parentfield": whitelist_role_field,
             },
@@ -43,9 +71,7 @@ class BaseHRDocument(Document):
                 _("Backdated in {0} is restricted. Please set the {1} in {2}").format(
                     _(doc),
                     frappe.bold(_("{} Whitelist Role".format(self.doctype))),
-                    get_link_to_form(
-                        "Company Policy", "Company Policy", _("Company Policy")
-                    ),
+                    get_link_to_form("Company Policy", policy.name, _("Company Policy")),
                 )
             )
         # user_roles = frappe.get_roles(frappe.session.user)

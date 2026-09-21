@@ -44,7 +44,7 @@ class EarlyLeaveApplication(BaseHRDocument):
             )
 
     def validate_exit_date_time(self):
-        policy = frappe.get_doc("Company Policy")
+        policy = self.get_policy()
 
         exit_datetime = get_combine_datetime(self.exit_date, self.exit_time)
         employee_shift = get_employee_shift(

@@ -9,6 +9,7 @@ from frappe import _
 from frappe.desk.doctype.notification_log.notification_log import (
     enqueue_create_notification,
 )
+
 from frappe.model.document import Document
 from frappe.utils import (
     cint,
@@ -20,6 +21,9 @@ from frappe.utils import (
     now_datetime,
     nowdate,
 )
+
+from common.company_policy import get_policy_value
+from common.employee_snapshot import get_component_types
 
 # Helpers a reason's formula may call, on top of the award's own values.
 FORMULA_GLOBALS = {
@@ -401,19 +405,15 @@ class EndofServiceAward(Document):
         if not salary_details:
             frappe.throw(_("No salary found for this employee"))
 
-        basic_components = []
-        housing_components = []
-        transportation_components = []
-        for c in frappe.db.sql(
-            "SELECT salary_component, type, parentfield from `tabHR Salary Component`",
-            as_dict=True,
-        ):
-            if c.type == "Basic":
-                basic_components.append(c.salary_component)
-            elif c.type == "Housing Allowance":
-                housing_components.append(c.salary_component)
-            elif c.type == "Transportation Allowance":
-                transportation_components.append(c.salary_component)
+        # Categorised by the employee's own company's policy. This used to
+        # read every row of the child table regardless of parent, which was
+        # right only while a single policy owned all of them.
+        types = get_component_types(self.company)
+        basic_components = [c for c, t in types.items() if t == "Basic"]
+        housing_components = [c for c, t in types.items() if t == "Housing Allowance"]
+        transportation_components = [
+            c for c, t in types.items() if t == "Transportation Allowance"
+        ]
         for detail in salary_details:
             component = detail.get("salary_component")
             amount = flt(detail.get("amount", 0))
@@ -484,12 +484,12 @@ class EndofServiceAward(Document):
         Configured once in Company Policy, so the award never assumes what the
         annual leave type is named on this site.
         """
-        leave_type = frappe.db.get_single_value("Company Policy", "annual_leave_type")
+        leave_type = get_policy_value("annual_leave_type", self.company)
         if not leave_type:
             frappe.throw(
                 _("Please set {0} in {1}").format(
                     frappe.bold(_("Annual Leave Type")),
-                    get_link_to_form("Company Policy", "Company Policy"),
+                    get_link_to_form("Company Policy", self.company, _("Company Policy")),
                 )
             )
         return leave_type

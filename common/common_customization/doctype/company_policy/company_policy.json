@@ -1,14 +1,14 @@
 {
  "actions": [],
- "allow_rename": 1,
+ "allow_rename": 0,
  "creation": "2025-05-04 15:24:09.595157",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "company",
   "tab_5_tab",
   "active_event_only",
   "attendance_tab",
-  "company",
   "working_days",
   "column_break_hxhn",
   "leaves_tab",
@@ -60,6 +60,16 @@
   "terms_and_conditions_en"
  ],
  "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1,
+   "set_only_once": 1,
+   "in_list_view": 1
+  },
   {
    "default": "30",
    "fieldname": "working_days",
@@ -207,13 +217,6 @@
    "fieldtype": "Link",
    "label": "Expense Claim Type",
    "options": "Expense Claim Type",
-   "reqd": 1
-  },
-  {
-   "fieldname": "company",
-   "fieldtype": "Link",
-   "label": "Company",
-   "options": "Company",
    "reqd": 1
   },
   {
@@ -384,7 +387,7 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "issingle": 1,
+ "issingle": 0,
  "links": [],
  "modified": "2025-11-06 13:49:12.263859",
  "modified_by": "Administrator",
@@ -443,5 +446,8 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "autoname": "field:company",
+ "naming_rule": "By fieldname",
+ "title_field": "company"
 }

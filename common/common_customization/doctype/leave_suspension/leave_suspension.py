@@ -65,7 +65,7 @@ class LeaveSuspension(BaseHRDocument):
         if self.status != "Approved":
             return
         return_unused_days = (
-            frappe.db.get_single_value("Company Policy", "return_unused_days")
+            self.policy_value("return_unused_days")
             or "Return to Balance"
         )
         if return_unused_days == "Return to Balance":

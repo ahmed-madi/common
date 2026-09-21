@@ -7,6 +7,8 @@ from common.api.utils.endpoints import (
 )
 from common.api.utils.response import build_success_response, build_error_response
 
+from common.company_policy import get_employee_policy
+
 
 # test workflow
 @frappe.whitelist()
@@ -87,18 +89,15 @@ def get_user_settings():
             frappe.db.commit()
 
         language = frappe.db.get_value("User", frappe.session.user, "language") or "en"
-        if language == "ar":
-            terms_and_conditions = frappe.db.get_single_value(
-                "Company Policy", "terms_and_conditions_ar"
-            )
-        else:
-            terms_and_conditions = frappe.db.get_single_value(
-                "Company Policy", "terms_and_conditions_en"
-            )
+        # The terms are the ones the user's own employer published, so the
+        # policy is found through their employee record.
+        employee = frappe.db.get_value("Employee", {"user_id": doc.user}, "name")
+        policy = get_employee_policy(employee)
+        terms_and_conditions = policy.get(
+            "terms_and_conditions_ar" if language == "ar" else "terms_and_conditions_en"
+        )
         if not terms_and_conditions:
-            terms_and_conditions = frappe.db.get_single_value(
-                "Company Policy", "terms_and_conditions_ar"
-            )
+            terms_and_conditions = policy.get("terms_and_conditions_ar")
         doc = {
             "user": doc.user,
             "task_assignments": doc.task_assignments,
