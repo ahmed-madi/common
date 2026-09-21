@@ -15,7 +15,7 @@ class EmployeeResignation(BaseHRDocument):
 
     def validate_notice_days(self):
         notice_days = cint(
-            frappe.db.get_single_value("Company Policy", "resignation_notice_days")
+            self.policy_value("resignation_notice_days")
         )
         if notice_days <= 0:
             return

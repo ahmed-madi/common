@@ -1,7 +1,7 @@
 frappe.pages['hr-request-tracking'].on_page_load = function (wrapper) {
     var page = frappe.ui.make_app_page({
         parent: wrapper,
-        title: 'HR Request Tracking',
+        title: __('HR Request Tracking'),
         single_column: true
     });
 
@@ -49,7 +49,7 @@ class HRRequestTracking {
         const skeleton = `
 			<div id="hr-request-tracking-container" class="hr-container">
 				<div class="hr-header">
-					<h2 class="hr-title">HR Request Tracking</h2>
+					<h2 class="hr-title">${__('HR Request Tracking')}</h2>
 				</div>
 
 				<div class="hr-filters">
@@ -60,18 +60,18 @@ class HRRequestTracking {
 					<div class="hr-filter-item" id="order-by-filter-container"></div>
 					<div class="hr-filter-item" id="order-direction-filter-container"></div>
 					<div class="hr-filter-actions">
-						<button id="btn-reset-filters" class="hr-btn hr-btn-secondary">Reset</button>
-						<button id="btn-apply-filters" class="hr-btn hr-btn-primary">Apply Filters</button>
+						<button id="btn-reset-filters" class="hr-btn hr-btn-secondary">${__('Reset')}</button>
+						<button id="btn-apply-filters" class="hr-btn hr-btn-primary">${__('Apply Filters')}</button>
 					</div>
 				</div>
 
 				<div class="hr-requests-list">
 					<div class="hr-list-header">
-						<span>Request Type</span>
-						<span>Status</span>
-						<span>Request Date</span>
-						<span>Employee</span>
-						<span style="text-align: right;">Actions</span>
+						<span>${__('Request Type')}</span>
+						<span>${__('Status')}</span>
+						<span>${__('Request Date')}</span>
+						<span>${__('Employee')}</span>
+						<span style="text-align: right;">${__('Actions')}</span>
 					</div>
 					<div id="requests-list">
 						<div class="hr-loader-container">
@@ -98,8 +98,8 @@ class HRRequestTracking {
                 fieldtype: 'Link',
                 options: 'Employee',
                 fieldname: 'employee',
-                label: 'Employee',
-                placeholder: 'Select Employee'
+                label: __('Employee'),
+                placeholder: __('Select Employee')
             },
             render_input: true,
             on_change: () => {
@@ -112,10 +112,13 @@ class HRRequestTracking {
             parent: this.container.find('#doctype-filter-container'),
             df: {
                 fieldtype: 'Select',
-                options: ['', ...this.request_doctypes],
+                options: [
+                    { label: __('All Types'), value: '' },
+                    ...this.request_doctypes.map((dt) => ({ label: __(dt), value: dt })),
+                ],
                 fieldname: 'doctype',
-                label: 'Request Type',
-                placeholder: 'All Types'
+                label: __('Request Type'),
+                placeholder: __('All Types')
             },
             render_input: true,
             on_change: () => {
@@ -129,8 +132,8 @@ class HRRequestTracking {
             df: {
                 fieldtype: 'Date',
                 fieldname: 'from_date',
-                label: 'From Date',
-                placeholder: 'From Date'
+                label: __('From Date'),
+                placeholder: __('From Date')
             },
             render_input: true,
             on_change: () => {
@@ -144,8 +147,8 @@ class HRRequestTracking {
             df: {
                 fieldtype: 'Date',
                 fieldname: 'to_date',
-                label: 'To Date',
-                placeholder: 'To Date'
+                label: __('To Date'),
+                placeholder: __('To Date')
             },
             render_input: true,
             on_change: () => {
@@ -159,14 +162,14 @@ class HRRequestTracking {
             df: {
                 fieldtype: 'Select',
                 options: [
-                    { label: 'Modified', value: 'modified' },
-                    { label: 'Request Date', value: 'request_date' },
-                    { label: 'Creation', value: 'creation' },
-                    { label: 'Name', value: 'name' },
-                    { label: 'Request Type', value: 'doctype' }
+                    { label: __('Modified'), value: 'modified' },
+                    { label: __('Request Date'), value: 'request_date' },
+                    { label: __('Creation'), value: 'creation' },
+                    { label: __('Name'), value: 'name' },
+                    { label: __('Request Type'), value: 'doctype' }
                 ],
                 fieldname: 'order_by',
-                label: 'Sort By',
+                label: __('Sort By'),
                 default: 'modified'
             },
             render_input: true,
@@ -182,11 +185,11 @@ class HRRequestTracking {
             df: {
                 fieldtype: 'Select',
                 options: [
-                    { label: 'DESC', value: 'DESC' },
-                    { label: 'ASC', value: 'ASC' }
+                    { label: __('Descending'), value: 'DESC' },
+                    { label: __('Ascending'), value: 'ASC' }
                 ],
                 fieldname: 'order',
-                label: 'Order',
+                label: __('Order'),
                 default: 'DESC'
             },
             render_input: true,
@@ -303,7 +306,7 @@ class HRRequestTracking {
         this.pagination_container.empty();
     }
 
-    render_empty(message = 'No requests found matching your filters.') {
+    render_empty(message = __('No requests found matching your filters.')) {
         this.requests_grid.html(`
 			<div class="hr-empty-state">
 				<p>${message}</p>
@@ -382,7 +385,7 @@ class HRRequestTracking {
 
         const doctype_obj = typeof item.doctype === 'object' ? item.doctype : { label: item.doctype, value: item.doctype };
         const employee_obj = typeof item.employee === 'object' ? item.employee : { label: item.employee, value: item.employee };
-        const employee_name_val = item.employee_name && typeof item.employee_name === 'object' ? item.employee_name.label : (item.employee_name || employee_obj.label || employee_obj.value || 'N/A');
+        const employee_name_val = item.employee_name && typeof item.employee_name === 'object' ? item.employee_name.label : (item.employee_name || employee_obj.label || employee_obj.value || __('N/A'));
 
         const wf_actions = item.meta_data.workflow.actions || [];
 
@@ -396,19 +399,19 @@ class HRRequestTracking {
             if (action_name.toLowerCase().includes('approve')) btn_class += ' btn-approve';
             if (action_name.toLowerCase().includes('reject')) btn_class += ' btn-reject';
 
-            actions_html += `<button class="${btn_class}" data-action="${action_name}" data-state="${next_state}">${action_label}</button>`;
+            actions_html += `<button class="${btn_class}" data-action="${action_name}" data-state="${next_state}">${__(action_label)}</button>`;
         });
 
         const has_actions = wf_actions.length > 0;
 
         return `
 			<div class="hr-list-item" data-name="${item.name}">
-				<div class="hr-card-doctype">${doctype_obj.label}</div>
-				<div class="hr-card-status ${status_class}">${status_label}</div>
+				<div class="hr-card-doctype">${__(doctype_obj.label)}</div>
+				<div class="hr-card-status ${status_class}">${__(status_label)}</div>
 				<div class="hr-info-date">${frappe.datetime.str_to_user(item.request_date)}</div>
 				<div class="hr-info-employee">${employee_name_val}</div>
 				<div class="hr-list-actions">
-					<button class="hr-view-btn" title="View Details">
+					<button class="hr-view-btn" title="${__('View Details')}">
 						<i class="fa fa-eye"></i>
 					</button>
 					<div class="hr-card-actions">
@@ -454,7 +457,7 @@ class HRRequestTracking {
 
     execute_workflow_action(doctype, docname, action, next_state) {
         const me = this;
-        frappe.confirm(`Are you sure you want to ${action} this request?`, () => {
+        frappe.confirm(__('Are you sure you want to {0} this request?', [__(action)]), () => {
             frappe.call({
                 method: 'common.api.controllers.common.workflow.execute_workflow_action',
                 args: {
@@ -464,10 +467,10 @@ class HRRequestTracking {
                     next_state: next_state
                 },
                 freeze: true,
-                freeze_message: 'Executing Action...',
+                freeze_message: __('Executing Action...'),
                 callback: (r) => {
                     if (r.message && r.message[0]) {
-                        frappe.show_alert({ message: `Request ${action} successfully`, indicator: 'green' });
+                        frappe.show_alert({ message: __('Request {0} successfully', [__(action)]), indicator: 'green' });
                         me.fetch_data(); // Refresh grid
                     }
                 }
@@ -486,7 +489,7 @@ class HRRequestTracking {
         const end_page = Math.min(total_pages, start_page + 4);
 
         // Prev
-        const $prev = $(`<button class="hr-page-btn" ${this.filters.page === 1 ? 'disabled' : ''}>Prev</button>`);
+        const $prev = $(`<button class="hr-page-btn" ${this.filters.page === 1 ? 'disabled' : ''}>${__('Prev')}</button>`);
         $prev.on('click', () => {
             if (me.filters.page > 1) {
                 me.filters.page--;
@@ -505,7 +508,7 @@ class HRRequestTracking {
         }
 
         // Next
-        const $next = $(`<button class="hr-page-btn" ${this.filters.page === total_pages ? 'disabled' : ''}>Next</button>`);
+        const $next = $(`<button class="hr-page-btn" ${this.filters.page === total_pages ? 'disabled' : ''}>${__('Next')}</button>`);
         $next.on('click', () => {
             if (me.filters.page < total_pages) {
                 me.filters.page++;

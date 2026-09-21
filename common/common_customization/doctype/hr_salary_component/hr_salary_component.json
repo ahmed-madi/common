@@ -23,7 +23,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Type",
-   "options": "\nBasic\nTravel Allowance\nHousing Allowance\nTransportation Allowance",
+   "options": "\nBasic\nHousing Allowance\nTransportation Allowance",
    "reqd": 1
   }
  ],

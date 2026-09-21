@@ -40,7 +40,7 @@ class WorkFromHomeRequest(BaseHRDocument):
     def validate_total_requests(
         self, name, from_date, employee, total_days, xclient=False
     ):
-        max_days = cint(frappe.db.get_single_value("Company Policy", "max_wfh_days"))
+        max_days = cint(self.policy_value("max_wfh_days"))
         if max_days == 0:
             return
         if flt(total_days) > max_days:

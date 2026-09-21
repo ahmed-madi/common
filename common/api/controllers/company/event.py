@@ -2,6 +2,8 @@ import frappe
 from frappe.utils import cint
 from common.api.utils.resource import BaseResource
 
+from common.company_policy import get_policy_value
+
 
 class EventResource(BaseResource):
     doctype = "Event"
@@ -28,7 +30,7 @@ class EventResource(BaseResource):
         filters = cls.list_user_filters.copy()
         try:
             if (
-                cint(frappe.db.get_single_value("Company Policy", "active_event_only"))
+                cint(get_policy_value("active_event_only"))
                 == 1
             ):
                 filters.append(["status", "=", "Open"])

@@ -5,6 +5,8 @@ from frappe.utils import getdate, cint
 from common.api.utils.resource import BaseResource
 from common.api.utils.decorators import safe_api
 
+from common.company_policy import get_policy_value
+
 
 class EmployeeResource(BaseResource):
     doctype = "Employee"
@@ -58,8 +60,8 @@ class EmployeeResource(BaseResource):
             allocation = leave_details["leave_allocation"]
 
             if cint(for_annual) == 1:
-                annual_leave = frappe.db.get_single_value(
-                    "Company Policy", "annual_leave_type"
+                annual_leave = get_policy_value(
+                    "annual_leave_type", employee.get("company")
                 )
                 if not annual_leave:
                     frappe.throw(

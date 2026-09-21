@@ -38,7 +38,7 @@ class CancelLeaveApplication(BaseHRDocument):
             )
 
         cancel_allowed_before = cint(
-            frappe.db.get_single_value("Company Policy", "cancel_allowed_before")
+            self.policy_value("cancel_allowed_before")
         )
         if (
             cancel_allowed_before > 0

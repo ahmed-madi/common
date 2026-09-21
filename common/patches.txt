@@ -18,3 +18,9 @@ common.patches.v2.update_leave_workspace_icon
 common.patches.v1.remove_task_property_setter
 common.patches.v1.remove_task_custom_field
 common.patches.v2.update_loans
+common.patches.v2.create_end_of_service_award_reasons
+common.patches.v2.add_saudi_award_reasons
+common.patches.v2.scope_award_reasons_to_saudi_companies
+common.patches.v2.make_company_policy_per_company
+common.patches.v2.backfill_employee_snapshot
+common.patches.v2.remove_salary_components_from_hr_settings

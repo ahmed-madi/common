@@ -29,7 +29,7 @@ class TrainingRequest(BaseHRDocument):
 
     def validate_training_policy(self):
         training_allowed_before = cint(
-            frappe.db.get_single_value("Company Policy", "training_allowed_before")
+            self.policy_value("training_allowed_before")
         )
         if (
             training_allowed_before > 0

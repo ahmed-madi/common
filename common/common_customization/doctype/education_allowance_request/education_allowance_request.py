@@ -25,11 +25,11 @@ class EducationAllowanceRequest(BaseHRDocument):
         pass
 
     def check_expense_type(self):
-        if not frappe.db.get_single_value("Company Policy", "expense_claim_type"):
+        if not self.policy_value("expense_claim_type"):
             frappe.throw(
                 _("Expense Claim Type is not added in {0}").format(
                     get_link_to_form(
-                        "Company Policy", "Company Policy", _("Company Policy")
+                        "Company Policy", self.policy_company(), _("Company Policy")
                     ),
                 )
             )
@@ -38,15 +38,13 @@ class EducationAllowanceRequest(BaseHRDocument):
         if flt(self.amount_requested) <= 0:
             frappe.throw(_("Requested amount can not be zero or negative number"))
         education_allowance_whitelist = flt(
-            frappe.db.get_single_value(
-                "Company Policy", "education_allowance_whitelist"
-            )
+            self.policy_value("education_allowance_whitelist")
         )
         if education_allowance_whitelist in frappe.get_roles(frappe.session.user):
             return
 
         max_education_allowance = flt(
-            frappe.db.get_single_value("Company Policy", "max_education_allowance")
+            self.policy_value("max_education_allowance")
         )
         sum = frappe.db.sql(
             """
@@ -80,13 +78,11 @@ class EducationAllowanceRequest(BaseHRDocument):
         self.create_expense_claim()
 
     def create_expense_claim(self):
-        expense_type = frappe.db.get_single_value(
-            "Company Policy", "expense_claim_type"
-        )
-        payable_account = frappe.db.get_single_value(
-            "Company Policy", "expense_claim_account"
-        )
-        company = frappe.db.get_single_value("Company Policy", "company")
+        expense_type = self.policy_value("expense_claim_type")
+        payable_account = self.policy_value("expense_claim_account")
+        # The claim belongs to the employee's own company, which is the company
+        # whose policy set the type and the account in the first place.
+        company = self.policy_company()
         expense_claim = frappe.new_doc("Expense Claim")
         expense_claim.employee = self.employee
         expense_claim.payable_account = payable_account

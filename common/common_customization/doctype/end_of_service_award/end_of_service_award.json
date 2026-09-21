@@ -8,10 +8,12 @@
   "employee",
   "employee_name",
   "department",
+  "company",
   "type_of_contract",
   "salary",
   "worked_days",
   "reason",
+  "exclude_award_from_total",
   "column_break_5",
   "work_start_date",
   "end_date",
@@ -115,10 +117,10 @@
   },
   {
    "fieldname": "reason",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Reason for end of service",
-   "options": "Expiration the contract, agreement between the parties to terminate the contract, or termination the contract by the company\nEmployee resignation before the end of the contract period\nEnd of the contract during the probation period",
+   "options": "End of Service Award Reason",
    "reqd": 1
   },
   {
@@ -463,6 +465,25 @@
    "label": "Salary Structure",
    "options": "Salary Structure",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "reason.exclude_award_from_total",
+   "fieldname": "exclude_award_from_total",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Exclude Award from Total",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
