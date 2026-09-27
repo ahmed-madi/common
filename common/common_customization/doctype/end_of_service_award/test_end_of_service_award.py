@@ -122,6 +122,14 @@ class TestEndofServiceAward(FrappeTestCase):
         # (1/3) * 6000 * 5 + (2/3) * 6000 * 3
         self.assertEqual(award.award, 22000)
 
+    def test_resignation_at_exactly_ten_years_is_two_thirds(self):
+        """The Select-era rule: the two thirds band runs up to and including ten."""
+        award = make_award(RESIGNATION_REASON, salary=6000, years=10)
+        award.get_award()
+
+        # (1/3) * 6000 * 5 + (2/3) * 6000 * 5
+        self.assertEqual(award.award, 30000)
+
     def test_resignation_over_ten_years(self):
         award = make_award(RESIGNATION_REASON, salary=6000, years=12)
         award.get_award()
