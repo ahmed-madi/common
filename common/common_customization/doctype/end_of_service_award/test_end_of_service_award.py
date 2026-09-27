@@ -6,15 +6,33 @@ from frappe.tests.utils import FrappeTestCase
 
 from common.common_customization.doctype.end_of_service_award.end_of_service_award import (
     FORMULA_VARIABLES,
+    recalculate,
+)
+from common.common_customization.doctype.end_of_service_award_reason.seed import (
+    REASONS,
 )
 
-CONTRACT_END_REASON = (
+
+def seeded_copy(title):
+    """The name of this test's own copy of a seeded reason.
+
+    A site keeps its seeded reasons per company and may have edited their
+    formulas, so the tests insert their own copies rather than lean on those.
+    """
+    return f"_Test {title}"[:140]
+
+
+CONTRACT_END_REASON = seeded_copy(
     "Expiration the contract, agreement between the parties to terminate the contract,"
     " or termination the contract by the company"
 )
-RESIGNATION_REASON = "Employee resignation before the end of the contract period"
-PROBATION_REASON = "End of the contract during the probation period"
-UNLAWFUL_REASON = "Termination of the contract by the employer for an unlawful reason"
+RESIGNATION_REASON = seeded_copy(
+    "Employee resignation before the end of the contract period"
+)
+PROBATION_REASON = seeded_copy("End of the contract during the probation period")
+UNLAWFUL_REASON = seeded_copy(
+    "Termination of the contract by the employer for an unlawful reason"
+)
 
 
 def make_award(reason, salary=6000, years=0, months=0, days=0):
@@ -43,6 +61,32 @@ class TestEndofServiceAward(FrappeTestCase):
     Each expected value is the old get_award() branch worked out by hand, so a
     change to a seeded formula shows up here rather than on a payslip.
     """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        for reason in REASONS:
+            name = seeded_copy(reason["title"])
+            if frappe.db.exists("End of Service Award Reason", name):
+                frappe.delete_doc("End of Service Award Reason", name, force=True)
+
+            frappe.get_doc(
+                {
+                    "doctype": "End of Service Award Reason",
+                    "amount_based_on_formula": 1,
+                    **reason,
+                    "title": name,
+                    "company": None,
+                }
+            ).insert(ignore_permissions=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        for reason in REASONS:
+            frappe.delete_doc(
+                "End of Service Award Reason", seeded_copy(reason["title"]), force=True
+            )
+        super().tearDownClass()
 
     def test_contract_end_under_five_years(self):
         award = make_award(CONTRACT_END_REASON, salary=6000, years=3)
@@ -274,3 +318,65 @@ class TestEndofServiceAward(FrappeTestCase):
         award = make_award(reason.name)
         award.company = "_Test Company"
         award.validate_reason_company()
+
+    def make_dated_award(self, days_number=0):
+        award = make_award(None)
+        award.update(
+            {
+                "work_start_date": "2020-01-01",
+                "end_date": "2026-03-17",
+                "days_number": days_number,
+            }
+        )
+        return award
+
+    def test_an_empty_days_number_is_filled_from_the_end_date(self):
+        award = self.make_dated_award()
+        award.calculate()
+
+        self.assertEqual(award.days_number, 17)
+
+    def test_a_days_number_entered_on_a_new_award_survives_the_first_save(self):
+        award = self.make_dated_award(days_number=5)
+        award.calculate()
+
+        self.assertEqual(award.days_number, 5)
+
+    def test_a_refetch_refills_an_entered_days_number(self):
+        award = self.make_dated_award(days_number=5)
+        award.calculate(refetch=True)
+
+        self.assertEqual(award.days_number, 17)
+
+    def test_calculate_derives_the_service_duration_and_totals(self):
+        award = self.make_dated_award()
+        award.ticket_number = 2
+        award.ticket_cost = 1500
+        award.calculate()
+
+        self.assertEqual((award.years, award.months, award.days), (6, 2, 17))
+        self.assertEqual(award.ticket_total_cost, 3000)
+        self.assertEqual(award.total, 3000)
+
+    def test_the_form_drops_a_reason_from_another_company(self):
+        company = frappe.get_all("Company", pluck="name", limit=1)[0]
+        reason = self.make_reason(
+            "_Test Form Scoped Reason", formula="salary", company=company
+        )
+
+        award = make_award(reason.name)
+        award.company = f"{company} - elsewhere"
+        values = recalculate(award.as_json())
+
+        self.assertIsNone(values["reason"])
+        self.assertEqual(values["award"], 0)
+
+    def test_the_form_gets_the_award_from_the_reason(self):
+        award = make_award(CONTRACT_END_REASON, salary=6000, years=3)
+        award.update({"work_start_date": "2023-01-01", "end_date": "2025-12-30"})
+        values = recalculate(award.as_json())
+
+        # 3 * 6000 * 0.5, with the duration worked out from the dates
+        self.assertEqual((values["years"], values["months"], values["days"]), (3, 0, 0))
+        self.assertEqual(values["award"], 9000)
+        self.assertEqual(values["total"], 9000)
