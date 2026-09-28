@@ -62,9 +62,14 @@ class EndofServiceAward(Document):
         self.validate_dates()
         self.set_employee_details()
         self.validate_reason_company()
-        self.calculate()
+        # Saved from the form, the days number and the leave balance are
+        # already what the form refilled on the last change of employee or
+        # dates, plus whatever the user typed over them since. Comparing the
+        # dates with the saved doc here would refill them a second time and
+        # throw the typed values away.
+        self.calculate(refetch=False if self.get(FORM_CALCULATED_FLAG) else None)
 
-    def calculate(self, refetch=None):
+    def calculate(self, refetch=None, salary=True):
         """Every derived figure, from the employee's current record and the reason.
 
         `refetch` says whether the employee or the service dates changed, which
@@ -72,13 +77,17 @@ class EndofServiceAward(Document):
         keeping a manual override. Left as None it is worked out against the
         saved doc; the form passes it explicitly, since it knows which field
         the user just changed.
+
+        `salary` False leaves the salary figures as they are, for an employee
+        with no payslip to read them from.
         """
         if refetch is None:
             refetch = self.dates_changed()
 
         self.calculate_service_duration()
         self.calculate_days_number(refetch)
-        self.calculate_salary_details()
+        if salary:
+            self.calculate_salary_details()
         self.calculate_month_totals()
         self.calculate_leave_cost(refetch)
         self.calculate_ticket_cost()
@@ -1238,6 +1247,11 @@ class EndofServiceAward(Document):
         return money_in_words(amount, lang=lang)
 
 
+# Set on the form's doc once its figures come from recalculate(). Not a field:
+# it travels with the save only, so validate() knows the form already decided
+# when to refill the days number and the leave balance.
+FORM_CALCULATED_FLAG = "__form_calculated"
+
 # Every field recalculate() may change on the form.
 FORM_CALCULATED_FIELDS = (
     "employee_name",
@@ -1284,6 +1298,10 @@ def recalculate(doc, refetch=0):
     Returns only the calculated values rather than syncing the whole doc back,
     so an edit the user makes while the request is in flight is not overwritten
     by the copy the request was sent with.
+
+    An employee with no submitted payslip has no salary to work from. That is
+    reported once, as `missing_salary_slip`, instead of get_salary() throwing
+    on every edit - the save refuses it regardless.
     """
     doc = frappe.get_doc(frappe.parse_json(doc))
     doc.check_permission("create" if doc.is_new() else "write")
@@ -1294,9 +1312,19 @@ def recalculate(doc, refetch=0):
     # tried to save yet, and the reason list only offers the right ones anyway.
     if doc.get_reason_company_mismatch():
         doc.reason = None
-    doc.calculate(refetch=cint(refetch))
 
-    return {field: doc.get(field) for field in FORM_CALCULATED_FIELDS}
+    missing_salary_slip = bool(
+        doc.employee
+        and not frappe.db.exists(
+            "Salary Slip", {"employee": doc.employee, "docstatus": 1}
+        )
+    )
+    doc.calculate(refetch=cint(refetch), salary=not missing_salary_slip)
+
+    return {
+        "values": {field: doc.get(field) for field in FORM_CALCULATED_FIELDS},
+        "missing_salary_slip": missing_salary_slip,
+    }
 
 
 def get_end_of_service_jv_entries(end_of_service_name, voucher_type, docstatus):

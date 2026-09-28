@@ -48,16 +48,42 @@ async function apply_calculated_values(frm, values) {
   }
 }
 
-// The one recalculation, done on the server by the same chain validate() runs,
-// so the form and the saved doc can never disagree - the award formula is
-// Python and could not be mirrored here anyway.
+// Not a field. Set once the form's figures come from recalculate(), and sent
+// with the save, so validate() keeps the days number and the leave balance the
+// form refilled - or the user typed over - instead of refilling them again.
+const FORM_CALCULATED_FLAG = "__form_calculated";
+
+// An employee with no submitted payslip has no salary to work the award from.
+// Said once, on the form, rather than as an error on every edit; the save
+// refuses it regardless.
+function show_missing_salary_slip(frm, missing) {
+  if (!missing) {
+    frm.dashboard.clear_headline();
+    return;
+  }
+
+  frm.dashboard.set_headline_alert(
+    __(
+      "{0} has no submitted salary slip, so no salary can be taken for the award. Submit one before saving.",
+      [frappe.utils.escape_html(frm.doc.employee_name || frm.doc.employee)]
+    ),
+    "red"
+  );
+}
+
+// The one recalculation, done on the server by the same chain validate() runs
+// - the award formula is Python and could not be mirrored here anyway.
 //
 // Only one request is ever in flight. A change made while one is running marks
 // the form for another pass, run with the latest values once it returns, so a
-// slow response can never overwrite a newer one.
+// slow response can never overwrite a newer one. That holds when a pass fails,
+// too: a change queued meanwhile still gets its pass, and may well be the one
+// that fixes whatever failed.
 //
 // `refetch` is set when the employee or a service date changed: the days
 // number and the leave balance are then refilled rather than kept as entered.
+// A refill whose pass failed is carried to the next pass, and until one
+// succeeds the save is left to decide for itself.
 function recalculate(frm, { refetch = false } = {}) {
   if (frm.__eosa_applying || frm.doc.docstatus !== 0) {
     return Promise.resolve();
@@ -70,17 +96,31 @@ function recalculate(frm, { refetch = false } = {}) {
   }
 
   frm.__eosa_running = (async () => {
+    let error = null;
     do {
       frm.__eosa_pending = false;
       const refetch_now = frm.__eosa_refetch;
       frm.__eosa_refetch = false;
 
-      const { message } = await frappe.call({
-        method: RECALCULATE_METHOD,
-        args: { doc: frm.doc, refetch: refetch_now ? 1 : 0 },
-      });
-      await apply_calculated_values(frm, message);
+      try {
+        const { message } = await frappe.call({
+          method: RECALCULATE_METHOD,
+          args: { doc: frm.doc, refetch: refetch_now ? 1 : 0 },
+        });
+        await apply_calculated_values(frm, (message || {}).values);
+        show_missing_salary_slip(frm, (message || {}).missing_salary_slip);
+        frm.doc[FORM_CALCULATED_FLAG] = 1;
+        error = null;
+      } catch (e) {
+        frm.__eosa_refetch = frm.__eosa_refetch || refetch_now;
+        delete frm.doc[FORM_CALCULATED_FLAG];
+        error = e;
+      }
     } while (frm.__eosa_pending);
+
+    if (error) {
+      throw error;
+    }
   })().finally(() => {
     frm.__eosa_running = null;
     frm.__eosa_pending = false;
@@ -200,6 +240,12 @@ frappe.ui.form.on("End of Service Award", {
   // employee's current record.
   validate: function (frm) {
     return frm.__eosa_running;
+  },
+
+  // The next save starts from what this one stored, not from the form's
+  // earlier decision.
+  after_save: function (frm) {
+    delete frm.doc[FORM_CALCULATED_FLAG];
   },
 
   // A new employee, or new service dates, change everything from the salary

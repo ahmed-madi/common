@@ -5,6 +5,7 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from common.common_customization.doctype.end_of_service_award.end_of_service_award import (
+    FORM_CALCULATED_FLAG,
     FORMULA_VARIABLES,
     recalculate,
 )
@@ -374,7 +375,7 @@ class TestEndofServiceAward(FrappeTestCase):
 
         award = make_award(reason.name)
         award.company = f"{company} - elsewhere"
-        values = recalculate(award.as_json())
+        values = recalculate(award.as_json())["values"]
 
         self.assertIsNone(values["reason"])
         self.assertEqual(values["award"], 0)
@@ -382,9 +383,61 @@ class TestEndofServiceAward(FrappeTestCase):
     def test_the_form_gets_the_award_from_the_reason(self):
         award = make_award(CONTRACT_END_REASON, salary=6000, years=3)
         award.update({"work_start_date": "2023-01-01", "end_date": "2025-12-30"})
-        values = recalculate(award.as_json())
+        values = recalculate(award.as_json())["values"]
 
         # 3 * 6000 * 0.5, with the duration worked out from the dates
         self.assertEqual((values["years"], values["months"], values["days"]), (3, 0, 0))
         self.assertEqual(values["award"], 9000)
         self.assertEqual(values["total"], 9000)
+
+    def make_saved_award_with_new_end_date(self, days_number):
+        """A draft whose end date was changed since it was saved."""
+        award = self.make_dated_award(days_number=days_number)
+        before = frappe.copy_doc(award)
+        before.end_date = "2026-02-10"
+        award._doc_before_save = before
+
+        return award
+
+    def test_a_save_from_the_form_keeps_what_the_form_decided(self):
+        """The form refilled on the date change and the user typed over it
+        afterwards - the save must not refill it a second time."""
+        award = self.make_saved_award_with_new_end_date(days_number=5)
+        award.set(FORM_CALCULATED_FLAG, 1)
+        award.validate()
+
+        self.assertEqual(award.days_number, 5)
+
+    def test_a_save_from_elsewhere_refills_after_a_date_change(self):
+        award = self.make_saved_award_with_new_end_date(days_number=5)
+        award.validate()
+
+        self.assertEqual(award.days_number, 17)
+
+    def test_the_form_is_told_about_a_missing_salary_slip_instead_of_failing(self):
+        slipless = frappe.get_all(
+            "Employee",
+            filters={
+                "name": [
+                    "not in",
+                    frappe.get_all(
+                        "Salary Slip", filters={"docstatus": 1}, pluck="employee"
+                    )
+                    or [""],
+                ]
+            },
+            pluck="name",
+            limit=1,
+        )
+        if not slipless:
+            self.skipTest("Every employee on this site has a salary slip")
+
+        award = make_award(None, salary=0)
+        award.employee = slipless[0]
+        result = recalculate(award.as_json())
+
+        self.assertTrue(result["missing_salary_slip"])
+        self.assertEqual(result["values"]["salary"], 0)
+
+        # The save still refuses it.
+        self.assertRaises(frappe.ValidationError, award.calculate_salary_details)
