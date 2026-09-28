@@ -24,3 +24,5 @@ common.patches.v2.scope_award_reasons_to_saudi_companies
 common.patches.v2.make_company_policy_per_company
 common.patches.v2.backfill_employee_snapshot
 common.patches.v2.remove_salary_components_from_hr_settings
+common.patches.v2.reset_award_reasons_to_select_rules
+common.patches.v2.refresh_employee_snapshot

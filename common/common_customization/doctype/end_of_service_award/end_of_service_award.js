@@ -3,170 +3,134 @@
 
 cur_frm.add_fetch("employee", "date_of_joining", "work_start_date");
 
-// Each of the last month's totals and the day value it is derived from.
-const MONTH_COMPONENTS = [
-  ["total_month_salary", "day_value"],
-  ["total_month_basic", "basic_day_value"],
-  ["total_month_housing", "housing_day_value"],
-  ["total_month_transportation", "transportation_day_value"],
-  ["total_month_other", "other_day_value"],
+const RECALCULATE_METHOD =
+  "common.common_customization.doctype.end_of_service_award.end_of_service_award.recalculate";
+
+const CHECK_FIELDS = ["exclude_award_from_total"];
+const TEXT_FIELDS = [
+  "employee_name",
+  "company",
+  "type_of_contract",
+  "department",
+  "reason",
+  "salary_structure",
 ];
 
-// A reason scoped to one company cannot be used by another. Clearing it beats
-// leaving a value on the form that validate() is going to reject.
-async function clear_reason_from_another_company(frm) {
-  if (!frm.doc.reason) {
-    return;
+function value_changed(fieldname, current, incoming) {
+  if (TEXT_FIELDS.includes(fieldname)) {
+    return (current || "") !== (incoming || "");
   }
-
-  const reason_company = await frappe.db.get_value(
-    "End of Service Award Reason",
-    frm.doc.reason,
-    "company"
-  );
-  const company = (reason_company.message || {}).company;
-
-  if (company && company !== frm.doc.company) {
-    await frm.set_value("reason", null);
+  if (CHECK_FIELDS.includes(fieldname)) {
+    return cint(current) !== cint(incoming);
   }
+  return flt(current, 2) !== flt(incoming, 2);
 }
 
-// Some reasons - the probation period among them - have their award calculated
-// and shown, but not paid. The flag is fetched from the selected reason.
-function award_is_excluded(frm) {
-  return cint(frm.doc.exclude_award_from_total) === 1;
-}
-
-// Number of unpaid days in the last month of service. Mirrors
-// EndofServiceAward.calculate_days_number so the form and the server can never
-// land on a different number - including for a service length of exactly 30
-// days, where the form used to set 0 and the server the day of the end date.
-async function set_days_number(frm) {
-  if (!frm.doc.end_date || !frm.doc.work_start_date) {
-    return;
-  }
-
-  const diff_days =
-    frappe.datetime.get_diff(frm.doc.end_date, frm.doc.work_start_date) + 1;
-  const days_number =
-    diff_days < 30
-      ? diff_days
-      : frappe.datetime.str_to_obj(frm.doc.end_date).getDate();
-
-  await frm.set_value("days_number", cint(days_number));
-}
-
-async function calculate_month_totals(frm) {
-  // When the last month's salary has already been paid, every component is
-  // zeroed - the journal and bank entries post from the components, not from
-  // total_month_salary alone.
-  if (cint(frm.doc.salary_is_already_taken)) {
-    for (const [total_field] of MONTH_COMPONENTS) {
-      await frm.set_value(total_field, 0);
+// Writes what the server worked out onto the form. Only the values that
+// actually changed are set, and the field handlers are told to stand down
+// while they are, so setting a field never starts another recalculation.
+async function apply_calculated_values(frm, values) {
+  const changed = {};
+  for (const [fieldname, value] of Object.entries(values || {})) {
+    if (value_changed(fieldname, frm.doc[fieldname], value)) {
+      changed[fieldname] = value;
     }
+  }
+  if (!Object.keys(changed).length) {
     return;
   }
 
-  const days_number = flt(frm.doc.days_number);
-  for (const [total_field, day_value_field] of MONTH_COMPONENTS) {
-    await frm.set_value(
-      total_field,
-      flt(days_number * flt(frm.doc[day_value_field]), 2)
-    );
+  frm.__eosa_applying = true;
+  try {
+    await frm.set_value(changed);
+  } finally {
+    frm.__eosa_applying = false;
   }
 }
 
-async function calculate_leave_cost(frm) {
-  await frm.set_value(
-    "leave_total_cost",
-    flt(flt(frm.doc.leave_number) * flt(frm.doc.leave_cost), 2)
-  );
-}
+// Not a field. Set once the form's figures come from recalculate(), and sent
+// with the save, so validate() keeps the days number and the leave balance the
+// form refilled - or the user typed over - instead of refilling them again.
+const FORM_CALCULATED_FLAG = "__form_calculated";
 
-async function calculate_ticket_cost(frm) {
-  await frm.set_value(
-    "ticket_total_cost",
-    flt(flt(frm.doc.ticket_number) * flt(frm.doc.ticket_cost), 2)
-  );
-}
-
-async function calculate_total_earning(frm) {
-  const total = (frm.doc.end_of_service_award_earning || []).reduce(
-    (sum, row) => sum + flt(row.earning),
-    0
-  );
-  await frm.set_value("total_earning", flt(total, 2));
-}
-
-async function calculate_total_deduction(frm) {
-  const total = (frm.doc.end_of_service_award_deduction || []).reduce(
-    (sum, row) => sum + flt(row.deduction),
-    0
-  );
-  await frm.set_value("total_deduction", flt(total, 2));
-}
-
-// The award comes from the formula on the selected reason, which is Python and
-// so can only be evaluated on the server. The form no longer mirrors the math -
-// there is one implementation, and it is the one that saves.
-async function calculate_award(frm) {
-  if (!frm.doc.reason) {
-    await frm.set_value("award", 0);
-    await frm.set_value("exclude_award_from_total", 0);
+// An employee with no submitted payslip has no salary to work the award from.
+// Said once, on the form, rather than as an error on every edit; the save
+// refuses it regardless.
+function show_missing_salary_slip(frm, missing) {
+  if (!missing) {
+    frm.dashboard.clear_headline();
     return;
   }
 
-  const { message } = await frappe.call({
-    doc: frm.doc,
-    method: "evaluate_award",
+  frm.dashboard.set_headline_alert(
+    __(
+      "{0} has no submitted salary slip, so no salary can be taken for the award. Submit one before saving.",
+      [frappe.utils.escape_html(frm.doc.employee_name || frm.doc.employee)]
+    ),
+    "red"
+  );
+}
+
+// The one recalculation, done on the server by the same chain validate() runs
+// - the award formula is Python and could not be mirrored here anyway.
+//
+// Only one request is ever in flight. A change made while one is running marks
+// the form for another pass, run with the latest values once it returns, so a
+// slow response can never overwrite a newer one. That holds when a pass fails,
+// too: a change queued meanwhile still gets its pass, and may well be the one
+// that fixes whatever failed.
+//
+// `refetch` is set when the employee or a service date changed: the days
+// number and the leave balance are then refilled rather than kept as entered.
+// A refill whose pass failed is carried to the next pass, and until one
+// succeeds the save is left to decide for itself.
+function recalculate(frm, { refetch = false } = {}) {
+  if (frm.__eosa_applying || frm.doc.docstatus !== 0) {
+    return Promise.resolve();
+  }
+
+  frm.__eosa_refetch = frm.__eosa_refetch || refetch;
+  if (frm.__eosa_running) {
+    frm.__eosa_pending = true;
+    return frm.__eosa_running;
+  }
+
+  frm.__eosa_running = (async () => {
+    let error = null;
+    do {
+      frm.__eosa_pending = false;
+      const refetch_now = frm.__eosa_refetch;
+      frm.__eosa_refetch = false;
+
+      try {
+        const { message } = await frappe.call({
+          method: RECALCULATE_METHOD,
+          args: { doc: frm.doc, refetch: refetch_now ? 1 : 0 },
+        });
+        await apply_calculated_values(frm, (message || {}).values);
+        show_missing_salary_slip(frm, (message || {}).missing_salary_slip);
+        frm.doc[FORM_CALCULATED_FLAG] = 1;
+        error = null;
+      } catch (e) {
+        frm.__eosa_refetch = frm.__eosa_refetch || refetch_now;
+        delete frm.doc[FORM_CALCULATED_FLAG];
+        error = e;
+      }
+    } while (frm.__eosa_pending);
+
+    if (error) {
+      throw error;
+    }
+  })().finally(() => {
+    frm.__eosa_running = null;
+    frm.__eosa_pending = false;
   });
 
-  if (!message) {
-    return;
-  }
-
-  await frm.set_value("award", flt(message.award, 2));
-  await frm.set_value(
-    "exclude_award_from_total",
-    cint(message.exclude_award_from_total)
-  );
+  return frm.__eosa_running;
 }
 
-async function calculate_total_award(frm) {
-  let totals =
-    flt(frm.doc.ticket_total_cost) +
-    flt(frm.doc.total_month_salary) +
-    flt(frm.doc.leave_total_cost) +
-    flt(frm.doc.total_earning);
-
-  // Some reasons - the probation period among them - have the award shown
-  // but not paid.
-  if (!award_is_excluded(frm)) {
-    totals += flt(frm.doc.award);
-  }
-
-  const total_deduction = flt(frm.doc.total_deduction);
-  await frm.set_value(
-    "total",
-    totals >= total_deduction ? flt(totals - total_deduction, 2) : 0
-  );
-}
-
-// The one recalculation chain, in the same order as the server's validate().
-// Every step is awaited, so no total is ever computed from a value that a
-// previous step has not finished writing yet.
-async function recalculate(frm, { refetch_dates = false } = {}) {
-  if (refetch_dates) {
-    await set_days_number(frm);
-  }
-  await calculate_month_totals(frm);
-  await calculate_leave_cost(frm);
-  await calculate_ticket_cost(frm);
-  await calculate_total_earning(frm);
-  await calculate_total_deduction(frm);
-  await calculate_award(frm);
-  await calculate_total_award(frm);
-}
+const recalculate_on_change = (frm) => recalculate(frm);
+const recalculate_with_refetch = (frm) => recalculate(frm, { refetch: true });
 
 frappe.ui.form.on("End of Service Award", {
   onload: function (frm) {
@@ -271,144 +235,32 @@ frappe.ui.form.on("End of Service Award", {
     }
   },
 
+  // A save must not race a recalculation still in flight. The server works
+  // everything out again on save regardless, from the reason and the
+  // employee's current record.
   validate: function (frm) {
-    return recalculate(frm);
+    return frm.__eosa_running;
   },
 
-  employee: async function (frm) {
-    if (!frm.doc.employee) {
-      return;
-    }
-
-    const data = await frappe.call({
-      method: "get_salary",
-      doc: frm.doc,
-      args: { employee: frm.doc.employee },
-    });
-
-    if (data && data.message) {
-      await frm.set_value("salary", data.message[0]);
-      await frm.set_value("day_value", data.message[1]);
-      await frm.set_value("leave_cost", data.message[1]);
-      await frm.set_value("basic", data.message[2]);
-      await frm.set_value("basic_day_value", data.message[3]);
-      await frm.set_value("housing_allowance", data.message[4]);
-      await frm.set_value("housing_day_value", data.message[5]);
-      await frm.set_value("transportation_allowance", data.message[6]);
-      await frm.set_value("transportation_day_value", data.message[7]);
-      // Other allowances are excluded from the award -temporarily-, so both the
-      // allowance and its day value are forced to zero. Leaving the day value
-      // populated used to leak the allowance into the journal entries while the
-      // total ignored it.
-      await frm.set_value("other_allowance", 0);
-      await frm.set_value("other_day_value", 0);
-      await frm.set_value("salary_structure", data.message[10]);
-    }
-
-    // The new employee may work for another company, which the reason on the
-    // form is not necessarily available to. Dropping it here is kinder than
-    // letting the save fail on it.
-    await clear_reason_from_another_company(frm);
-
-    // work_start_date is fetched from the employee, so the service duration has
-    // to be recomputed here too - the award is derived from years/months/days.
-    await frm.trigger("get_days_months_years");
-    await frm.trigger("get_leave_balance");
-    await recalculate(frm, { refetch_dates: true });
+  // The next save starts from what this one stored, not from the form's
+  // earlier decision.
+  after_save: function (frm) {
+    delete frm.doc[FORM_CALCULATED_FLAG];
   },
 
-  end_date: async function (frm) {
-    await frm.trigger("get_days_months_years");
-    await frm.trigger("get_leave_balance");
-    await recalculate(frm, { refetch_dates: true });
-  },
+  // A new employee, or new service dates, change everything from the salary
+  // and the service duration down - and refill the days number and the leave
+  // balance, which otherwise keep a manual override.
+  employee: recalculate_with_refetch,
+  end_date: recalculate_with_refetch,
+  work_start_date: recalculate_with_refetch,
 
-  work_start_date: async function (frm) {
-    await frm.trigger("get_days_months_years");
-    await frm.trigger("get_leave_balance");
-    await recalculate(frm, { refetch_dates: true });
-  },
-
-  // days_number stays editable so it can be overridden; changing it cascades
-  // into every total that depends on it. It no longer resets
-  // salary_is_already_taken - that used to silently wipe the user's choice.
-  days_number: async function (frm) {
-    await recalculate(frm);
-  },
-
-  salary_is_already_taken: async function (frm) {
-    await recalculate(frm);
-  },
-
-  leave_number: async function (frm) {
-    await recalculate(frm);
-  },
-
-  ticket_number: async function (frm) {
-    await recalculate(frm);
-  },
-
-  ticket_cost: async function (frm) {
-    await recalculate(frm);
-  },
-
-  reason: async function (frm) {
-    await calculate_award(frm);
-    await calculate_total_award(frm);
-  },
-
-  get_days_months_years: function (frm) {
-    const fields = ["years", "months", "days"];
-    if (!frm.doc.end_date || !frm.doc.work_start_date) {
-      return Promise.all(fields.map((field) => frm.set_value(field, 0)));
-    }
-
-    if (frm.doc.end_date < frm.doc.work_start_date) {
-      return Promise.all(fields.map((field) => frm.set_value(field, 0))).then(
-        () => {
-          frappe.throw(
-            __("End date must be greater than or equal to the work start date")
-          );
-        }
-      );
-    }
-
-    return frappe
-      .call({
-        method: "get_days_months_years",
-        doc: frm.doc,
-        args: {
-          end_date: frm.doc.end_date,
-          work_start_date: frm.doc.work_start_date,
-        },
-        freeze: true,
-      })
-      .then((data) => {
-        const values = (data && data.message) || [0, 0, 0];
-        return Promise.all(
-          fields.map((field, idx) => frm.set_value(field, values[idx]))
-        );
-      });
-  },
-
-  get_leave_balance: function (frm) {
-    if (!(frm.doc.employee && frm.doc.work_start_date && frm.doc.end_date)) {
-      return frm.set_value("leave_number", 0);
-    }
-
-    return frappe
-      .call({
-        method: "get_leave_balance",
-        doc: frm.doc,
-        args: {
-          employee: frm.doc.employee,
-          work_start_date: frm.doc.work_start_date,
-          end_date: frm.doc.end_date,
-        },
-        freeze: true,
-      })
-      .then((data) => frm.set_value("leave_number", flt(data && data.message)));
-  },
+  days_number: recalculate_on_change,
+  salary_is_already_taken: recalculate_on_change,
+  leave_number: recalculate_on_change,
+  ticket_number: recalculate_on_change,
+  ticket_cost: recalculate_on_change,
+  reason: recalculate_on_change,
 
   notice_month: function (frm) {
     frm.set_df_property("notice_month_start", "reqd", frm.doc.notice_month);
@@ -465,23 +317,11 @@ frappe.ui.form.on("End of Service Award", {
 });
 
 frappe.ui.form.on("End of Service Award Deduction", {
-  deduction(frm) {
-    return calculate_total_deduction(frm).then(() =>
-      calculate_total_award(frm)
-    );
-  },
-  end_of_service_award_deduction_remove(frm) {
-    return calculate_total_deduction(frm).then(() =>
-      calculate_total_award(frm)
-    );
-  },
+  deduction: recalculate_on_change,
+  end_of_service_award_deduction_remove: recalculate_on_change,
 });
 
 frappe.ui.form.on("End of Service Award Earning", {
-  earning(frm) {
-    return calculate_total_earning(frm).then(() => calculate_total_award(frm));
-  },
-  end_of_service_award_earning_remove(frm) {
-    return calculate_total_earning(frm).then(() => calculate_total_award(frm));
-  },
+  earning: recalculate_on_change,
+  end_of_service_award_earning_remove: recalculate_on_change,
 });

@@ -60,17 +60,79 @@ class EndofServiceAward(Document):
         # server always agrees with what the form shows, no matter how the doc
         # was saved (UI, API, data import or a workflow transition).
         self.validate_dates()
+        self.set_employee_details()
         self.validate_reason_company()
+        # Saved from the form, the days number and the leave balance are
+        # already what the form refilled on the last change of employee or
+        # dates, plus whatever the user typed over them since. Comparing the
+        # dates with the saved doc here would refill them a second time and
+        # throw the typed values away.
+        self.calculate(refetch=False if self.get(FORM_CALCULATED_FLAG) else None)
+
+    def calculate(self, refetch=None, salary=True):
+        """Every derived figure, from the employee's current record and the reason.
+
+        `refetch` says whether the employee or the service dates changed, which
+        is when the days number and the leave balance are refilled instead of
+        keeping a manual override. Left as None it is worked out against the
+        saved doc; the form passes it explicitly, since it knows which field
+        the user just changed.
+
+        `salary` False leaves the salary figures as they are, for an employee
+        with no payslip to read them from.
+        """
+        if refetch is None:
+            refetch = self.dates_changed()
+
         self.calculate_service_duration()
-        self.calculate_days_number()
-        self.calculate_salary_details()
+        self.calculate_days_number(refetch)
+        if salary:
+            self.calculate_salary_details()
         self.calculate_month_totals()
-        self.calculate_leave_cost()
+        self.calculate_leave_cost(refetch)
         self.calculate_ticket_cost()
         self.calculate_total_earning()
         self.calculate_total_deduction()
         self.get_award()
         self.calculate_total_award()
+
+    def set_employee_details(self):
+        """The employee's details as their record has them now, not when picked.
+
+        Fetched fields are only refetched by Frappe when the link changes, so an
+        employee who moved company or contract since the award was drafted
+        would otherwise keep the old values - which the reason's company check
+        and its formula both read.
+        """
+        if not self.employee:
+            return
+
+        details = frappe.db.get_value(
+            "Employee",
+            self.employee,
+            ["employee_name", "company", "employment_type", "department"],
+            as_dict=True,
+        )
+        if not details:
+            return
+
+        self.employee_name = details.employee_name
+        self.company = details.company
+        self.type_of_contract = details.employment_type
+        self.department = details.department
+
+    def get_reason_company_mismatch(self):
+        """The company the reason is tied to, when that is not the award's."""
+        if not self.reason:
+            return None
+
+        reason_company = frappe.db.get_value(
+            "End of Service Award Reason", self.reason, "company"
+        )
+        if not reason_company or reason_company == self.company:
+            return None
+
+        return reason_company
 
     def validate_reason_company(self):
         """A reason tied to a company may only be used by that company.
@@ -79,13 +141,8 @@ class EndofServiceAward(Document):
         a reason written for one company must not be picked for an employee of
         another. A reason with no company is a shared rule and fits any of them.
         """
-        if not self.reason:
-            return
-
-        reason_company = frappe.db.get_value(
-            "End of Service Award Reason", self.reason, "company"
-        )
-        if not reason_company or reason_company == self.company:
+        reason_company = self.get_reason_company_mismatch()
+        if not reason_company:
             return
 
         frappe.throw(
@@ -117,17 +174,22 @@ class EndofServiceAward(Document):
         )
 
     def dates_changed(self):
-        """True when the employee or either service date differs from the saved doc."""
+        """True when the employee or either service date differs from the saved doc.
+
+        A new doc has nothing to differ from: its days number and leave balance
+        are filled when empty and otherwise kept, so a value overridden on the
+        form survives the first save.
+        """
         previous = self.get_doc_before_save()
         if not previous:
-            return True
+            return False
 
         return any(
             self.get(field) != previous.get(field)
             for field in ("employee", "work_start_date", "end_date")
         )
 
-    def calculate_days_number(self):
+    def calculate_days_number(self, refetch):
         """Number of unpaid days in the last month of service.
 
         Auto-filled whenever the employee or the service dates change, so it can
@@ -137,7 +199,7 @@ class EndofServiceAward(Document):
         if not (self.end_date and self.work_start_date):
             return
 
-        if not self.dates_changed() and flt(self.days_number):
+        if not refetch and flt(self.days_number):
             return
 
         diff_days = date_diff(self.end_date, self.work_start_date) + 1
@@ -205,7 +267,7 @@ class EndofServiceAward(Document):
         )
         self.total_month_other = flt(days_number * flt(self.other_day_value), 2)
 
-    def calculate_leave_cost(self):
+    def calculate_leave_cost(self, refetch):
         """Leave balance and its cost.
 
         The balance is refetched whenever the employee or the service dates
@@ -213,7 +275,7 @@ class EndofServiceAward(Document):
         derived, so it can never drift from the balance times the day value.
         """
         if self.employee and self.work_start_date and self.end_date:
-            if self.dates_changed() or not flt(self.leave_number):
+            if refetch or not flt(self.leave_number):
                 self.leave_number = self.get_leave_balance(
                     self.employee, self.work_start_date, self.end_date
                 )
@@ -296,16 +358,6 @@ class EndofServiceAward(Document):
             "years_int": cint(self.years),
             "months": cint(self.months),
             "days": cint(self.days),
-        }
-
-    @frappe.whitelist()
-    def evaluate_award(self):
-        """The award for the form, which cannot run a Python formula itself."""
-        self.get_award()
-
-        return {
-            "award": flt(self.award),
-            "exclude_award_from_total": cint(self.exclude_award_from_total),
         }
 
     def award_is_excluded(self):
@@ -1193,6 +1245,86 @@ class EndofServiceAward(Document):
 
     def get_money_words(self, amount, lang="en"):
         return money_in_words(amount, lang=lang)
+
+
+# Set on the form's doc once its figures come from recalculate(). Not a field:
+# it travels with the save only, so validate() knows the form already decided
+# when to refill the days number and the leave balance.
+FORM_CALCULATED_FLAG = "__form_calculated"
+
+# Every field recalculate() may change on the form.
+FORM_CALCULATED_FIELDS = (
+    "employee_name",
+    "company",
+    "type_of_contract",
+    "department",
+    "reason",
+    "years",
+    "months",
+    "days",
+    "days_number",
+    "salary_structure",
+    "salary",
+    "day_value",
+    "basic",
+    "basic_day_value",
+    "housing_allowance",
+    "housing_day_value",
+    "transportation_allowance",
+    "transportation_day_value",
+    "other_allowance",
+    "other_day_value",
+    "total_month_salary",
+    "total_month_basic",
+    "total_month_housing",
+    "total_month_transportation",
+    "total_month_other",
+    "leave_number",
+    "leave_cost",
+    "leave_total_cost",
+    "ticket_total_cost",
+    "total_earning",
+    "total_deduction",
+    "award",
+    "exclude_award_from_total",
+    "total",
+)
+
+
+@frappe.whitelist()
+def recalculate(doc, refetch=0):
+    """The form's figures, worked out by the same chain validate() runs.
+
+    Returns only the calculated values rather than syncing the whole doc back,
+    so an edit the user makes while the request is in flight is not overwritten
+    by the copy the request was sent with.
+
+    An employee with no submitted payslip has no salary to work from. That is
+    reported once, as `missing_salary_slip`, instead of get_salary() throwing
+    on every edit - the save refuses it regardless.
+    """
+    doc = frappe.get_doc(frappe.parse_json(doc))
+    doc.check_permission("create" if doc.is_new() else "write")
+
+    doc.validate_dates()
+    doc.set_employee_details()
+    # On the form the reason is dropped rather than refused - the user has not
+    # tried to save yet, and the reason list only offers the right ones anyway.
+    if doc.get_reason_company_mismatch():
+        doc.reason = None
+
+    missing_salary_slip = bool(
+        doc.employee
+        and not frappe.db.exists(
+            "Salary Slip", {"employee": doc.employee, "docstatus": 1}
+        )
+    )
+    doc.calculate(refetch=cint(refetch), salary=not missing_salary_slip)
+
+    return {
+        "values": {field: doc.get(field) for field in FORM_CALCULATED_FIELDS},
+        "missing_salary_slip": missing_salary_slip,
+    }
 
 
 def get_end_of_service_jv_entries(end_of_service_name, voucher_type, docstatus):
