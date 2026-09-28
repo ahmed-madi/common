@@ -43,7 +43,7 @@ REASONS = [
             " else ((1 / 6) * salary * years"
             " if years <= 5"
             " else ((1 / 3) * salary * 5 + (2 / 3) * salary * (years - 5)"
-            " if years <= 10"
+            " if years < 10"
             " else 0.5 * salary * 5 + salary * (years - 5)))"
         ),
         "exclude_award_from_total": 0,
