@@ -9,7 +9,6 @@ from frappe import _
 from frappe.desk.doctype.notification_log.notification_log import (
     enqueue_create_notification,
 )
-
 from frappe.model.document import Document
 from frappe.utils import (
     cint,
@@ -541,7 +540,9 @@ class EndofServiceAward(Document):
             frappe.throw(
                 _("Please set {0} in {1}").format(
                     frappe.bold(_("Annual Leave Type")),
-                    get_link_to_form("Company Policy", self.company, _("Company Policy")),
+                    get_link_to_form(
+                        "Company Policy", self.company, _("Company Policy")
+                    ),
                 )
             )
         return leave_type
@@ -616,20 +617,44 @@ class EndofServiceAward(Document):
         is disabled before the employee is saved so Employee.update_user_status
         finds nothing left to do.
         """
-        self.cancel_salary_structure_assignments()
+        self.deactivate_unshared_salary_structures()
         self.cancel_leave_policy_assignments()
         self.disable_employee_user()
         self.set_employee_as_left()
 
-    def cancel_salary_structure_assignments(self):
-        for name in frappe.get_all(
+    def deactivate_unshared_salary_structures(self):
+        """Retire the structures that were built for this employee alone.
+
+        The employee's own assignments are left submitted - they are the record
+        of what the employee was paid, and the award's journal entry reads its
+        cost center from them. A structure still assigned to anyone else -
+        draft or submitted - stays active: salary slips and payroll entries
+        only pick up active structures, so deactivating it would drop those
+        employees from payroll.
+        """
+        for salary_structure in frappe.get_all(
             "Salary Structure Assignment",
             filters={"employee": self.employee, "docstatus": 1},
-            pluck="name",
+            pluck="salary_structure",
+            distinct=True,
         ):
-            assignment = frappe.get_doc("Salary Structure Assignment", name)
-            assignment.flags.ignore_permissions = True
-            assignment.cancel()
+            if frappe.db.exists(
+                "Salary Structure Assignment",
+                {
+                    "salary_structure": salary_structure,
+                    "employee": ("!=", self.employee),
+                    "docstatus": ("<", 2),
+                },
+            ):
+                continue
+
+            structure = frappe.get_doc("Salary Structure", salary_structure)
+            if structure.is_active == "No":
+                continue
+
+            structure.is_active = "No"
+            structure.flags.ignore_permissions = True
+            structure.save()
 
     def cancel_leave_policy_assignments(self):
         for name in frappe.get_all(
