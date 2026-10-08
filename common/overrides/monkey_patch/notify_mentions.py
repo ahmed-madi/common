@@ -8,7 +8,7 @@ from frappe.desk.doctype.notification_log.notification_log import (
 from frappe.utils import get_fullname
 
 
-def notify_mentions(ref_doctype, ref_name, content):
+def notify_mentions(ref_doctype, ref_name, content, source_doctype=None, source_name=None):
     if ref_doctype and ref_name and content:
         mentions = frappe.desk.notifications.extract_mentions(content)
         if not mentions:
@@ -43,6 +43,8 @@ def notify_mentions(ref_doctype, ref_name, content):
             "type": "Mention",
             "document_type": ref_doctype,
             "document_name": ref_name,
+            "source_doctype": source_doctype,
+			"source_name": source_name,
             "subject": notification_message,
             "base_subject": "{{sender_fullname}} mentioned you in a comment in {{_(doctype)}} {{doc_name}}",
             "base_message": "Mention in {{doctype}} {{doc_name}}",
