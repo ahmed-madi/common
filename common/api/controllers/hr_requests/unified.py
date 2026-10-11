@@ -1,8 +1,12 @@
 import frappe
 from frappe import cint
-from common.api.utils.resource import BaseResource
-from common.api.utils.endpoints import document_list as base_document_list
+from frappe.utils import sbool
+
 from common.api.utils.decorators import safe_api
+from common.api.utils.endpoints import document_list as base_document_list
+from common.api.utils.resource import BaseResource
+from common.api.utils.workflow_handlers import WorkflowActionManager
+from common.company_policy import get_policy_value
 
 # Configuration for each Doctype
 # format: "Doctype": { "fields": [...], "filters": {...}, "date_aliases": {...}, "has_attachment": bool }
@@ -10,8 +14,6 @@ from common.api.utils.decorators import safe_api
 REQUEST_CONFIG = {
     "Compensatory Leave Request": {
         "extra_fields": ["work_from_date as from_date", "work_end_date as to_date"],
-        "null_dates": True,
-        "null_attachment": True,
     },
     "Leave Application": {
         "extra_fields": [
@@ -20,7 +22,6 @@ REQUEST_CONFIG = {
             "attachment",
             "posting_date as request_date",
         ],
-        "null_dates": True,
         "date_filter_field": "posting_date",
     },
     "Visa Application": {
@@ -29,7 +30,6 @@ REQUEST_CONFIG = {
             "end_date as to_date",
             "attachment",
         ],
-        "null_dates": True,
     },
     "Club Request": {
         "extra_fields": [
@@ -37,7 +37,6 @@ REQUEST_CONFIG = {
             "end_date as to_date",
             "attachment",
         ],
-        "null_dates": True,
     },
     "Training Request": {
         "extra_fields": [
@@ -45,29 +44,17 @@ REQUEST_CONFIG = {
             "end_date as to_date",
             "attachment",
         ],
-        "null_dates": True,
     },
     "Work From Home Request": {
         "extra_fields": ["from_date", "to_date"],
-        "null_dates": True,
-        "null_attachment": True,
     },
     "Work Outside Office Request": {
         "extra_fields": ["from_date", "to_date", "attachment"],
-        "null_dates": True,
     },
-    "Cancel Leave Application": {
-        "null_attachment": True,
-    },
-    "Leave Suspension": {
-        "null_attachment": True,
-    },
-    "Employee Resignation": {
-        "null_attachment": True,
-    },
-    "System Access Request": {
-        "null_attachment": True,
-    },
+    "Cancel Leave Application": {},
+    "Leave Suspension": {},
+    "Employee Resignation": {},
+    "System Access Request": {},
     "Early Leave Application": {
         "extra_fields": ["attachment"],
     },
@@ -110,7 +97,7 @@ REQUEST_CONFIG = {
         "extra_fields": [
             "employee",
             "employee_name",
-        ]
+        ],
     },
     "General Request": {
         "extra_fields": ["attachment", "request_date"],
@@ -131,8 +118,77 @@ REQUESTS_DOCTYPE = list(REQUEST_CONFIG.keys())
 #     "Employee Expense Request"
 
 DOC_STATUS = {"Draft": 0, "Submitted": 1, "Cancelled": 2}
-FORCE_FILTER_EMPLOYEE_MOBILE = True
-FORCE_FILTER_EMPLOYEE_WEB = False
+
+
+def get_own_requests_scope():
+    """Whether the current user is limited to their own requests, and their employee.
+
+    Read from the Company Policy of the user's company: `own_requests_only_mobile`
+    for API (mobile) calls, `own_requests_only_web` otherwise.
+    """
+    user = frappe.session.user
+    if user == "Administrator":
+        return False, None
+
+    employee, company = frappe.db.get_value(
+        "Employee", {"user_id": user}, ["name", "company"]
+    ) or (None, None)
+    fieldname = (
+        "own_requests_only_mobile"
+        if frappe.flags.get("api_call", False)
+        else "own_requests_only_web"
+    )
+    try:
+        restrict = cint(get_policy_value(fieldname, company))
+    except frappe.ValidationError:
+        # no policy can be resolved for this user: stay on the safe side
+        frappe.clear_last_message()
+        restrict = 1
+
+    return bool(restrict), employee
+
+
+def add_waiting_my_action_filters(doctype, filters, wf):
+    """Narrow `filters` to requests that can have an action for the current user.
+
+    A cheap SQL pre-filter only; `has_my_action` makes the final call per request.
+    Returns None when no request of this doctype can wait for the user.
+    """
+    if wf:
+        roles = set(frappe.get_roles())
+        states = list({t.state for t in wf.transitions if t.allowed in roles})
+        if not states:
+            return None
+        state_field = wf.workflow_state_field
+        if state_field in filters:
+            # an explicit `status` filter must be one of those states
+            return filters if filters[state_field] in states else None
+        filters[state_field] = ["in", states]
+        return filters
+
+    # without a workflow only drafts carry actions (Submit / Approve / Reject)
+    if not frappe.get_meta(doctype).is_submittable:
+        return None
+    if filters.get("docstatus", 0) != 0:
+        return None
+    filters["docstatus"] = 0
+    return filters
+
+
+def has_my_action(doctype, name, wf):
+    """Whether the request's action list for the current user is not empty."""
+    try:
+        doc = frappe.get_doc(doctype, name)
+        permissions = frappe.permissions.get_doc_permissions(doc)
+        workflow = WorkflowActionManager().get_workflow_data(
+            doc, frappe.get_meta(doctype), wf, permissions, frappe.get_roles()
+        )
+    except frappe.PermissionError:
+        # one unreadable request must not fail the whole list
+        frappe.clear_last_message()
+        return False
+    return bool(workflow["actions"])
+
 
 def get_request_config(doctype):
     return REQUEST_CONFIG.get(doctype, {})
@@ -297,24 +353,25 @@ class UnifiedRequestResource(BaseResource):
                 if args.get("doctype") in REQUEST_CONFIG
                 else list(REQUEST_CONFIG.keys())
             )
-            is_mobile = frappe.flags.get("api_call", False)
-            employee = None
-            if (FORCE_FILTER_EMPLOYEE_MOBILE and is_mobile) or FORCE_FILTER_EMPLOYEE_WEB:
-                user = frappe.session.user
-                # is_admin = user == "Administrator" or "System Manager" in frappe.get_roles(user)
-                is_admin = user == "Administrator"
-                # Mobile flow: always restrict to the current user's employee
-                if not is_admin:
-                    employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
-                    if not employee:
-                        return {
-                            "data_list": [],
-                            "page": 1,
-                            "perPage": 0,
-                            "totalCount": 0,
-                            "pageCount": 0,
-                        }, "No Employee linked to current user"
+            # requests waiting for the current user to take a workflow action;
+            # approvers act on other employees' requests, so own-only does not apply
+            waiting_my_action = sbool(args.get("waiting_my_action", False)) is True
+            restrict_to_own, own_employee = (
+                (False, None) if waiting_my_action else get_own_requests_scope()
+            )
+            if restrict_to_own:
+                if not own_employee:
+                    return {
+                        "data_list": [],
+                        "page": 1,
+                        "perPage": 0,
+                        "totalCount": 0,
+                        "pageCount": 0,
+                    }, "No Employee linked to current user"
+                employee = own_employee
             else:
+                # visibility follows the user's permissions (frappe.get_list);
+                # `employee` only narrows the list further
                 employee = args.get("employee")
 
             request_date = args.get("request_date") or args.get("date")
@@ -347,6 +404,11 @@ class UnifiedRequestResource(BaseResource):
                 )
                 workflows[doctype] = wf
 
+                if waiting_my_action:
+                    filters = add_waiting_my_action_filters(doctype, filters, wf)
+                    if filters is None:
+                        continue
+
                 is_valid, code, result = custom_document_list(
                     doctype, fields, filters, limit_start=0, limit_page_length=999999
                 )
@@ -363,8 +425,10 @@ class UnifiedRequestResource(BaseResource):
 
                 has_success = True
 
-                config = get_request_config(doctype)
                 rows = result.get("data_list", [])
+                if waiting_my_action:
+                    rows = [r for r in rows if has_my_action(doctype, r["name"], wf)]
+                    result["totalCount"] = len(rows)
 
                 for row in rows:
                     row["doctype"] = doctype
@@ -376,10 +440,9 @@ class UnifiedRequestResource(BaseResource):
                             except Exception:
                                 pass
 
-                    if config.get("null_dates"):
-                        row.update({"from_date": None, "to_date": None})
-                    if config.get("null_attachment"):
-                        row["attachment"] = None
+                    # keep every row's shape the same without overwriting real values
+                    for key in ("from_date", "to_date", "attachment"):
+                        row.setdefault(key, None)
 
                 all_data.extend(rows)
                 total_count += cint(result.get("totalCount"))
