@@ -53,6 +53,10 @@
   "employee_resignation_section",
   "resignation_notice_days",
   "roles_restrictions_tab",
+  "employee_requests_section",
+  "own_requests_only_mobile",
+  "column_break_eqrq",
+  "own_requests_only_web",
   "suggestions_and_complaints_section",
   "suggestions_whitelist_role",
   "terms_and_conditions_tab",
@@ -303,6 +307,29 @@
    "label": "Roles & Restrictions"
   },
   {
+   "fieldname": "employee_requests_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Requests"
+  },
+  {
+   "default": "1",
+   "description": "Mobile app: users see only their own requests in the unified requests list. Turn off to show every request the user has permission to read.",
+   "fieldname": "own_requests_only_mobile",
+   "fieldtype": "Check",
+   "label": "Show Only Own Requests on Mobile"
+  },
+  {
+   "fieldname": "column_break_eqrq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Web portal: users see only their own requests in the unified requests list. Turn off to show every request the user has permission to read.",
+   "fieldname": "own_requests_only_web",
+   "fieldtype": "Check",
+   "label": "Show Only Own Requests on Web"
+  },
+  {
    "description": "User with any role can read suggestions and complaints.",
    "fieldname": "suggestions_whitelist_role",
    "fieldtype": "Table MultiSelect",
@@ -389,7 +416,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 0,
  "links": [],
- "modified": "2025-11-06 13:49:12.263859",
+ "modified": "2026-10-11 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
