@@ -10,8 +10,6 @@ from common.api.utils.decorators import safe_api
 REQUEST_CONFIG = {
     "Compensatory Leave Request": {
         "extra_fields": ["work_from_date as from_date", "work_end_date as to_date"],
-        "null_dates": True,
-        "null_attachment": True,
     },
     "Leave Application": {
         "extra_fields": [
@@ -20,7 +18,6 @@ REQUEST_CONFIG = {
             "attachment",
             "posting_date as request_date",
         ],
-        "null_dates": True,
         "date_filter_field": "posting_date",
     },
     "Visa Application": {
@@ -29,7 +26,6 @@ REQUEST_CONFIG = {
             "end_date as to_date",
             "attachment",
         ],
-        "null_dates": True,
     },
     "Club Request": {
         "extra_fields": [
@@ -37,7 +33,6 @@ REQUEST_CONFIG = {
             "end_date as to_date",
             "attachment",
         ],
-        "null_dates": True,
     },
     "Training Request": {
         "extra_fields": [
@@ -45,29 +40,17 @@ REQUEST_CONFIG = {
             "end_date as to_date",
             "attachment",
         ],
-        "null_dates": True,
     },
     "Work From Home Request": {
         "extra_fields": ["from_date", "to_date"],
-        "null_dates": True,
-        "null_attachment": True,
     },
     "Work Outside Office Request": {
         "extra_fields": ["from_date", "to_date", "attachment"],
-        "null_dates": True,
     },
-    "Cancel Leave Application": {
-        "null_attachment": True,
-    },
-    "Leave Suspension": {
-        "null_attachment": True,
-    },
-    "Employee Resignation": {
-        "null_attachment": True,
-    },
-    "System Access Request": {
-        "null_attachment": True,
-    },
+    "Cancel Leave Application": {},
+    "Leave Suspension": {},
+    "Employee Resignation": {},
+    "System Access Request": {},
     "Early Leave Application": {
         "extra_fields": ["attachment"],
     },
@@ -363,7 +346,6 @@ class UnifiedRequestResource(BaseResource):
 
                 has_success = True
 
-                config = get_request_config(doctype)
                 rows = result.get("data_list", [])
 
                 for row in rows:
@@ -376,10 +358,9 @@ class UnifiedRequestResource(BaseResource):
                             except Exception:
                                 pass
 
-                    if config.get("null_dates"):
-                        row.update({"from_date": None, "to_date": None})
-                    if config.get("null_attachment"):
-                        row["attachment"] = None
+                    # keep every row's shape the same without overwriting real values
+                    for key in ("from_date", "to_date", "attachment"):
+                        row.setdefault(key, None)
 
                 all_data.extend(rows)
                 total_count += cint(result.get("totalCount"))

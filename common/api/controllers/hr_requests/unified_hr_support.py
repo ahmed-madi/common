@@ -237,7 +237,6 @@ class HRSupportResource(BaseResource):
 
                 has_success = True
 
-                config = get_request_config(doctype)
                 rows = result.get("data_list", [])
 
                 for row in rows:
@@ -250,10 +249,9 @@ class HRSupportResource(BaseResource):
                             except Exception:
                                 pass
 
-                    if config.get("null_dates"):
-                        row.update({"from_date": None, "to_date": None})
-                    if config.get("null_attachment"):
-                        row["attachment"] = None
+                    # keep every row's shape the same without overwriting real values
+                    for key in ("from_date", "to_date", "attachment"):
+                        row.setdefault(key, None)
 
                 all_data.extend(rows)
                 total_count += cint(result.get("totalCount"))
