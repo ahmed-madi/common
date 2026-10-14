@@ -128,10 +128,12 @@ after_install = "common.install.after_install"
 
 permission_query_conditions = {
     "Employee HR Feedback": "common.permissions.employee_hr_feedback.get_permission_query_conditions",
+    "Employee Inquiry": "common.permissions.employee_inquiry.get_permission_query_conditions",
 }
 
 has_permission = {
     "Employee HR Feedback": "common.permissions.employee_hr_feedback.has_permission",
+    "Employee Inquiry": "common.permissions.employee_inquiry.has_permission",
 }
 
 # DocType Class
