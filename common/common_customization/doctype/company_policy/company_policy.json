@@ -59,6 +59,8 @@
   "own_requests_only_web",
   "suggestions_and_complaints_section",
   "suggestions_whitelist_role",
+  "employee_inquiry_section",
+  "inquiry_full_access_roles",
   "terms_and_conditions_tab",
   "terms_and_conditions_ar",
   "terms_and_conditions_en"
@@ -410,13 +412,25 @@
    "fieldtype": "Table",
    "label": "Print Format per Company",
    "options": "Salary Identification Letter Print Format"
+  },
+  {
+   "fieldname": "employee_inquiry_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Inquiries"
+  },
+  {
+   "description": "Users with any of these roles can access all employee inquiries of this company. Others see only their own, and department managers see the non-draft inquiries of their department.",
+   "fieldname": "inquiry_full_access_roles",
+   "fieldtype": "Table MultiSelect",
+   "label": "Inquiry Full Access Roles",
+   "options": "Company Policy Whitelist Role"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 0,
  "links": [],
- "modified": "2026-10-11 12:00:00.000000",
+ "modified": "2026-10-14 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Common Customization",
  "name": "Company Policy",
