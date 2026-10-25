@@ -2,7 +2,7 @@
 # See license.txt
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from common.common_customization.doctype.end_of_service_award.end_of_service_award import (
     FORM_CALCULATED_FLAG,
@@ -56,7 +56,7 @@ def make_award(reason, salary=6000, years=0, months=0, days=0):
     return award
 
 
-class TestEndofServiceAward(FrappeTestCase):
+class TestEndofServiceAward(IntegrationTestCase):
     """The seeded reasons must reproduce the numbers the hardcoded rules gave.
 
     Each expected value is the old get_award() branch worked out by hand, so a

@@ -2,13 +2,13 @@
 # See license.txt
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from common.common_customization.doctype.end_of_service_award_reason import seed
 from common.events import company
 
 
-class TestEndofServiceAwardReason(FrappeTestCase):
+class TestEndofServiceAwardReason(IntegrationTestCase):
     def test_condition_must_be_an_expression(self):
         reason = frappe.get_doc(
             {
@@ -64,7 +64,7 @@ class TestEndofServiceAwardReason(FrappeTestCase):
         self.assertIsNone(reason.condition)
 
 
-class TestSeedAwardReasons(FrappeTestCase):
+class TestSeedAwardReasons(IntegrationTestCase):
     def tearDown(self):
         frappe.db.rollback()
 
