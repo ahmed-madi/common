@@ -268,8 +268,8 @@ class AttendanceViewer {
 		const html = `
 			<div class="attendance-card">
                 <div class="card-actions">
-                    <button class="action-btn check"><i class="fa fa-check"></i></button>
-                    <button class="action-btn view" onclick="frappe.set_route('Form', 'Employee', '${emp.employee}')"><i class="fa fa-eye"></i></button>
+                    <button class="action-btn check">${frappe.utils.icon("check", "sm")}</button>
+                    <button class="action-btn view" onclick="frappe.set_route('Form', 'Employee', '${emp.employee}')">${frappe.utils.icon("eye", "sm")}</button>
                 </div>
 
                 <div class="calendar-section">
