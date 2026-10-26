@@ -2,14 +2,14 @@
 # See license.txt
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from common import employee_snapshot
 
 COMPANY = "_Test Company"
 
 
-class TestEmployeeSnapshot(FrappeTestCase):
+class TestEmployeeSnapshot(IntegrationTestCase):
     def tearDown(self):
         frappe.db.rollback()
         frappe.clear_document_cache("Company Policy", COMPANY)

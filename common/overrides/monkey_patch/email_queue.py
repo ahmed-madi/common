@@ -1,3 +1,5 @@
+import json
+
 import frappe
 from frappe import _
 from frappe.email.doctype.email_queue.email_queue import (
@@ -24,7 +26,7 @@ class SendMailContext(BaseSendMailContext):
         notification.subject = _("Failed to send email with subject:") + f" {subject}"
         notification.base_subject = "Failed to send email with subject: {{subject}}"
         notification.base_message = "None"
-        notification.base_variables = f'{{"subject": "{subject}"}}'
+        notification.base_variables = json.dumps({"subject": subject})
         try:
             notification.insert()
         except Exception as e:
@@ -32,6 +34,8 @@ class SendMailContext(BaseSendMailContext):
 
 
 def patch_send_mail_context():
-    import frappe.email.queue
+    # EmailQueue.send() builds the context from its own module's global, so
+    # that is the name to replace (frappe.email.queue never referenced it).
+    import frappe.email.doctype.email_queue.email_queue as email_queue
 
-    frappe.email.queue.SendMailContext = SendMailContext
+    email_queue.SendMailContext = SendMailContext
