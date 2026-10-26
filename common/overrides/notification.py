@@ -28,11 +28,26 @@ def get_reference_name(doc):
 
 
 class Notification(BaseNotification):
-    def create_system_notification(self, doc, context):
-        subject = self.subject
-        base_subject = self.subject
-        if "{" in subject:
-            subject = frappe.render_template(self.subject, context)
+    def create_system_notification(self, doc, context, template_content=None):
+        def _render(template):
+            if not (template and "{" in template):
+                return template
+            return frappe.render_template(template, context, restrict_globals=True)
+
+        # Untranslated sources of the subject and message, kept on the log so
+        # they can be rendered again in the reader's language
+        base_subject, base_message = self.subject, self.message
+
+        if template_content is None:
+            template_content = self.get_email_template_content(doc)
+        if template_content:
+            subject = template_content["subject"]
+            email_content = template_content["message"]
+            email_template = frappe.get_cached_doc("Email Template", self.email_template)
+            base_subject, base_message = email_template.subject, email_template.response_
+        else:
+            subject = _render(self.subject)
+            email_content = _render(self.message)
 
         attachments = self.get_attachment(doc)
 
@@ -44,16 +59,20 @@ class Notification(BaseNotification):
             return
 
         notification_doc = {
-            "type": "Alert",
+            "type": self.notification_type or "Alert",
             "document_type": get_reference_doctype(doc),
             "document_name": get_reference_name(doc),
+            "app": frappe.db.get_value("Module Def", self.module, "app_name")
+            if self.module
+            else None,
+            "title": subject,
             "subject": subject,
             "from_user": doc.modified_by or doc.owner,
-            "email_content": frappe.render_template(self.message, context),
+            "email_content": email_content,
             "attached_file": attachments and json.dumps(attachments[0]),
             "push_notification": cint(self.send_push_notification),
-            "base_subject": strip_html(base_subject),
-            "base_message": strip_html(self.message),
+            "base_subject": strip_html(base_subject or ""),
+            "base_message": strip_html(base_message or ""),
             "base_variables": f"{context}",
         }
         enqueue_create_notification(users, notification_doc)

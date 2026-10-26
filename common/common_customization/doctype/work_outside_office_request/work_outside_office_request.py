@@ -64,7 +64,7 @@ class WorkOutsideOfficeRequest(BaseHRDocument):
         end_of_year = add_days(add_months(start_of_year, 11), 30)
         total_request_days = frappe.get_list(
             "Work Outside Office Request",
-            fields=["sum(total_days) as sum"],
+            fields=[{"SUM": "total_days", "as": "sum"}],
             filters={
                 "employee": employee,
                 "from_date": [">=", start_of_year],

@@ -8,7 +8,7 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+required_apps = ["frappe/erpnext", "frappe/hrms"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -136,11 +136,12 @@ has_permission = {
     "Employee Inquiry": "common.permissions.employee_inquiry.has_permission",
 }
 
-# DocType Class
+# Extend DocType Class
 # ---------------
-# Override standard doctype classes
+# Each class subclasses the standard controller; frappe mixes it in ahead of
+# that controller (and of any other app's override or extension) at runtime.
 
-override_doctype_class = {
+extend_doctype_class = {
     "Leave Application": "common.overrides.leave_application.LeaveApplication",
     "Leave Type": "common.overrides.leave_type.LeaveType",
     "Compensatory Leave Request": "common.overrides.compensatory_leave_request.CompensatoryLeaveRequest",

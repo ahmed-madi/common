@@ -39,7 +39,7 @@ class SubmissionQueue(BaseSubmissionQueue):
                 {
                     "message": message.format(
                         *message_replacements,
-                        f"<a href='/app/{quote(doctype.lower().replace(' ', '-'))}/{quote(docname)}'><b>here</b></a>",
+                        f"<a href='/desk/{quote(doctype.lower().replace(' ', '-'))}/{quote(docname)}'><b>here</b></a>",
                     ),
                     "alert": True,
                     "indicator": "red" if submission_status == "Failed" else "green",
