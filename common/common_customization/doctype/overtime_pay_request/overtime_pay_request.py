@@ -123,8 +123,3 @@ def is_salary_slip_exists(employee, target_date):
 
     return exists
 
-
-@frappe.whitelist()
-def fetch_time_logs(overtime_request):
-    time_logs = frappe.get_value("Overtime Request", overtime_request, "time_logs")
-    return time_logs

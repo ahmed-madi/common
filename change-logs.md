@@ -56,9 +56,11 @@ Everything below targets the `version-16` branch; v15 sites should stay on `main
 ## Known items not changed (worth a follow-up)
 
 - `loan_purpose` is now a Link to **Loan Purpose** and is optional. Create Loan Purpose records, and mark the field mandatory with a Property Setter if the old rule should stay. API clients that sent free text in `loan_purpose` must send a Loan Purpose name.
-- Broken on v15 too, left untouched:
-  - `form_timeline_workflow.js` listens to events Frappe never triggers, and the `data-template` CSS selectors never match.
-  - `overtime_pay_request.js` sets `fields_dict.<x>.onchange`, which Frappe never calls, and calls a module-level function with `doc:`.
 - The `Helpdesk` module folder isn't in `modules.txt`, so its workspace never syncs. The Employee Attendance workspace references the **Attendance Count v2** chart, which isn't shipped with the app.
 - Not authored yet: per-module sidebars (`<module>/sidebar/`) and a dock (`dock/common/common.json`). v16 falls back to generated sidebars. To curate them, author in the UI on a developer-mode site and use *Export to App*.
 - `.addClass("btn-primary")` on custom form buttons may not show as primary under v16's button styles. If so, use `frm.change_custom_button_type(label, null, "primary")`.
+
+## Follow-up fixes
+
+- **Workflow timeline styling** (`public/js/form_timeline_workflow.js`, `public/css/common-style3.css`): the `past-state` / `current-state` / `future-state` classes were added on `render_timeline` and `form_render`, which Frappe never triggers on `document`. They are now added on the `timeline_refresh` form event (fired by `FormTimeline.refresh()` right after it renders), with `form-refresh` and the "Show all activity" toggle as fallbacks. The CSS no longer selects `data-template` (Frappe never sets it); it targets `.timeline-item.<status>-state .timeline-badge`, since every journey item has an icon and Frappe renders a badge for it, not a dot. The unreachable rules for FontAwesome icons and for hiding Frappe's own workflow/version items were dropped.
+- **Overtime Pay Request** (`common_customization/doctype/overtime_pay_request/`): removed the dead `onload` handler and the `fetch_time_logs` whitelisted function. The handler was never called, the function read a Table field with `get_value`, and the doctype has no `time_logs` field. `employee` and `total_hours` still come from the Overtime Request through `fetch_from`.
