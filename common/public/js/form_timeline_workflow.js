@@ -67,14 +67,25 @@ var refresh_workflow_styles = function () {
     });
 };
 
-// Extend FormTimeline to handle workflow state card styling
-$(document).on("render_timeline", function () {
-    setTimeout(refresh_workflow_styles, 100);
+// FormTimeline.refresh() renders its items synchronously and then fires the
+// "timeline_refresh" form event, so this runs right after every re-render
+// (form refresh, new comment, docinfo update).
+frappe.ui.form.on("*", {
+    timeline_refresh: function () {
+        refresh_workflow_styles();
+    }
 });
 
-// Also run once on page load and when form reloads
-$(document).on("form_render", function () {
+// Fallback: Frappe's global form refresh event fires before the timeline is
+// refreshed, so wait a little before styling.
+$(document).on("form-refresh", function () {
     setTimeout(refresh_workflow_styles, 500);
+});
+
+// The "Show all activity" toggle re-renders the timeline without firing
+// "timeline_refresh".
+$(document).on("click", ".show-all-activity input[type=checkbox]", function () {
+    setTimeout(refresh_workflow_styles, 100);
 });
 
 // Standard Workflow Action Btn handler

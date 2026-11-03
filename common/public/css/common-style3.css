@@ -134,10 +134,13 @@
 }
 
 /* Timeline Indicators Enhancements */
-.timeline-item[data-template="workflow_history_card"] .timeline-dot,
-.timeline-item[data-template="workflow_current_state"] .timeline-dot,
-.timeline-item[data-template="workflow_action_card"] .timeline-dot,
-.timeline-item[data-template="workflow_state_card"] .timeline-dot {
+/* Frappe sets no data-template on timeline items. form_timeline_workflow.js adds
+   past-state / current-state / future-state to each .timeline-item holding a
+   .journey-state-card. Every journey item has an icon, so Frappe renders a
+   .timeline-badge (not a .timeline-dot) for it. */
+.timeline-item.past-state .timeline-badge,
+.timeline-item.current-state .timeline-badge,
+.timeline-item.future-state .timeline-badge {
     background-color: white !important;
     border-width: 2px !important;
     display: flex;
@@ -145,26 +148,19 @@
     justify-content: center;
 }
 
-.timeline-item[data-template="workflow_state_card"].past-state .timeline-dot {
+.timeline-item.past-state .timeline-badge {
     border-color: var(--green-500, #28a745) !important;
 }
 
-.timeline-item[data-template="workflow_state_card"].current-state .timeline-dot {
+.timeline-item.current-state .timeline-badge {
     border-color: var(--orange-500, #ffa00a) !important;
     background-color: white !important;
     z-index: 2;
 }
 
-.timeline-item[data-template="workflow_state_card"].future-state .timeline-dot {
+.timeline-item.future-state .timeline-badge {
     border-color: var(--gray-300, #d1d8dd) !important;
     background-color: white !important;
-}
-
-.timeline-item[data-template="workflow_state_card"] .timeline-dot svg,
-.timeline-item[data-template="workflow_state_card"] .timeline-dot i {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
 }
 
 /* journey-state-card status colors */
@@ -185,47 +181,20 @@
     color: var(--gray-500, #8d99a6);
 }
 
-/* Color coding icons */
-.timeline-item[data-template="workflow_state_card"] i {
-    font-style: normal;
-}
-
-.timeline-item[data-template="workflow_state_card"] .fa-check,
-.timeline-item[data-template="workflow_state_card"] .fa-tick {
-    color: var(--green-600, #28a745) !important;
-    display: inline-block !important;
-}
-
-.timeline-item[data-template="workflow_state_card"] .fa-clock-o,
-.timeline-item[data-template="workflow_state_card"] .fa-clock,
-.timeline-item[data-template="workflow_state_card"] .fa-time {
-    color: var(--orange-600, #ffa00a) !important;
-    display: inline-block !important;
-}
-
-.timeline-item[data-template="workflow_state_card"] .fa-circle-o,
-.timeline-item[data-template="workflow_state_card"] .fa-circle {
-    color: var(--gray-400, #d1d8dd) !important;
-    display: inline-block !important;
-}
-
-/* Suppress default Frappe workflow timeline items and version noise */
-.timeline-item[data-template="workflow_action"],
-.timeline-item[data-template="workflow_history"],
-.timeline-item[data-template="workflow_action_card"],
-.timeline-item[data-template="version"] {
-    display: none !important;
-}
-
 /* SVG icon support */
-.timeline-item[data-template="workflow_state_card"] .timeline-dot svg {
+.timeline-item.past-state .timeline-badge svg,
+.timeline-item.current-state .timeline-badge svg,
+.timeline-item.future-state .timeline-badge svg {
     width: 14px;
     height: 14px;
 }
 
-.timeline-item[data-template="workflow_state_card"] .timeline-dot svg,
-.timeline-item[data-template="workflow_state_card"] .timeline-dot i,
-.timeline-item[data-template="workflow_state_card"] .timeline-dot .icon {
+.timeline-item.past-state .timeline-badge svg,
+.timeline-item.current-state .timeline-badge svg,
+.timeline-item.future-state .timeline-badge svg,
+.timeline-item.past-state .timeline-badge .icon,
+.timeline-item.current-state .timeline-badge .icon,
+.timeline-item.future-state .timeline-badge .icon {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -233,15 +202,15 @@
     justify-content: center;
 }
 
-.timeline-item[data-template="workflow_state_card"].past-state .timeline-dot svg {
+.timeline-item.past-state .timeline-badge svg {
     fill: var(--green-500, #28a745) !important;
 }
 
-.timeline-item[data-template="workflow_state_card"].current-state .timeline-dot svg {
+.timeline-item.current-state .timeline-badge svg {
     fill: var(--orange-500, #ffa00a) !important;
 }
 
-.timeline-item[data-template="workflow_state_card"].future-state .timeline-dot svg {
+.timeline-item.future-state .timeline-badge svg {
     fill: var(--gray-400, #d1d8dd) !important;
 }
 
