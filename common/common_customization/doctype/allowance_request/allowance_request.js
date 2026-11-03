@@ -6,7 +6,7 @@ frappe.ui.form.on("Allowance Request", {
       if (frm.doc.docstatus == 1 && frm.doc.add_to == "Journal Entry") {
         frappe.call({
           method:
-            "common_customization.common_customization.doctype.allowance_request.allowance_request.has_jv_entries",
+            "common.common_customization.doctype.allowance_request.allowance_request.has_jv_entries",
           args: {
             name: frm.doc.name,
           },

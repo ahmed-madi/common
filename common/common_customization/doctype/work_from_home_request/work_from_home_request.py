@@ -55,7 +55,7 @@ class WorkFromHomeRequest(BaseHRDocument):
 
         total_request_days = frappe.get_list(
             "Work From Home Request",
-            fields=["sum(total_days) as sum"],
+            fields=[{"SUM": "total_days", "as": "sum"}],
             filters={
                 "employee": employee,
                 "name": ["!=", name],

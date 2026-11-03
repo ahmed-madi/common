@@ -412,7 +412,7 @@ class HRRequestTracking {
 				<div class="hr-info-employee">${employee_name_val}</div>
 				<div class="hr-list-actions">
 					<button class="hr-view-btn" title="${__('View Details')}">
-						<i class="fa fa-eye"></i>
+						${frappe.utils.icon("eye", "sm")}
 					</button>
 					<div class="hr-card-actions">
 						${has_actions ? `

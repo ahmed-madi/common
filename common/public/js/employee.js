@@ -36,7 +36,7 @@ function render_attendance_view(frm) {
                     <div class="attendance-grid-container" style="padding: 20px; background: #fff; border-radius: 12px; border: 1px solid #ebeef5; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
                         <div class="header d-flex justify-content-between align-items-center mb-4">
                             <h5 style="margin: 0; font-weight: 700; color: #1a1c21; font-size: 1.1rem;">
-                                <i class="fa fa-calendar-check-o" style="color: #4b66f1; margin-right: 8px;"></i> 
+                                <span style="color: #4b66f1; margin-right: 8px;">${frappe.utils.icon("calendar-check", "sm")}</span> 
                                 ${data.month_name}
                             </h5>
                             <div class="legend d-flex gap-3" style="font-size: 0.8rem; font-weight: 500;">

@@ -76,7 +76,7 @@ def get_employee_bank_account(employee):
         "Employee Bank",
         filters={"parent": employee, "parenttype": "Employee"},
         fields=["iban", "bank_ac_no", "default"],
-        order_by="`default` desc, idx asc",
+        order_by="default desc, idx asc",
         limit=1,
     )
     if not banks:

@@ -66,7 +66,7 @@ class LeavePermission(Document):
 
         total_hours_list = frappe.get_list(
             "Leave Permission",
-            fields=["sum(total_hours) as sum"],
+            fields=[{"SUM": "total_hours", "as": "sum"}],
             filters=[
                 ["employee", "=", employee],
                 ["day", ">=", start_of_month],

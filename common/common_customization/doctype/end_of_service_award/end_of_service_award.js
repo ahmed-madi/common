@@ -1,8 +1,6 @@
 // Copyright (c) 2025, Ahmed Madi and contributors
 // For license information, please see license.txt
 
-cur_frm.add_fetch("employee", "date_of_joining", "work_start_date");
-
 const RECALCULATE_METHOD =
   "common.common_customization.doctype.end_of_service_award.end_of_service_award.recalculate";
 
@@ -133,6 +131,9 @@ const recalculate_on_change = (frm) => recalculate(frm);
 const recalculate_with_refetch = (frm) => recalculate(frm, { refetch: true });
 
 frappe.ui.form.on("End of Service Award", {
+  setup: function (frm) {
+    frm.add_fetch("employee", "date_of_joining", "work_start_date");
+  },
   onload: function (frm) {
     // Only reasons that apply to the employee's company. A reason with no
     // company is a shared rule and is offered to all of them.

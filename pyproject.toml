@@ -4,11 +4,11 @@ authors = [
     { name = "Ahmed Madi", email = "dev.amadi7@gmail.com"}
 ]
 description = "Common customization"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
-    # "frappe~=15.0.0" # Installed and managed by bench.
+    # "frappe~=16.0.0" # Installed and managed by bench.
     "firebase_admin~=7.1.0",
 ]
 
@@ -16,6 +16,16 @@ dependencies = [
 requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
+# Frappe apps this app is built against; bench checks them on get-app/install
+[tool.bench.frappe-dependencies]
+frappe = ">=16.0.0,<17.0.0"
+erpnext = ">=16.0.0,<17.0.0"
+hrms = ">=16.0.0,<17.0.0"
+
 # These dependencies are only installed when developer mode is enabled
 [tool.bench.dev-dependencies]
 # package_name = "~=1.1.0"
+
+# These apt dependencies will be installed from Ubuntu repositories when you host your app on Frappe Cloud
+[deploy.dependencies.apt]
+packages = []

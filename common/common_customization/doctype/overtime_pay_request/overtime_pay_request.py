@@ -102,7 +102,7 @@ class OvertimePayRequest(Document):
 
         # Display a message with a link
         message = f"Additional Salary {additional_salary.name} created successfully. "
-        message += f"<a href='/app/additional-salary/{additional_salary.name}'>View Additional Salary</a>"
+        message += f"<a href='/desk/additional-salary/{additional_salary.name}'>View Additional Salary</a>"
 
         frappe.msgprint(message)
 
@@ -123,8 +123,3 @@ def is_salary_slip_exists(employee, target_date):
 
     return exists
 
-
-@frappe.whitelist()
-def fetch_time_logs(overtime_request):
-    time_logs = frappe.get_value("Overtime Request", overtime_request, "time_logs")
-    return time_logs

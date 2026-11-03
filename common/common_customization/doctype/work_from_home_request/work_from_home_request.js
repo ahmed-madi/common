@@ -56,7 +56,7 @@ frappe.ui.form.on("Work From Home Request", {
                 );
                 diff = 0;
             }
-            const diffInDays = diff / (1000 * 60 * 60 * 24) + 1;
+            let diffInDays = diff / (1000 * 60 * 60 * 24) + 1;
             if (frm.max_wfh_days > 0) {
                 if (diffInDays > frm.max_wfh_days) {
                     frappe.show_alert(

@@ -666,7 +666,9 @@ def add_custom_filters(doctype):
     target_field = None
     is_datetime = False
     if doctype == "Task":
+        # Datetime since ERPNext v16
         target_field = "exp_start_date"
+        is_datetime = True
     elif doctype == "Company Newsletter":
         target_field = "publish_on"
         is_datetime = True
@@ -691,7 +693,7 @@ def add_custom_filters(doctype):
                     [
                         target_field,
                         ">=",
-                        getdate(f_date) + " 00:00:00"
+                        f"{getdate(f_date)} 00:00:00"
                         if is_datetime
                         else getdate(f_date),
                     ]
@@ -704,7 +706,7 @@ def add_custom_filters(doctype):
                     [
                         target_field,
                         "<=",
-                        getdate(t_date) + " 23:59:59"
+                        f"{getdate(t_date)} 23:59:59"
                         if is_datetime
                         else getdate(t_date),
                     ]

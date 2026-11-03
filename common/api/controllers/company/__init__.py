@@ -255,7 +255,7 @@ DEPT_FIELDS = [
     "is_group",
 ]
 
-EMP_COUNT_FIELD = "count(name) as cnt"
+EMP_COUNT_FIELD = {"COUNT": "name", "as": "cnt"}
 
 
 def _fmt_dept(row: Dict[str, Any]) -> Dict[str, Any]:

@@ -13,7 +13,7 @@ frappe.ui.form.on("Project", {
       );
       customizeDashboard(frm, dashboard);
     } else {
-      if (installedApps.includes("real_estate")) return;
+      if (data.message.includes("real_estate")) return;
       frm.dashboard.add_progress(
         "Project Progress",
         0,

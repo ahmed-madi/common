@@ -26,7 +26,7 @@ frappe.ui.form.on("Remote Work Request", {
         );
         diff = 0;
       }
-      const diffInDays = diff / (1000 * 60 * 60 * 24) + 1;
+      let diffInDays = diff / (1000 * 60 * 60 * 24) + 1;
       if (diffInDays > 12) {
         frappe.show_alert(
           {
